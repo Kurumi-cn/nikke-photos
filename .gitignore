@@ -9,8 +9,8 @@ node_modules/
 # 构建产物
 dist/
 
-# BOT 素材包：由 app/public 现打包（约 100MB），且超过 GitHub 单文件 100MB 上限
-bot/seed/assets.tar
+# BOT 插件单独一个仓库，不属于本仓库（顺带挡掉 bot/seed/assets.tar 这类约 100MB 的大文件）
+bot/
 
 # 本地工具链（pip 装到项目里的 fonttools 等）
 .tools/

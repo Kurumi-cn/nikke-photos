@@ -1,6 +1,0 @@
-name: astrbot_plugin_nikke_roster
-display_name: NIKKE练度统计助手
-desc: NIKKE 练度统计助手：把网页端导出的分享码导入 BOT，按 QQ 保存练度数据，并出角色面板图与练度统计表。
-version: v0.2.0
-author: 博哥
-repo: 'https://github.com/Kurumi-cn/nikke-photos'
