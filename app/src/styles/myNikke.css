@@ -1,0 +1,108 @@
+/* 「我的妮姬」页：属性按钮行 + 按属性分组的网格。
+   工具条、搜索框、缩放、空状态都复用 base.css 里的既有类，这里只补本页独有的部分。 */
+
+/* ---------- 属性按钮行 ---------- */
+
+/* flex-basis 100% 让它必然在 .toolbar 里换行，独占一行：
+   第一行是「搜索框 + 分类下拉 + 开关」，这一行是「属性按钮 + 缩放」 */
+.mn-elements {
+  display: flex;
+  flex: 1 0 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.mn-element {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 9px 0 8px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--bg-2);
+  color: var(--text-2);
+  font-size: 12px;
+  transition: border-color var(--dur), background var(--dur), color var(--dur);
+}
+
+/* 未选中时把图标压暗，和文字处在同一层级，避免一行五个彩色图标抢视线 */
+.mn-element img {
+  display: block;
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  opacity: 0.55;
+  transition: opacity var(--dur);
+}
+
+.mn-element b {
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.mn-element:hover:not(:disabled) {
+  border-color: var(--text-3);
+  color: var(--text);
+}
+
+.mn-element:hover:not(:disabled) img {
+  opacity: 0.85;
+}
+
+/* 选中态：边框与文字取该属性的颜色（燃烧红 / 水冷蓝 / 风压绿 / 电击品红 / 铁甲橙） */
+.mn-element.active {
+  border-color: var(--el-color, var(--primary));
+  background: var(--bg-3);
+  color: var(--el-color, var(--primary));
+}
+
+.mn-element.active img {
+  opacity: 1;
+}
+
+.mn-element:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---------- 按属性分组 ---------- */
+
+.mn-group + .mn-group {
+  margin-top: 16px;
+}
+
+/* 小标题 + 一条伸到右侧的细线，像通讯录的字母索引；文字用该属性的颜色 */
+.mn-group-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 9px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--text-2);
+}
+
+.mn-group-head b {
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.mn-group-head::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ---------- 空状态 ---------- */
+
+.mn-empty-btn {
+  margin: 0 5px;
+  vertical-align: middle;
+}

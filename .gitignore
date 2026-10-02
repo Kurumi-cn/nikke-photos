@@ -1,0 +1,30 @@
+# 依赖
+node_modules/
+
+# npm 缓存（app/.npmrc 把缓存指到了项目内的 .npm-cache）
+.npm-cache/
+.npm/
+.vite/
+
+# 构建产物
+dist/
+
+# BOT 素材包：由 app/public 现打包（约 100MB），且超过 GitHub 单文件 100MB 上限
+bot/seed/assets.tar
+
+# 本地工具链（pip 装到项目里的 fonttools 等）
+.tools/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# 日志与系统文件
+*.log
+.DS_Store
+Thumbs.db
+
+# OCR 调试产物（保留 文档/ 下的 md、txt 与协议文档）
+文档/ocr_diag/
+文档/ocr_samples/
+文档/_ocr_*.png

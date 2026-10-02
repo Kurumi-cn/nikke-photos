@@ -1,0 +1,126 @@
+{
+  "generatedAt": "2026-09-30T16:13:40.832Z",
+  "source": "NIKKE Workshop cubeIconCatalog.js",
+  "count": 17,
+  "cubes": [
+    {
+      "cubeId": 1000301,
+      "resourceId": 10001,
+      "nameCn": "遗迹突击魔方",
+      "nameEn": "Assault Cube",
+      "icon": "ui-assets/nikke/cubes/ie_10001.png"
+    },
+    {
+      "cubeId": 1000302,
+      "resourceId": 10002,
+      "nameCn": "战术突击魔方",
+      "nameEn": "Onslaught Cube",
+      "icon": "ui-assets/nikke/cubes/ie_10002.png"
+    },
+    {
+      "cubeId": 1000303,
+      "resourceId": 10003,
+      "nameCn": "遗迹巨熊魔方",
+      "nameEn": "Resilience Cube",
+      "icon": "ui-assets/nikke/cubes/ie_10003.png"
+    },
+    {
+      "cubeId": 1000304,
+      "resourceId": 10004,
+      "nameCn": "战术巨熊魔方",
+      "nameEn": "Bastion Cube",
+      "icon": "ui-assets/nikke/cubes/ie_10004.png"
+    },
+    {
+      "cubeId": 1000305,
+      "resourceId": 10005,
+      "nameCn": "遗迹促进魔方",
+      "nameEn": "Adjutant Cube",
+      "icon": "ui-assets/nikke/cubes/ie_10005.png"
+    },
+    {
+      "cubeId": 1000306,
+      "resourceId": 10006,
+      "nameCn": "战术促进魔方",
+      "nameEn": "Wingman Cube",
+      "icon": "ui-assets/nikke/cubes/ie_10006.png"
+    },
+    {
+      "cubeId": 1000307,
+      "resourceId": 11001,
+      "nameCn": "遗迹量子魔方",
+      "nameEn": "Quantum Cube",
+      "icon": "ui-assets/nikke/cubes/ie_11001.png"
+    },
+    {
+      "cubeId": 1000308,
+      "resourceId": 13001,
+      "nameCn": "体力神器魔方",
+      "nameEn": "Vigor Cube",
+      "icon": "ui-assets/nikke/cubes/ie_13001.png"
+    },
+    {
+      "cubeId": 1000309,
+      "resourceId": 12001,
+      "nameCn": "遗迹强韧魔方",
+      "nameEn": "Endurance Cube",
+      "icon": "ui-assets/nikke/cubes/ie_12001.png"
+    },
+    {
+      "cubeId": 1000310,
+      "resourceId": 13002,
+      "nameCn": "遗迹治疗魔方",
+      "nameEn": "Healing Cube",
+      "icon": "ui-assets/nikke/cubes/ie_13002.png"
+    },
+    {
+      "cubeId": 1000311,
+      "resourceId": 12002,
+      "nameCn": "遗迹回火魔方",
+      "nameEn": "Tempering Cube",
+      "icon": "ui-assets/nikke/cubes/ie_12002.png"
+    },
+    {
+      "cubeId": 1000312,
+      "resourceId": 10009,
+      "nameCn": "遗迹辅助魔方",
+      "nameEn": "Relic Assist Cube",
+      "icon": "ui-assets/nikke/cubes/ie_10009.png"
+    },
+    {
+      "cubeId": 1000313,
+      "resourceId": 10007,
+      "nameCn": "遗迹毁灭魔方",
+      "nameEn": "Destruction Cube",
+      "icon": "ui-assets/nikke/cubes/ie_10007.png"
+    },
+    {
+      "cubeId": 1000314,
+      "resourceId": 10008,
+      "nameCn": "遗迹穿透魔方",
+      "nameEn": "Piercing Cube",
+      "icon": "ui-assets/nikke/cubes/ie_10008.png"
+    },
+    {
+      "cubeId": 1000315,
+      "resourceId": 10010,
+      "nameCn": "遗迹粉碎魔方",
+      "nameEn": "Rupture Cube",
+      "icon": "ui-assets/nikke/cubes/ie_10010.png"
+    },
+    {
+      "cubeId": 1000316,
+      "resourceId": 10012,
+      "nameCn": "遗迹掩体魔方",
+      "nameEn": "Stealth Cube",
+      "icon": "ui-assets/nikke/cubes/ie_10012.png"
+    },
+    {
+      "cubeId": 1000317,
+      "resourceId": 10013,
+      "nameCn": "遗迹分裂魔方",
+      "nameEn": "Diffusion Cube",
+      "icon": "ui-assets/nikke/cubes/ie_10013.png"
+    }
+  ]
+}

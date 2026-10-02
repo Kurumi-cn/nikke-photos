@@ -1,0 +1,14 @@
+{
+  "web_base_url": {
+    "type": "string",
+    "description": "网页端地址（用户去这里生成/导出分享码）",
+    "hint": "同时用在 /妮姬帮助 和 /妮姬网址 里。留空则 /妮姬网址 会提示未配置。改完需重载插件。",
+    "default": ""
+  },
+  "help_use_forward": {
+    "type": "bool",
+    "description": "群聊里把帮助发成合并转发（聊天记录）",
+    "hint": "帮助较长，直接发会刷屏。开启后群聊里发成一条合并转发；私聊始终发纯文本。协议端不支持（非 OneBot）时会自动退回纯文本。",
+    "default": true
+  }
+}

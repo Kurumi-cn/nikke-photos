@@ -1,0 +1,173 @@
+{
+  "base": "Abolition-s3",
+  "maxVariants": 4,
+  "samples": [
+    {
+      "file": "灰姑娘.png",
+      "character": "灰姑娘",
+      "size": "1920x1080",
+      "region": {
+        "x0": 1540,
+        "y0": 150,
+        "x1": 1919,
+        "y1": 1010
+      },
+      "matched": [
+        {
+          "field": "combat",
+          "expected": "221074",
+          "classified": "221074",
+          "agreement": "6/6",
+          "mode": "dark",
+          "cut": 0,
+          "skipped": []
+        },
+        {
+          "field": "level",
+          "expected": "486",
+          "classified": "480",
+          "agreement": "2/3",
+          "mode": "badge",
+          "cut": 1,
+          "skipped": [
+            "3位读0·lax"
+          ]
+        },
+        {
+          "field": "affection",
+          "expected": "20",
+          "classified": "27",
+          "agreement": "1/2",
+          "mode": "chroma",
+          "cut": 2,
+          "skipped": [
+            "2位读7·lax"
+          ]
+        }
+      ],
+      "unmatched": []
+    },
+    {
+      "file": "丽塔.png",
+      "character": "丽塔",
+      "size": "1920x1080",
+      "region": {
+        "x0": 1540,
+        "y0": 150,
+        "x1": 1919,
+        "y1": 1010
+      },
+      "matched": [
+        {
+          "field": "combat",
+          "expected": "215520",
+          "classified": "215520",
+          "agreement": "6/6",
+          "mode": "dark",
+          "cut": 0,
+          "skipped": []
+        },
+        {
+          "field": "level",
+          "expected": "486",
+          "classified": "480",
+          "agreement": "2/3",
+          "mode": "badge",
+          "cut": 0,
+          "skipped": [
+            "3位读0·lax"
+          ]
+        },
+        {
+          "field": "affection",
+          "expected": "30",
+          "classified": "00",
+          "agreement": "1/2",
+          "mode": "dark",
+          "cut": 1,
+          "skipped": [
+            "1位读0·lax"
+          ]
+        }
+      ],
+      "unmatched": []
+    },
+    {
+      "file": "诺亚尔.png",
+      "character": "诺亚尔",
+      "size": "1920x1080",
+      "region": {
+        "x0": 1540,
+        "y0": 150,
+        "x1": 1919,
+        "y1": 1010
+      },
+      "matched": [
+        {
+          "field": "combat",
+          "expected": "208159",
+          "classified": "208159",
+          "agreement": "6/6",
+          "mode": "dark",
+          "cut": 0,
+          "skipped": []
+        },
+        {
+          "field": "level",
+          "expected": "486",
+          "classified": "480",
+          "agreement": "2/3",
+          "mode": "badge",
+          "cut": 0,
+          "skipped": [
+            "3位读0·lax"
+          ]
+        },
+        {
+          "field": "affection",
+          "expected": "30",
+          "classified": "dot0",
+          "agreement": "1/2",
+          "mode": "pale",
+          "cut": 1,
+          "skipped": [
+            "1位读dot·lax"
+          ]
+        }
+      ],
+      "unmatched": []
+    },
+    {
+      "file": "参考1.png",
+      "character": "海伦",
+      "size": "405x977",
+      "region": {
+        "x0": 80,
+        "y0": 148,
+        "x1": 360,
+        "y1": 470
+      },
+      "matched": [
+        {
+          "field": "combat",
+          "expected": "241356",
+          "classified": "241356",
+          "agreement": "6/6",
+          "mode": "dark",
+          "cut": 0,
+          "skipped": []
+        },
+        {
+          "field": "level",
+          "expected": "481",
+          "classified": "481",
+          "agreement": "3/3",
+          "mode": "badge",
+          "cut": 0,
+          "skipped": []
+        }
+      ],
+      "unmatched": []
+    }
+  ]
+}

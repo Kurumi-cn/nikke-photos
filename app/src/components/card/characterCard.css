@@ -1,0 +1,859 @@
+/* 角色卡样式：版式与数值对齐 NIKKE Workshop 的 characterCard.css（736×1096，导出 PNG）
+   游戏字体（解包 font_library 提取）仅用于「装备词条区」——词条名 / 阶数 / 词条数值；
+   卡片上其余文字与数字保持项目原版系统字体（--np-cn-font / --np-num-font）
+   - NIKKE Text  = SC_common_extra_bold（Noto Sans SC Black，已子集化，词条名与阶数文本）
+   - NIKKE Digit = Deco_ext_azx（Azonix，阶数数字与词条数值、% 符号）
+   字重声明为全范围：游戏字体为单一字重，避免浏览器对 600/700 再合成加粗破坏字形 */
+@font-face {
+  font-family: 'NIKKE Text';
+  src: url('../../assets/fonts/NotoSansSC-Black-subset.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'NIKKE Digit';
+  src: url('../../assets/fonts/Azonix_Regular.otf') format('opentype');
+  font-weight: 100 900;
+  font-display: block;
+}
+
+.np-card {
+  --np-cn-font: 'Microsoft YaHei', system-ui, sans-serif;
+  --np-num-font: Bahnschrift, 'Arial Narrow', sans-serif;
+  /* 装备词条区专用游戏字体（仅词条名/阶数/词条数值使用，其余文字保持项目原版系统字体） */
+  --np-affix-cn-font: 'NIKKE Text', 'Microsoft YaHei', system-ui, sans-serif;
+  --np-affix-num-font: 'NIKKE Digit', Bahnschrift, 'Arial Narrow', sans-serif;
+  position: relative;
+  width: var(--card-width);
+  height: var(--card-height);
+  overflow: hidden;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #f8fafb 0 58%, #eef2f4 76%, #f5f7f8 100%);
+  color: #24282c;
+  isolation: isolate;
+}
+
+.np-card.is-transparent {
+  background: transparent;
+}
+
+.np-card-art,
+.np-card-art-placeholder {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.np-card-art {
+  object-fit: cover;
+  object-position: 50% 50%;
+  transform-origin: 50% 50%;
+  filter: saturate(0.96) contrast(1.01) drop-shadow(0 9px 7px rgb(36 40 48 / 16%));
+  transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.np-card-art-placeholder {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(145deg, #edf1f4, #f9fafb 50%, #e3e8ec);
+}
+
+.np-card-art-placeholder span {
+  color: #899198;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* ---------- 收藏品 / 珍藏品 ---------- */
+
+.np-favorite {
+  position: absolute;
+  z-index: 3;
+  top: 20px;
+  left: 22px;
+  display: grid;
+  width: 88px;
+  justify-items: center;
+  grid-template-rows: 64px 20px;
+  filter: drop-shadow(0 2px 1px rgb(34 29 40 / 18%));
+}
+
+.np-favorite-mascot {
+  position: relative;
+  display: block;
+  width: 72px;
+  height: 64px;
+  overflow: hidden;
+}
+
+.np-favorite-mascot img {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  display: block;
+  width: 76px;
+  max-width: none;
+  height: 82px;
+  object-fit: contain;
+  object-position: 50% 0;
+  transform: translateX(-50%);
+}
+
+.np-favorite.has-icon .np-favorite-mascot img {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: 50% 100%;
+  transform: none;
+}
+
+.np-favorite-stars {
+  box-sizing: border-box;
+  display: flex;
+  width: 64px;
+  height: 19px;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 0 8px 1px;
+  border-radius: 999px;
+  background: #9447c9;
+  box-shadow: inset 0 -2px 0 rgb(73 28 115 / 18%), 0 1px 1px rgb(35 26 43 / 18%);
+}
+
+.np-favorite-stars i {
+  color: rgb(255 255 255 / 27%);
+  font: normal 700 13px/1 Arial, sans-serif;
+  transform: translateY(0.5px);
+}
+
+.np-favorite-stars i.filled {
+  color: #fff;
+  text-shadow: 0 1px 0 rgb(72 33 105 / 24%);
+}
+
+.np-favorite.is-r .np-favorite-stars { background: #3b8fd2; }
+.np-favorite.is-sr .np-favorite-stars { background: #9447c9; }
+.np-favorite.is-ssr .np-favorite-stars { background: #ec8a32; }
+
+/* 有珍藏品时魔方下移到其下方（缩小品块高 104px + 8px 间距），形成同一条左竖轴 */
+.np-card.has-favorite .np-cube {
+  top: 112px;
+}
+
+/* ---------- 右侧身份信息区 ---------- */
+
+.np-identity {
+  position: absolute;
+  z-index: 3;
+  inset: 24px 20px auto auto;
+  display: grid;
+  width: 360px;
+  gap: 7px;
+  justify-items: end;
+}
+
+.np-rarity-row {
+  display: flex;
+  width: 248px;
+  min-height: 42px;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 6px;
+  padding-inline: 8px 3px;
+}
+
+.np-rarity {
+  width: 92px;
+  height: 30px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 1px rgb(126 72 0 / 16%));
+}
+
+.np-rarity-fallback {
+  display: grid;
+  place-items: center;
+  color: #34373a;
+  background: rgb(255 255 255 / 91%);
+  font: 700 20px/1 var(--np-cn-font);
+  filter: none;
+}
+
+.np-breakthrough {
+  display: flex;
+  align-items: center;
+}
+
+.np-stars {
+  display: flex;
+  height: 28px;
+  align-items: center;
+}
+
+.np-stars img {
+  display: block;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.np-stars img + img { margin-left: -5px; }
+
+.np-core {
+  position: relative;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  margin-left: -4px;
+  place-items: center;
+  filter: drop-shadow(0 2px 2px rgb(56 20 62 / 25%));
+}
+
+.np-core img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.np-core strong {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  font-family: var(--np-num-font);
+  font-size: 16px;
+  line-height: 1;
+  text-shadow: 0 1px 1px #16181a;
+}
+
+.np-core strong.is-max {
+  font-size: 11px;
+  letter-spacing: -0.02em;
+}
+
+.np-level-name {
+  box-sizing: border-box;
+  display: grid;
+  width: fit-content;
+  min-width: 248px;
+  max-width: 100%;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: center;
+  column-gap: 12px;
+  min-height: 50px;
+  padding: 2px 12px 3px;
+  border-radius: 8px;
+  background: #34373a;
+  box-shadow: 0 4px 5px rgb(26 30 34 / 24%);
+  color: #fff;
+}
+
+.np-level {
+  color: #d9dde0;
+  font-family: var(--np-num-font);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.np-level strong {
+  color: #ffc445;
+  font-size: 32px;
+}
+
+.np-level-name h2 {
+  min-width: 0;
+  margin: 0;
+  font: 700 22px/1.1 var(--np-cn-font);
+  letter-spacing: -0.02em;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.np-level-name.long-name h2 { font-size: 19px; }
+
+.np-affection {
+  position: relative;
+  box-sizing: border-box;
+  display: grid;
+  width: 174px;
+  min-height: 31px;
+  grid-template-columns: auto auto auto;
+  align-items: center;
+  justify-content: center;
+  column-gap: 7px;
+  margin-right: 3px;
+  padding: 1px 6px 1px 9px;
+  border-radius: 5px;
+  background: rgb(255 255 255 / 78%);
+  color: #f0444d;
+}
+
+.np-decoration {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+}
+
+.np-decoration > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.np-affection-caption {
+  position: relative;
+  display: flex;
+  height: 21px;
+  align-items: center;
+  font: 600 10px/1 var(--np-num-font);
+  letter-spacing: 0.075em;
+  white-space: nowrap;
+}
+
+.np-affection-caption > b {
+  margin-right: 4px;
+  font-size: 12px;
+}
+
+.np-affection > strong {
+  position: relative;
+  font: 400 14px/21px var(--np-num-font);
+}
+
+.np-affection > em {
+  position: relative;
+  display: grid;
+  width: 30px;
+  height: 28.571px;
+  place-items: center;
+  color: #fff;
+  font: normal 700 14px/1 var(--np-num-font);
+}
+
+.np-affection > em > b {
+  position: relative;
+  margin-top: -3px;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.np-affection > em.is-wide { font-size: 11px; }
+
+.np-combat {
+  display: grid;
+  width: max-content;
+  justify-items: start;
+  row-gap: 2px;
+  padding: 5px 7px 6px;
+  border-radius: 2px;
+  background: rgb(255 255 255 / 91%);
+  box-shadow: 0 2px 3px rgb(28 33 39 / 11%);
+}
+
+.np-combat span {
+  margin-left: 2px;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.np-combat strong {
+  font: 700 41px/1 var(--np-num-font);
+  letter-spacing: -0.025em;
+}
+
+.np-combat b {
+  justify-self: center;
+  padding-left: 0.24em;
+  color: #34383c;
+  font: 800 11px/1 var(--np-num-font);
+  letter-spacing: 0.24em;
+}
+
+/* 属性图标组 */
+
+.np-meta-stack {
+  display: grid;
+  gap: 5px;
+  justify-items: end;
+}
+
+.np-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.np-meta {
+  position: relative;
+  display: grid;
+  width: 50px;
+  min-height: 58px;
+  place-items: center;
+}
+
+.np-meta > img,
+.np-meta > span {
+  position: relative;
+  z-index: 1;
+}
+
+.np-meta.native > img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 57.5px;
+  height: 63.773px;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+}
+
+.np-meta.glyph::before,
+.np-meta.glyph::after {
+  content: '';
+  position: absolute;
+  width: 46px;
+  height: 53px;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+
+.np-meta.glyph::before {
+  background: #cfd3d7;
+  filter: drop-shadow(0 1px 0 rgb(75 82 89 / 18%)) drop-shadow(0 4px 2px rgb(28 33 39 / 25%));
+}
+
+.np-meta.glyph::after {
+  width: 44px;
+  height: 51px;
+  background: rgb(255 255 255 / 98%);
+}
+
+.np-meta.weapon::before { background: #35393d; }
+.np-meta.weapon::after { width: 42px; height: 49px; }
+
+.np-meta.glyph img {
+  filter: brightness(0) saturate(0);
+  object-fit: contain;
+}
+
+.np-meta.weapon img { width: 23px; height: 23px; }
+.np-meta.class img { width: 22px; height: 22px; transform: translateY(-7px); }
+.np-meta.manufacturer img { width: 20px; height: 20px; transform: translateY(-7px); }
+
+.np-meta-level {
+  position: absolute;
+  z-index: 2;
+  bottom: 9px;
+  left: 50%;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 1px;
+  color: #34383c;
+  font: 800 9px/1 var(--np-num-font);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.np-meta-level strong { font: 800 10.5px/1 var(--np-num-font); }
+
+/* 技能 */
+
+/* 技能区：左下角竖排（技能1 → 技能2 → 爆裂，最下方为爆裂） */
+.np-skills {
+  position: absolute;
+  z-index: 3;
+  left: 22px;
+  bottom: 22px;
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+
+.np-standard-skills {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+
+.np-skill {
+  position: relative;
+  display: grid;
+  width: 46px;
+  height: 46px;
+  flex: none;
+  place-items: center;
+}
+
+.np-skill.is-burst {
+  width: 76px;
+  height: 76px;
+}
+
+.np-skill-frame {
+  filter: drop-shadow(0 2px 2px rgb(24 29 34 / 28%));
+}
+
+.np-skill-glyph {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.np-skill.is-burst > .np-skill-glyph {
+  width: 56px;
+  height: 56px;
+}
+
+.np-level-badge {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  display: grid;
+  width: 21px;
+  height: 21px;
+  place-items: center;
+  color: #fff;
+  font: 800 12px/1 var(--np-num-font);
+  font-variant-numeric: tabular-nums;
+}
+
+.np-level-badge > .np-decoration {
+  filter: drop-shadow(0 2px 2px rgb(21 26 31 / 34%));
+}
+
+.np-level-badge > b {
+  position: relative;
+  font: inherit;
+}
+
+.np-skill.is-burst > .np-level-badge {
+  width: 24px;
+  height: 24px;
+  font-size: 13px;
+}
+
+/* 魔方 */
+
+/* 魔方：左上角珍藏品下方（无珍藏品时回到原位，见 .has-favorite 分支） */
+.np-cube {
+  position: absolute;
+  z-index: 3;
+  top: 20px;
+  left: 22px;
+  display: grid;
+  width: 64px;
+  height: 64px;
+  place-items: center;
+  color: #34383c;
+}
+
+.np-cube-art {
+  display: grid;
+  width: 60px;
+  height: 60px;
+  place-items: center;
+  overflow: hidden;
+}
+
+.np-cube-art img {
+  display: block;
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 2px rgb(24 31 39 / 24%));
+}
+
+.np-cube > .np-level-badge {
+  right: -3px;
+  bottom: -3px;
+  width: 24px;
+  height: 24px;
+  font-size: 13px;
+}
+
+/* ---------- 装备与词条合计 ---------- */
+
+.np-equipment-panel {
+  position: absolute;
+  z-index: 3;
+  inset: auto 22px 22px auto;
+  width: 316px;
+  /* 大小由右栏「布局」滑块控制（档案字段 panelScale，80%~150%，默认取上限） */
+  transform: scale(var(--panel-scale, 1.5));
+  transform-origin: right bottom;
+}
+
+.np-affix-summary {
+  box-sizing: border-box;
+  display: grid;
+  /* 宽度按最长内容实测放宽（8 字词条 92px + 【XX档】45.5px + 最长合计值 63px） */
+  width: 248px;
+  gap: 2px;
+  margin: 0 0 12px auto;
+  padding: 4px;
+  border-radius: 5px;
+  background: rgb(255 255 255 / 94%);
+  box-shadow: 0 2px 4px rgb(27 33 40 / 15%);
+}
+
+.np-affix-summary > div {
+  display: grid;
+  width: 240px;
+  min-height: 18px;
+  /* 名称列 104px 与装备行一致（Black 字体 8 字实测 92px）
+     ⚠️ 本行的 span:last-child 是 grid 容器，【X档】必须包成单个节点，
+     裸文本节点会成为独立网格项导致换行 */
+  grid-template-columns: 104px minmax(0, 1fr);
+  align-items: center;
+  gap: 2px;
+  padding: 0 4px;
+  border-radius: 3px;
+  background: rgb(245 247 248 / 82%);
+  color: #34393e;
+}
+
+.np-affix-summary > div > span:first-child {
+  overflow: hidden;
+  font: 700 11.5px/1 var(--np-affix-cn-font);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.np-affix-summary > div > span:last-child {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: baseline;
+  font: 700 11px/1 var(--np-affix-cn-font);
+  white-space: nowrap;
+}
+
+.np-affix-summary strong {
+  min-width: 45px;
+  font: 700 13px/1 var(--np-affix-num-font);
+  text-align: right;
+}
+
+.np-equipment-grid {
+  display: grid;
+  grid-template-rows: repeat(4, minmax(76px, 1fr));
+  gap: 7px;
+}
+
+.np-equipment {
+  display: grid;
+  /* 词条列按最长内容实测加宽（Black 字体最长词条 8 字 94.4px + 最长值串 102.6px） */
+  grid-template-columns: 64px 236px;
+  justify-content: end;
+  gap: 8px;
+  min-height: 76px;
+  padding: 3px 4px 3px 5px;
+  border-radius: 5px;
+  background: rgb(255 255 255 / 92%);
+  box-shadow: 0 2px 4px rgb(25 31 38 / 12%);
+}
+
+.np-equipment-icon {
+  position: relative;
+  align-self: center;
+  width: 64px;
+  height: 64px;
+  border: 1px solid #e9819d;
+  border-radius: 6px;
+  background:
+    radial-gradient(circle, rgb(132 144 154 / 13%) 0 0.5px, transparent 0.65px),
+    rgb(245 247 248 / 82%);
+  background-size: 4px 4px;
+  box-shadow: 0 3px 3px rgb(18 20 24 / 44%), inset 0 0 0 1px rgb(255 255 255 / 66%), inset 0 0 6px rgb(255 68 126 / 18%);
+  isolation: isolate;
+}
+
+.np-equipment-icon::before {
+  content: '';
+  position: absolute;
+  z-index: 3;
+  inset: 1px;
+  border: 1px solid rgb(255 181 201 / 46%);
+  border-radius: 4px;
+}
+
+.np-equipment-art {
+  position: absolute;
+  z-index: 1;
+  inset: 1px;
+  width: 62px;
+  height: 62px;
+  object-fit: contain;
+}
+
+.np-equipment-icon.is-standard {
+  border-color: #98a2ab;
+  box-shadow: 0 3px 3px rgb(18 20 24 / 30%);
+}
+
+.np-equipment-icon.is-standard::before {
+  border-color: rgb(255 255 255 / 66%);
+}
+
+.np-equipment-tier {
+  position: absolute;
+  z-index: 4;
+  right: 2px;
+  bottom: 2px;
+  padding: 1px 3px;
+  border-radius: 2px;
+  background: #34393e;
+  color: #fff;
+  font: 700 10px/1.2 var(--np-num-font);
+}
+
+.np-equipment-placeholder {
+  display: grid;
+  height: 100%;
+  place-items: center;
+  color: #434b52;
+  font: 600 10px/1.3 var(--np-cn-font);
+}
+
+.np-equipment-badges {
+  position: absolute;
+  z-index: 4;
+  top: -6px;
+  left: -6px;
+  display: grid;
+  width: 19px;
+  justify-items: center;
+}
+
+.np-overload-badge,
+.np-class-badge {
+  position: relative;
+  display: grid;
+  width: 19px;
+  height: 22px;
+  place-items: center;
+  filter: drop-shadow(0 1px 1px rgb(26 20 29 / 38%));
+}
+
+.np-overload-badge {
+  overflow: visible;
+  filter: none;
+}
+
+.np-overload-badge > img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 24px;
+  height: 26.571px;
+  max-width: none;
+  object-fit: contain;
+  transform: translate(-50%, -50%);
+}
+
+.np-class-badge { margin-top: -2.4px; }
+
+.np-class-badge::before,
+.np-class-badge::after,
+.np-class-badge i {
+  content: '';
+  position: absolute;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+
+.np-class-badge::before { inset: 0; background: #151719; }
+.np-class-badge::after { inset: 0.8px; background: #e9edef; }
+.np-class-badge i {
+  z-index: 1;
+  inset: 1.6px;
+  background: linear-gradient(145deg, #55595c, #303336 52%, #17191b);
+}
+
+.np-class-badge img {
+  position: relative;
+  z-index: 2;
+  width: 10.3px;
+  height: 13.5px;
+  object-fit: contain;
+}
+
+.np-manufacturer-badge { margin-top: 0; }
+.np-manufacturer-badge::before { background: #7300c9; }
+.np-manufacturer-badge::after { background: #fff; }
+.np-manufacturer-badge i { background: #9300ff; }
+
+.np-affix-lines {
+  display: grid;
+  width: 236px;
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+}
+
+.np-affix-line {
+  display: grid;
+  min-width: 0;
+  /* 名称列 104px：Black 字体最长词条（优越代码伤害增加）实测 94.4px，留安全余量 */
+  grid-template-columns: 104px minmax(0, 1fr);
+  align-items: center;
+  gap: 2px;
+  padding: 0 4px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: rgb(245 247 248 / 82%);
+  color: #34393e;
+}
+
+.np-affix-name {
+  overflow: hidden;
+  font: 700 11.8px/1 var(--np-affix-cn-font);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.np-affix-values {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: center;
+  font: 700 11px/1 var(--np-affix-cn-font);
+  white-space: nowrap;
+}
+
+.np-affix-values strong {
+  font: 700 13.5px/1 var(--np-affix-num-font);
+  text-align: right;
+}
+/* 档位数字（【15档】里的数字）单独走装备词条区数值字体 */
+.np-num {
+  font-family: var(--np-affix-num-font);
+}
+
+.np-affix-line.tier-blue .np-affix-values { color: #009de0; }
+.np-affix-line.tier-15 { background: #242424; color: #08ace6; }
+
+/* 署名（可选） */
+
+.np-signature {
+  position: absolute;
+  z-index: 4;
+  left: 22px;
+  bottom: 22px;
+  color: rgb(36 40 48 / 62%);
+  font: 600 11px/1.4 var(--np-cn-font);
+  letter-spacing: 0.04em;
+  max-width: 300px;
+}

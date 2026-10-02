@@ -1,0 +1,18 @@
+{
+  "generatedAt": "2026-10-02T17:00:51.320Z",
+  "sourceDir": "E:/桌面/NIKKE Helper/NIKKE Helper v1.0/src/renderer/src/data",
+  "workshopObjectsPath": "E:/博哥/NIKKE WORKSHOP 1.0.14/NIKKE-Workshop-1.0.14/src/data/characterObjectAssets.json",
+  "sourceGeneratedAt": "2026-09-01",
+  "counts": {
+    "characters": 201,
+    "cnAvailable": 143,
+    "collectible": 21,
+    "collectibleCn": 12,
+    "overSpec": 4,
+    "chinaExclusive": 2,
+    "artworks": 379
+  },
+  "expectedCnRoster": 143,
+  "errors": [],
+  "warnings": []
+}

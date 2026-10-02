@@ -1,0 +1,162 @@
+/* 词条统计页：统计表样式（对齐参考表：浅灰表头、白底细边框、游戏字体） */
+
+@font-face {
+  font-family: 'NIKKE Text';
+  src: url('../assets/fonts/NotoSansSC-Black-subset.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'NIKKE Digit';
+  src: url('../assets/fonts/Azonix_Regular.otf') format('opentype');
+  font-display: swap;
+}
+
+.stats-main {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.stats-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.stats-head strong {
+  color: var(--text);
+}
+
+.st-sheet {
+  overflow: auto;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.st-table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: auto;
+}
+
+.st-table th,
+.st-table td {
+  border: 1px solid #e3e6ea;
+  padding: 6px 12px;
+  white-space: nowrap;
+}
+
+.st-table thead th {
+  background: #f1f3f5;
+  color: #5b636e;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  font-family: 'NIKKE Text', 'Microsoft YaHei', sans-serif;
+}
+
+.st-corner {
+  width: 168px;
+}
+
+.st-row {
+  cursor: grab;
+}
+
+.st-row.dragging td {
+  opacity: 0.45;
+}
+
+.st-row.drop-target td {
+  box-shadow: inset 0 2px 0 var(--primary);
+}
+
+.st-name {
+  text-align: left;
+  font-family: 'NIKKE Text', 'Microsoft YaHei', sans-serif;
+  font-weight: 900;
+  font-size: 13px;
+  color: var(--text);
+  user-select: none;
+}
+
+.st-cell {
+  text-align: center;
+  font-family: 'NIKKE Digit', 'Bahnschrift', sans-serif;
+  font-size: 14px;
+  color: #26292e;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 4 件规格：档位和 ≥ 40 → 蓝字；≥ 52 → 黑底蓝字（与卡片词条的变色同色系） */
+.st-cell.is-blue {
+  color: #009de0;
+}
+
+.st-cell.is-max {
+  background: #242424;
+  color: #08ace6;
+}
+
+.st-tier {
+  text-align: right;
+  font-family: 'NIKKE Digit', 'Bahnschrift', sans-serif;
+  font-size: 14px;
+  color: #26292e;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 选择器里的属性小字 */
+.data-element {
+  flex: none;
+  margin-left: auto;
+  font-size: 11px;
+}
+
+.data-empty {
+  margin: 8px 4px;
+  color: var(--text-3);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* 我的页 */
+.my-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 360px));
+  gap: 12px;
+}
+
+.my-card {
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 140ms, background-color 140ms;
+}
+
+.my-card:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-3);
+}
+
+.my-card b {
+  font-size: 15px;
+  color: var(--text);
+}
+
+.my-card span {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-2);
+}
