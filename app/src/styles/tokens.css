@@ -28,6 +28,8 @@
   --success: #2e9e6d;
   --warning: #b9801c;
   --danger: #d24a43;
+  /* 越界输入框的聚焦光圈（与 --primary-soft 同一手法，只是换成警示色） */
+  --danger-soft: rgba(210, 74, 67, 0.1);
 
   /* 圆角分级：容器中、控件中小、标签略圆 */
   --radius-lg: 10px;

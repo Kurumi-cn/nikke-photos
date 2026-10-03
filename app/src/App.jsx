@@ -8,6 +8,7 @@ import DataEntryPage from './pages/DataEntryPage.jsx'
 import MyNikkePage from './pages/MyNikkePage.jsx'
 import MyPage from './pages/MyPage.jsx'
 import ProfilesPage from './pages/ProfilesPage.jsx'
+import SchemesPage from './pages/SchemesPage.jsx'
 import StatsPage from './pages/StatsPage.jsx'
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/my-nikke" element={<MyNikkePage />} />
         <Route path="/my" element={<MyPage />} />
         <Route path="/profiles" element={<ProfilesPage />} />
+        <Route path="/schemes" element={<SchemesPage />} />
         <Route path="/bot-share" element={<BotSharePage />} />
         <Route path="/stats" element={<StatsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />

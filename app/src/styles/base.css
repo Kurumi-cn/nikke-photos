@@ -1382,6 +1382,14 @@ input {
   font-size: 11px;
 }
 
+/* 输入越界提示：与 .form-hint 占同一栅格位，只是换成警示色 */
+.form-error {
+  grid-column: 2;
+  margin: 2px 0 0;
+  color: var(--danger);
+  font-size: 11px;
+}
+
 .inp {
   width: 100%;
   height: 28px;
@@ -1407,6 +1415,15 @@ input {
 .inp-sm {
   height: 26px;
   font-size: 12px;
+}
+
+/* 数值输入框越界：只换边框与光圈颜色，不加抖动/阴影，保持"软件 UI"的克制。
+   必须带 :focus 变体 —— 用户正是边聚焦边打字，而 .inp:focus 与本选择器同权重且在文件更后面，
+   少了它红框会在聚焦时被主色覆盖掉。 */
+.inp.is-invalid,
+.inp.is-invalid:focus {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px var(--danger-soft);
 }
 
 .equip-grid {
@@ -1571,6 +1588,18 @@ input {
   color: var(--text-3);
   font-size: 11px;
   line-height: 1.5;
+}
+
+.ocr-warn-list {
+  margin: 0;
+  padding: 6px 8px;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--warning);
+  font-size: 11px;
+  line-height: 1.6;
 }
 
 .ocr-rows {

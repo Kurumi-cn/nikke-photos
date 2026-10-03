@@ -1,6 +1,8 @@
 // 浏览器侧 OCR 资源与输入：模板加载（含缓存）、图片解码、屏幕抓帧
-// 识别核心在 src/lib/ocr/equipment.js（纯函数，CLI 与浏览器共用）；本文件只做浏览器 I/O
+// 识别核心在 src/lib/ocr/equipment/（v2 链路）与 src/lib/ocr/equipment.js（旧实现）；
+// 本文件只做浏览器 I/O —— 两边的调用方都通过 `recognizeEquipment(image, { engine, ...loadOcrAssets() })`。
 import { FUNCTION_LABELS } from '../../data/affixTiers.js'
+import { createValueTemplateLoader } from './equipment/valueTemplateLoader.js'
 import { charOfTemplateFile, nameTemplateFromImage, valueTemplateFromImage } from './equipment.js'
 
 const OCR_ROOT = `${import.meta.env.BASE_URL}ocr`
@@ -25,6 +27,17 @@ const loadImageData = async (url) => {
     bitmap.close()
   }
 }
+
+/**
+ * v2 的按需模板加载器（规格 §6）
+ *
+ * 加载器要的是"相对 OCR 根目录的路径"，base 必须在这里补 —— 写死 `/ocr/...` 在
+ * GitHub Pages 子路径部署下会 404（本项目的 `base: './'` 就是为此）。
+ * 单字符字模按需加载，实测一次识别只解码 35 张左右（另有 4715 次命中缓存）。
+ */
+const createBrowserTemplateLoader = () => createValueTemplateLoader({
+  loadImage: (relative) => loadImageData(`${OCR_ROOT}/${relative}`),
+})
 
 let assetsPromise = null
 
@@ -64,7 +77,15 @@ const buildAssets = async () => {
     const template = nameTemplateFromImage(nameImages[index], job)
     if (template) nameTemplates.push(template)
   })
-  return { valueTemplates, nameTemplates }
+  // v2 的模板是**按需**取的，这里只把加载器挂上去，不预解码
+  const templateLoader = createBrowserTemplateLoader()
+  return {
+    valueTemplates,
+    nameTemplates,
+    loadFullTemplate: templateLoader.loadFullTemplate,
+    loadGlyph: templateLoader.loadGlyph,
+    templateLoader,
+  }
 }
 
 /** 拖拽 / 粘贴 / 选择文件得到的 Blob → RGBA 像素 */

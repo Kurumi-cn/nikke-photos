@@ -1,30 +1,50 @@
 // 多存档档案存储：一个存档（profile）内含多个角色记录，键 = name_code
 // 存放于浏览器 localStorage；支持整档 JSON 导出/导入（本地文件，不经网络）
 // 兼容旧版单档存储：首次读取时惰性迁移为「默认存档」；同步器等级为存档级全局唯一值
+//
+// 数值字段的合法性：
+//   - 范围真源在 fieldRanges.js，本文件只从这里取常量，不再自己写范围字面量
+//   - 读取旧存档时按版本迁移（profileMigrations.js），迁移前留原始副本
+//   - 写入前再过一次 sanitize 作为持久化边界的保险 —— 任何写入路径都跑不掉
+import { FIELD_RANGES, fallbackOf, isOutOfSpec } from './fieldRanges.js'
+import {
+  CURRENT_DATA_VERSION,
+  migrateCharacters,
+  migrateProfileMeta,
+  migrationPath,
+  needsMigration,
+  sanitizeCharacters,
+  sanitizeProfileMeta,
+  versionOf,
+} from './profileMigrations.js'
 import { CHARACTERS } from './roster.js'
+import { mergeSchemes, normalizeSchemes } from './schemes.js'
 import { isFullyRecorded } from './statsModel.js'
 
 export const STORE_VERSION = 1
-const PROFILE_VERSION = 1
+/** 数据版本以迁移模块为准（两边必须一致，直接引过来免得又出现两份版本号） */
+const PROFILE_VERSION = CURRENT_DATA_VERSION
 
 const LEGACY_KEY = 'nikke-photos/profile/v1'
 const INDEX_KEY = 'nikke-photos/profiles/v1/index'
 const DATA_KEY = (id) => `nikke-photos/profiles/v1/data/${id}`
+/** 迁移前的原始存档副本（每档只留**最早**那一份，后续迁移不覆盖） */
+const BACKUP_KEY = (id) => `nikke-photos/profiles/v1/backup/${id}`
 
 export const DEFAULT_PROFILE_ID = 'default'
 export const DEFAULT_PROFILE_NAME = '默认存档'
-export const DEFAULT_SYNCHRO_LEVEL = 200
-export const SYNCHRO_MIN = 1
-export const SYNCHRO_MAX = 2000
+export const DEFAULT_SYNCHRO_LEVEL = fallbackOf('synchro')
+export const SYNCHRO_MIN = FIELD_RANGES.synchro.min
+export const SYNCHRO_MAX = FIELD_RANGES.synchro.max
 export const REMARK_MAX = 200
 export const NAME_MAX = 30
 
 // 研究所等级：存档级共通值（职业研究 + 企业研究两条独立研究线），默认全 1
 export const RESEARCH_CLASSES = ['Attacker', 'Defender', 'Supporter']
 export const RESEARCH_CORPORATIONS = ['ELYSION', 'MISSILIS', 'TETRA', 'PILGRIM', 'ABNORMAL']
-export const RESEARCH_MIN = 0
-export const RESEARCH_MAX = 999
-const DEFAULT_RESEARCH_LEVEL = 1
+export const RESEARCH_MIN = FIELD_RANGES.research.min
+export const RESEARCH_MAX = FIELD_RANGES.research.max
+const DEFAULT_RESEARCH_LEVEL = fallbackOf('research')
 
 export const defaultResearch = () => ({
   class: Object.fromEntries(RESEARCH_CLASSES.map((key) => [key, DEFAULT_RESEARCH_LEVEL])),
@@ -66,22 +86,81 @@ function emit() {
 }
 
 // ---- 底层读写 ----
-function readJSON(key) {
+function readText(key) {
   try {
-    const raw = localStorage.getItem(key)
-    return raw ? JSON.parse(raw) : null
+    return localStorage.getItem(key)
   } catch {
     return null
   }
 }
 
+function parseText(raw) {
+  if (!raw) return null
+  try {
+    return JSON.parse(raw)
+  } catch {
+    return null
+  }
+}
+
+function readJSON(key) {
+  return parseText(readText(key))
+}
+
+/** 迁移前留档：每档只保留**最早**那一份原始副本，后续迁移不覆盖它 */
+function backupOnce(id, rawText) {
+  if (!rawText) return false
+  try {
+    if (localStorage.getItem(BACKUP_KEY(id))) return false
+    localStorage.setItem(BACKUP_KEY(id), rawText)
+    return true
+  } catch {
+    // 备份失败不阻断迁移本身（配额满等），但要说出来 —— 此时"可恢复"的保证不成立
+    console.warn(`[存档迁移] ${id} 原始副本写入失败，本次迁移没有留档`)
+    return false
+  }
+}
+
+/** 迁移日志：把「改了什么」一次打到控制台，方便核对（不进 UI） */
+const logMigration = (label, fromVersion, changes) => {
+  console.info(`[存档迁移] ${label}：v${fromVersion} → v${CURRENT_DATA_VERSION}（${migrationPath(fromVersion).join(', ')}）`)
+  if (changes.length > 0) console.table(changes)
+  else console.info(`[存档迁移] ${label} 无需修改字段，仅升级版本号`)
+}
+
 function readIndex() {
-  const parsed = readJSON(INDEX_KEY)
+  const rawText = readText(INDEX_KEY)
+  const parsed = parseText(rawText)
   if (!parsed || !Array.isArray(parsed.profiles) || parsed.profiles.length === 0) return null
   if (typeof parsed.currentId !== 'string') parsed.currentId = parsed.profiles[0].id
   // 老存档（研究等级功能之前创建的）补全两张表，缺项一律填 1
-  for (const profile of parsed.profiles) profile.research = normalizeResearch(profile.research)
-  return parsed
+  for (const profile of parsed.profiles) {
+    profile.research = normalizeResearch(profile.research)
+    // 方案（方案管理功能之前创建的存档没有这一项）补空数组；越界值归为「不指定」
+    profile.schemes = normalizeSchemes(profile.schemes)
+  }
+
+  // 读取时迁移：版本落后 → 把越界字段折回默认值，留档后按当前版本写回
+  const fromVersion = versionOf(parsed)
+  if (!needsMigration(fromVersion)) return parsed
+  try {
+    const changes = []
+    const profiles = []
+    for (const profile of parsed.profiles) {
+      const migrated = migrateProfileMeta(profile, fromVersion)
+      profiles.push(migrated.profile)
+      changes.push(...migrated.changes)
+    }
+    const migrated = { ...parsed, version: CURRENT_DATA_VERSION, profiles }
+    backupOnce('index', rawText)
+    writeIndex(migrated)
+    logMigration('存档索引', fromVersion, changes)
+    return migrated
+  } catch (error) {
+    // 迁移失败一律**不写回**，把原样数据返回 —— 保证存档不会因为迁移而变得更糟
+    console.warn(`[存档迁移] 存档索引迁移失败，已保持原样（未写回）：${error?.message || error}`)
+    return parsed
+  }
 }
 
 function writeIndex(index) {
@@ -89,16 +168,34 @@ function writeIndex(index) {
 }
 
 function readCharacters(id) {
-  const parsed = readJSON(DATA_KEY(id))
+  const rawText = readText(DATA_KEY(id))
+  const parsed = parseText(rawText)
   if (!parsed || typeof parsed.characters !== 'object' || parsed.characters === null) return null
-  return parsed.characters
+
+  const fromVersion = versionOf(parsed)
+  if (!needsMigration(fromVersion)) return parsed.characters
+  try {
+    const { characters, changes } = migrateCharacters(parsed.characters, fromVersion)
+    backupOnce(id, rawText)
+    writeCharacters(id, characters)
+    logMigration(`存档 ${id}`, fromVersion, changes)
+    return characters
+  } catch (error) {
+    console.warn(`[存档迁移] 存档 ${id} 迁移失败，已保持原样（未写回）：${error?.message || error}`)
+    return parsed.characters
+  }
 }
 
 function writeCharacters(id, characters) {
+  const input = characters ?? {}
+  // 持久化边界的保险：任何写入路径（表单 / 导入 / 旧版单档迁移）都跑不掉，
+  // 保证落库的一定是符合当前规格的数据。正常路径下这里不会改动任何值。
+  const safe = sanitizeCharacters(input)
+  if (safe !== input) console.warn(`[存档] 写入 ${id} 时发现不符合规格的字段，已在写入前折回默认值`)
   localStorage.setItem(DATA_KEY(id), JSON.stringify({
     version: PROFILE_VERSION,
     updatedAt: now(),
-    characters: characters ?? {},
+    characters: safe,
   }))
 }
 
@@ -120,6 +217,7 @@ function ensureIndex() {
     name: DEFAULT_PROFILE_NAME,
     synchroLevel: DEFAULT_SYNCHRO_LEVEL,
     research: defaultResearch(),
+    schemes: [],
     remark: '',
     createdAt: stamp,
     updatedAt: stamp,
@@ -163,7 +261,7 @@ export function fullyRecordedCodes(id) {
 }
 
 // ---- 对外：存档增删改（写入后 emit 通知订阅方） ----
-export function createProfile({ name, synchroLevel, remark = '', research }) {
+export function createProfile({ name, synchroLevel, remark = '', research, schemes }) {
   const index = ensureIndex()
   const stamp = now()
   const profile = {
@@ -171,6 +269,7 @@ export function createProfile({ name, synchroLevel, remark = '', research }) {
     name: String(name || '').trim(),
     synchroLevel,
     research: normalizeResearch(research),
+    schemes: normalizeSchemes(schemes),
     remark: String(remark || ''),
     createdAt: stamp,
     updatedAt: stamp,
@@ -272,6 +371,27 @@ export function syncSkillsToFullyRecorded(skills) {
   return count
 }
 
+// ---- 对外：方案（存档级，随存档切换；方案模型见 schemes.js） ----
+/** 当前存档的方案列表（拷贝，调用方随便改） */
+export function getSchemes() {
+  const index = ensureIndex()
+  return (currentOf(index).schemes || []).map((scheme) => ({ ...scheme }))
+}
+
+/**
+ * 整表覆盖保存 —— 方案管理弹窗自己持有列表，增删改后一次写回。
+ * 重名/越界的兜底在 normalizeSchemes；调用方负责用 schemes.js 的校验预先拦下。
+ */
+export function saveSchemes(schemes) {
+  const index = ensureIndex()
+  const profile = currentOf(index)
+  profile.schemes = normalizeSchemes(schemes)
+  profile.updatedAt = now()
+  writeIndex(index)
+  emit()
+  return profile.schemes.map((scheme) => ({ ...scheme }))
+}
+
 // ---- 对外：角色记录（作用于当前存档，签名与旧版保持一致） ----
 export function loadStore() {
   const index = ensureIndex()
@@ -327,6 +447,7 @@ export function exportProfile() {
     remark: profile.remark,
     createdAt: profile.createdAt,
     updatedAt: profile.updatedAt,
+    schemes: (profile.schemes || []).map((scheme) => ({ ...scheme })),
     characters: readCharacters(profile.id) || {},
   }, null, 2)
 }
@@ -341,11 +462,17 @@ export function parseProfile(text) {
   if (typeof characters !== 'object' || characters === null) throw new Error('档案里没有角色记录')
   const known = new Set(CHARACTERS.map((character) => character.nameCode))
   const keys = Object.keys(characters)
+  // 导入的元信息同样过一遍规格：非数字或越界一律折回默认值（与读取时迁移同一套判据）
+  const meta = sanitizeProfileMeta({
+    synchroLevel: Number.isFinite(parsed.synchroLevel) ? parsed.synchroLevel : DEFAULT_SYNCHRO_LEVEL,
+    research: normalizeResearch(parsed.research),
+  })
   return {
     name: typeof parsed.name === 'string' ? parsed.name : '',
     remark: typeof parsed.remark === 'string' ? parsed.remark : '',
-    synchroLevel: Number.isFinite(parsed.synchroLevel) ? parsed.synchroLevel : DEFAULT_SYNCHRO_LEVEL,
-    research: normalizeResearch(parsed.research),
+    synchroLevel: meta.synchroLevel,
+    research: meta.research,
+    schemes: normalizeSchemes(parsed.schemes),
     characters,
     count: keys.length,
     unknown: keys.filter((code) => !known.has(code)),
@@ -359,17 +486,26 @@ export function importIntoProfile(id, parsed) {
   if (!profile) throw new Error('存档不存在')
   profile.synchroLevel = parsed.synchroLevel
   profile.research = normalizeResearch(parsed.research)
+  // 方案是「合并」而不是「覆盖」：本机已有的方案留着，导入的追加在后面（重名自动改名）
+  const { list, renames } = mergeSchemes(profile.schemes, parsed.schemes)
+  profile.schemes = list
   profile.updatedAt = now()
   writeIndex(index)
   writeCharacters(id, parsed.characters)
   emit()
-  return { imported: parsed.count, unknown: parsed.unknown }
+  return { imported: parsed.count, unknown: parsed.unknown, schemes: list.length, schemeRenames: renames }
 }
 
-/** 新建存档并导入（名称 / 同步器等级由调用方在弹窗里确认，研究等级取导入值） */
+/** 新建存档并导入（名称 / 同步器等级由调用方在弹窗里确认，研究等级与方案取导入值） */
 export function importAsNewProfile(parsed, { name, synchroLevel }) {
-  const profile = createProfile({ name, synchroLevel, research: parsed.research, remark: parsed.remark })
+  const profile = createProfile({
+    name,
+    synchroLevel,
+    research: parsed.research,
+    schemes: parsed.schemes,
+    remark: parsed.remark,
+  })
   writeCharacters(profile.id, parsed.characters)
   emit()
-  return { imported: parsed.count, unknown: parsed.unknown, profile }
+  return { imported: parsed.count, unknown: parsed.unknown, schemes: parsed.schemes.length, profile }
 }

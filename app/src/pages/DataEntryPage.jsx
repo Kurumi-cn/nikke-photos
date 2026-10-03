@@ -2,7 +2,9 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import CharacterForm from '../components/CharacterForm.jsx'
 import ConfirmDialog from '../components/ConfirmDialog.jsx'
+import SchemeDialog from '../components/SchemeDialog.jsx'
 import { CHARACTERS, applyFilters, assetUrl, findCharacter, labelFor } from '../lib/roster.js'
+import { applyScheme, changeText } from '../lib/schemes.js'
 import {
   fullyRecordedCodes,
   getCurrentProfileId,
@@ -52,6 +54,8 @@ export default function DataEntryPage() {
   const researchLevels = researchLevelsFor(character, research)
   const [syncToast, setSyncToast] = useState('')
   const [syncSkills, setSyncSkills] = useState(null)
+  const [schemeOpen, setSchemeOpen] = useState(false)
+  const [pendingApply, setPendingApply] = useState(null)
   const lastToastRef = useRef(0)
   const toastTimerRef = useRef(0)
 
@@ -121,6 +125,33 @@ export default function DataEntryPage() {
     const applied = syncSkillsToFullyRecorded(syncSkills.values)
     setSyncSkills(null)
     showToast(`已同步 ${applied} 名妮姬的技能等级`)
+  }
+
+  // 方案应用：只填/覆盖方案里指定了的项（强制替换才会覆盖），装备词条不受影响
+  const commitSchemeApply = (outcome) => {
+    setRecord(outcome.record)
+    setDirty(true)
+    setSchemeOpen(false)
+    setPendingApply(null)
+    const parts = []
+    if (outcome.filled.length > 0) parts.push(`填入 ${outcome.filled.length} 项`)
+    if (outcome.overwritten.length > 0) parts.push(`覆盖 ${outcome.overwritten.length} 项`)
+    const notes = outcome.notes.length > 0 ? `（${outcome.notes.join('；')}）` : ''
+    showToast(`已应用方案：${parts.join('，')}${notes}`)
+  }
+
+  const handleSchemeApply = (scheme) => {
+    const outcome = applyScheme(record, scheme, { isFavoriteCharacter: Boolean(character?.favoriteItem) })
+    if (outcome.filled.length === 0 && outcome.overwritten.length === 0) {
+      showToast(outcome.notes.length > 0 ? `未应用：${outcome.notes.join('；')}` : '该方案没有可写入的值')
+      return
+    }
+    // 会覆盖已填内容 → 先把要覆盖的字段列清楚，确认后再落库
+    if (outcome.overwritten.length > 0) {
+      setPendingApply({ scheme, outcome })
+      return
+    }
+    commitSchemeApply(outcome)
   }
 
   return (
@@ -194,6 +225,7 @@ export default function DataEntryPage() {
                   </div>
                 </div>
                 <div className="head-actions">
+                  <button type="button" className="btn" onClick={() => setSchemeOpen(true)}>方案管理</button>
                   <Link className="btn" to={`/character/${character.nameCode}`}>查看角色详情</Link>
                 </div>
               </div>
@@ -241,6 +273,37 @@ export default function DataEntryPage() {
           confirmText="同步"
           onConfirm={confirmSyncSkills}
           onClose={() => setSyncSkills(null)}
+        />
+      ) : null}
+
+      {schemeOpen && character ? (
+        <SchemeDialog
+          targetName={character.nameCn}
+          onApply={handleSchemeApply}
+          onClose={() => setSchemeOpen(false)}
+        />
+      ) : null}
+
+      {pendingApply ? (
+        <ConfirmDialog
+          title="应用方案会覆盖已填字段"
+          message={(
+            <>
+              <p className="dlg-text">方案「{pendingApply.scheme.name}」勾选了强制替换，下列已填字段会被覆盖：</p>
+              <ul className="scheme-changes">
+                {pendingApply.outcome.overwritten.map((item) => (
+                  <li key={item.label}>{changeText(item)}</li>
+                ))}
+              </ul>
+              {pendingApply.outcome.filled.length > 0 ? (
+                <p className="dlg-text">另有 {pendingApply.outcome.filled.length} 项空白字段会被填入。</p>
+              ) : null}
+              <p className="dlg-text">装备词条不受影响。</p>
+            </>
+          )}
+          confirmText="应用"
+          onConfirm={() => commitSchemeApply(pendingApply.outcome)}
+          onClose={() => setPendingApply(null)}
         />
       ) : null}
 

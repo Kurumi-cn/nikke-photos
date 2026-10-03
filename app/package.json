@@ -11,6 +11,8 @@
     "data:check": "node scripts/build-roster.mjs --check",
     "data:cubes": "node scripts/build-cubes.mjs",
     "data:affix-check": "node scripts/check-affix-summary.mjs",
+    "store:migrate-check": "node scripts/check-migrations.mjs",
+    "share:check": "node scripts/check-share-code.mjs",
     "ocr:scan": "node scripts/ocr-scan.mjs",
     "ocr:extract": "node scripts/extract-glyph-templates.mjs",
     "ocr:regress": "node scripts/ocr-regression.mjs",

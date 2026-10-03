@@ -109,7 +109,11 @@ export default function CharacterListPage() {
     setImportParsed(null)
     setImportDraft(null)
     setImportError('')
-    setMessage(`已导入 ${result.imported} 个角色记录到${label}${result.unknown.length ? `（${result.unknown.length} 个键未识别）` : ''}`)
+    const schemeNote = result.schemes ? `，方案 ${result.schemes} 个` : ''
+    const renameNote = result.schemeRenames?.length
+      ? `（方案重名已改为 ${result.schemeRenames.map((item) => `「${item.to}」`).join('、')}）`
+      : ''
+    setMessage(`已导入 ${result.imported} 个角色记录到${label}${result.unknown.length ? `（${result.unknown.length} 个键未识别）` : ''}${schemeNote}${renameNote}`)
   }
 
   const handleFileChange = async (event) => {

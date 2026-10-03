@@ -10,6 +10,9 @@
 //      （字模匹配本身是按目标字框缩放模板，天然尺度无关）
 //   3) 数值专用掩码：实测面板上数值为蓝调（彩度中位 20~25），而名称/描述文字彩度与蓝偏为 0，
 //      用“彩度 ≥12 且灰度低于背景”即可干净分离，分类分数从 0.6 提到 0.74~0.98
+//
+// 本文件只承载**旧实现**。对外的统一入口 `recognizeEquipment`（分发器）在
+// `./equipment/engine.js` —— 放在那边是为了让依赖单向（engine → 本文件），不出现循环 import。
 import {
   alphaToMask,
   analyzeColor,
@@ -472,6 +475,24 @@ const assignPositions = (runs, rowsByPass) => {
   return { positions, warnings }
 }
 
+/** 空行（游戏本身无词条 / 未检测到面板）：按行对象契约补齐字段，供 UI 与回归统计统一读取 */
+const emptyRow = (position) => ({
+  position,
+  status: 'empty',
+  empty: true,
+  name: null,
+  functionType: null,
+  value: null,
+  tier: null,
+  confidence: null,
+  snapped: false,
+  snapReason: 'none',
+  needsConfirm: false,
+  flags: [],
+  method: null,
+  engine: 'legacy',
+})
+
 /** 在裁剪后的面板图上跑完整识别管线 */
 const runPipeline = (image, context) => {
   const tuning = context.tuning
@@ -529,7 +550,7 @@ const runPipeline = (image, context) => {
     const nameConfident = Boolean(nameMatch && nameMatch.score >= tuning.nameMinScore && nameMatch.margin >= tuning.nameMinMargin)
     const snap = snapAffixValue(run.value, { functionType: nameConfident ? nameMatch.functionType : undefined })
     // 吸附失败且词条可用：用档位表做“编辑距离 1”纠错（治模糊输入的单字符误判/漏检）
-    // 名称门槛比 nameConfident 略宽（margin 0.01）：纠错自带“唯一命中档位”强约束，且结果标为 snapped 供用户核对
+    // 名称门槛比 nameConfident 略宽（margin 0.01）：纠错自带“唯一命中档位”强约束，且结果会标记为已吸附供用户核对
     const snapOk = Boolean(snap && (snap.reason === 'scoped' || snap.reason === 'unique-value'))
     const nameUsable = Boolean(nameMatch && nameMatch.score >= tuning.nameMinScore && nameMatch.margin >= 0.01)
     const corrected = !snapOk && nameUsable ? correctAffixValueByTiers(run.value, nameMatch.functionType) : null
@@ -538,14 +559,21 @@ const runPipeline = (image, context) => {
       : snap
     const snapped = finalSnap && (finalSnap.reason === 'scoped' || finalSnap.reason === 'unique-value' || finalSnap.reason === 'corrected')
     const value = snapped ? finalSnap.tierValue : run.value
-    let confidence = 'low'
+    let legacyConfidence = 'low'
     if (snapped && nameConfident && finalSnap.reason === 'scoped') {
-      confidence = Math.abs(run.value - finalSnap.tierValue) < 0.005 ? 'high' : 'snapped'
+      legacyConfidence = Math.abs(run.value - finalSnap.tierValue) < 0.005 ? 'high' : 'snapped'
     } else if (snapped) {
-      confidence = 'snapped'
+      legacyConfidence = 'snapped'
     }
+    // 新契约：原 'snapped' 拆成「snapped 布尔 + confidence 'medium'」，UI 展示行为维持不变
+    const confidence = legacyConfidence === 'snapped' ? 'medium' : legacyConfidence
+    const isSnapped = legacyConfidence === 'snapped'
+    const flags = []
+    if (!nameConfident) flags.push('NAME_LOW_CONFIDENCE')
+    if (!snapped) flags.push('VALUE_LOW_CONFIDENCE')
     rows.push({
       position,
+      status: 'ok',
       empty: false,
       name: nameMatch ? FUNCTION_LABELS[nameMatch.functionType] : null,
       functionType: nameMatch ? nameMatch.functionType : null,
@@ -559,6 +587,12 @@ const runPipeline = (image, context) => {
       tierValue: snapped ? finalSnap.tierValue : null,
       tierDistance: snapped ? finalSnap.distance : null,
       confidence,
+      snapped: isSnapped,
+      snapReason: isSnapped ? finalSnap.reason : 'none',
+      needsConfirm: legacyConfidence === 'low',
+      flags,
+      method: 'legacy',
+      engine: 'legacy',
       box: run.box,
       evidence: {
         pass: run.pass,
@@ -572,24 +606,28 @@ const runPipeline = (image, context) => {
     })
   }
   for (const position of [1, 2, 3]) {
-    if (!rows.some((row) => row.position === position)) rows.push({ position, empty: true })
+    if (!rows.some((row) => row.position === position)) rows.push(emptyRow(position))
   }
   rows.sort((left, right) => left.position - right.position)
   return { rows, warnings }
 }
 
 /**
- * 识别入口：定位面板 → 裁剪 → 识别
- * 返回 { panel, rows, warnings }；panel 为 null 表示没找到装备面板（rows 全为空行）
- * 注意：rows[].box 坐标相对裁剪后的面板图
+ * 旧实现入口（长期常驻，不是临时脚手架）
+ *
+ * 它是基线可复跑的前提（规格 §8.3），也是新链路的显式降级目标：
+ * 面板锚定失败或行定位失败时由 engine.js 调用它，并留下 `LEGACY_FALLBACK_USED` 痕迹。
+ *
+ * 对外请用 `equipment/engine.js` 的 `recognizeEquipment`（分发器），不要直接引本函数 ——
+ * 只有 CLI 的基线模式与 engine.js 的降级路径应当显式指定旧引擎。
  */
-export const recognizeEquipment = (image, { valueTemplates, nameTemplates, tuning } = {}) => {
+export const recognizeEquipmentLegacy = (image, { valueTemplates, nameTemplates, tuning } = {}) => {
   const config = { ...OCR_TUNING, ...(tuning || {}) }
   const panel = locatePanel(image, config)
   if (!panel) {
     return {
       panel: null,
-      rows: [1, 2, 3].map((position) => ({ position, empty: true })),
+      rows: [1, 2, 3].map((position) => emptyRow(position)),
       warnings: ['未检测到装备面板（画面中没有足够大的浅色面板区域）'],
     }
   }

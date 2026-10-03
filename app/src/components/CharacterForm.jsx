@@ -5,36 +5,11 @@ import { FUNCTION_LABELS, SLOT_LABELS } from '../lib/cardModel.js'
 import { AFFIX_TIER_VALUES, affixTierText } from '../data/affixTiers.js'
 import { loadOcrAssets } from '../lib/ocr/assets.js'
 import EquipmentOcrDialog from './EquipmentOcrDialog.jsx'
+import NumField, { parseNumber } from './NumField.jsx'
 
 const FUNCTION_OPTIONS = Object.entries(FUNCTION_LABELS)
 // 收藏品品质：SSR（专属珍藏品）只对该角色是珍藏品版本时可选（见 favoriteCharacter）
 const BASE_RARITIES = ['R', 'SR']
-
-const toInput = (value) => (value === null || value === undefined ? '' : String(value))
-const parseNumber = (raw) => {
-  if (raw === '' || raw === null) return null
-  const number = Number(raw)
-  return Number.isFinite(number) ? number : null
-}
-
-function NumField({ label, value, onChange, min, max, step = 1, placeholder, hint }) {
-  return (
-    <label className="form-row">
-      <span className="form-label">{label}</span>
-      <input
-        className="inp"
-        type="number"
-        value={toInput(value)}
-        min={min}
-        max={max}
-        step={step}
-        placeholder={placeholder}
-        onChange={(event) => onChange(parseNumber(event.target.value))}
-      />
-      {hint ? <span className="form-hint">{hint}</span> : null}
-    </label>
-  )
-}
 
 export default function CharacterForm({ value, onChange, synchroLevel, onSynchroLevelChange, classLevel, corporationLevel, classLabel, corporationLabel, onSyncSkills, hasStored, hasSample, favoriteCharacter, onClearStored, onRestoreSample }) {
   const limit = value.limitBreak || {}
@@ -134,14 +109,13 @@ export default function CharacterForm({ value, onChange, synchroLevel, onSynchro
             label="等级（同步器）"
             value={synchroLevel}
             onChange={(next) => onSynchroLevelChange?.(next)}
-            min="1"
-            max="2000"
+            rangeKey="synchro"
             hint="全体妮姬共用，改动即同步"
           />
-          <NumField label="突破（星）" value={limit.grade} onChange={(v) => setLimit({ grade: v })} min="0" max="3" placeholder="0-3" />
-          <NumField label="核心" value={limit.core} onChange={(v) => setLimit({ core: v })} min="0" max="7" placeholder="0-7" />
-          <NumField label="好感度" value={value.affection} onChange={(v) => set({ affection: v })} min="0" max="40" />
-          <NumField label="战斗力" value={value.combat} onChange={(v) => set({ combat: v })} min="0" max="999999" />
+          <NumField label="突破（星）" value={limit.grade} onChange={(v) => setLimit({ grade: v })} rangeKey="grade" />
+          <NumField label="核心" value={limit.core} onChange={(v) => setLimit({ core: v })} rangeKey="core" />
+          <NumField label="好感度" value={value.affection} onChange={(v) => set({ affection: v })} rangeKey="affection" />
+          <NumField label="战斗力" value={value.combat} onChange={(v) => set({ combat: v })} rangeKey="combat" />
         </section>
 
         <section className="form-block">
@@ -171,9 +145,9 @@ export default function CharacterForm({ value, onChange, synchroLevel, onSynchro
             <span className="form-static">{corporationLevel ?? '—'}</span>
             <span className="form-hint">{corporationLabel || '企业'} · 在存档编辑中修改</span>
           </div>
-          <NumField label="技能 1" value={skills.skill1} onChange={(v) => setSkills({ skill1: v })} min="1" max="10" />
-          <NumField label="技能 2" value={skills.skill2} onChange={(v) => setSkills({ skill2: v })} min="1" max="10" />
-          <NumField label="爆裂技能" value={skills.burst} onChange={(v) => setSkills({ burst: v })} min="1" max="10" />
+          <NumField label="技能 1" value={skills.skill1} onChange={(v) => setSkills({ skill1: v })} rangeKey="skill" />
+          <NumField label="技能 2" value={skills.skill2} onChange={(v) => setSkills({ skill2: v })} rangeKey="skill" />
+          <NumField label="爆裂技能" value={skills.burst} onChange={(v) => setSkills({ burst: v })} rangeKey="skill" />
         </section>
 
         <section className="form-block">
@@ -195,7 +169,7 @@ export default function CharacterForm({ value, onChange, synchroLevel, onSynchro
               ))}
             </select>
           </label>
-          <NumField label="魔方等级" value={cube.level} onChange={(v) => setCube({ level: v })} min="1" max="15" />
+          <NumField label="魔方等级" value={cube.level} onChange={(v) => setCube({ level: v })} rangeKey="cubeLevel" />
           <label className="form-row">
             <span className="form-label">收藏品</span>
             <select
@@ -214,9 +188,7 @@ export default function CharacterForm({ value, onChange, synchroLevel, onSynchro
             label="收藏品等级"
             value={favoriteLevelValue}
             onChange={(v) => setFavorite({ level: isFavoriteSsr ? (v === null ? null : v - 1) : v })}
-            min={isFavoriteSsr ? '1' : '0'}
-            max={isFavoriteSsr ? '3' : '15'}
-            hint={isFavoriteSsr ? 'SSR 珍藏品：1-3' : '普通收藏品：0-15'}
+            rangeKey={isFavoriteSsr ? 'favoriteLevelSsr' : 'favoriteLevel'}
           />
           <p className="form-hint">
             {isFavoriteSsr ? '将使用该角色专属的珍藏品图标' : '将按武器类型显示该角色的收藏品玩偶'}

@@ -55,6 +55,7 @@
 // ── 未导出字段 ─────────────────────────────────────────────────────────
 //   掩码里没开的字段，BOT 端按 SHARE_DEFAULTS 填默认值（App 侧也会提示用户）。
 import { AFFIX_TIER_VALUES } from '../data/affixTiers.js'
+import { FIELD_RANGES } from './fieldRanges.js'
 import { DEFAULT_SYNCHRO_LEVEL, RESEARCH_CLASSES, RESEARCH_CORPORATIONS } from './profileStore.js'
 
 /** 单次分享的角色上限（协议侧写死，UI 与校验共用） */
@@ -163,6 +164,36 @@ const toInt = (value) => {
 const pick = (value, min, max, sentinel) => {
   const number = toInt(value)
   return number !== null && number >= min && number <= max ? number : sentinel
+}
+
+/** 按范围真源（fieldRanges.js）取范围后再 pick —— 本文件不再出现范围字面量 */
+const pickField = (value, key, sentinel) => {
+  const range = FIELD_RANGES[key]
+  return pick(value, range.min, range.max, sentinel)
+}
+
+// 哨兵值必须落在各自范围**之外**，否则「真实值」和「无数据」会撞成同一个码。
+// 这类事故在本项目发生过两次（星级 7 被 2 bit 截成 3；核心满级 7 撞上哨兵 7），
+// 所以这里改为启动时断言：范围已经集中到真源，漂了就立刻报错而不是等线上解错。
+{
+  const sentinels = {
+    grade: SENTINEL.grade,
+    core: SENTINEL.core,
+    affection: SENTINEL.affection,
+    // 其余字段的「无数据」码统一用 0，而它们的 min 都是 1
+    combat: 0,
+    skill: 0,
+    cubeLevel: 0,
+    favoriteLevel: 0,
+    favoriteLevelSsr: 0,
+    affixTier: 0,
+  }
+  for (const [key, sentinel] of Object.entries(sentinels)) {
+    const range = FIELD_RANGES[key]
+    if (sentinel >= range.min && sentinel <= range.max) {
+      throw new Error(`哨兵 ${key}=${sentinel} 落在合法范围 ${range.min}-${range.max} 内，会把真实值解成「无数据」`)
+    }
+  }
 }
 
 // ---- 位读写（MSB-first） ----
@@ -287,23 +318,23 @@ function writeCharacter(bw, nameCode, record, has) {
   bw.write(toWireId(nameCode), W.id)
 
   if (has('limitBreak')) {
-    bw.write(pick(data.limitBreak?.grade, 0, 3, SENTINEL.grade), W.grade)
-    bw.write(pick(data.limitBreak?.core, 0, 7, SENTINEL.core), W.core)
+    bw.write(pickField(data.limitBreak?.grade, 'grade', SENTINEL.grade), W.grade)
+    bw.write(pickField(data.limitBreak?.core, 'core', SENTINEL.core), W.core)
   }
   if (has('affection')) {
-    bw.write(pick(data.affection, 0, 40, SENTINEL.affection), W.affection)
+    bw.write(pickField(data.affection, 'affection', SENTINEL.affection), W.affection)
   }
   if (has('combat')) {
-    bw.write(pick(data.combat, 1, 4000000, 0), W.combat)
+    bw.write(pickField(data.combat, 'combat', 0), W.combat)
   }
   if (has('skills')) {
     const skills = data.skills || {}
-    for (const key of ['skill1', 'skill2', 'burst']) bw.write(pick(skills[key], 1, 10, 0), W.skill)
+    for (const key of ['skill1', 'skill2', 'burst']) bw.write(pickField(skills[key], 'skill', 0), W.skill)
   }
   if (has('cube')) {
     const index = CUBE_IDS.indexOf(toInt(data.cube?.resourceId))
     bw.write(index >= 0 ? index + 1 : 0, W.cubeType)
-    bw.write(index >= 0 ? pick(data.cube?.level, 1, 15, 0) : 0, W.cubeLevel)
+    bw.write(index >= 0 ? pickField(data.cube?.level, 'cubeLevel', 0) : 0, W.cubeLevel)
   }
   if (has('favorite')) {
     const favorite = data.favoriteItem || {}
@@ -312,13 +343,14 @@ function writeCharacter(bw, nameCode, record, has) {
     let level = 0
     if (rarity === 'R' || rarity === 'SR') {
       type = rarity === 'R' ? FAVORITE_TYPE_R : FAVORITE_TYPE_SR
-      level = pick(favorite.level, 1, 15, 0)
+      level = pickField(favorite.level, 'favoriteLevel', 0)
     } else if (rarity === 'SSR') {
       const index = FAVORITE_KEYS.indexOf(String(favorite.resourceKey || ''))
       if (index >= 0) {
         type = FAVORITE_TYPE_BASE + index
-        // 珍藏品等级在 App 内部存 0-2（界面显示 1-3），线上统一传界面值
-        level = pick((toInt(favorite.level) ?? -1) + 1, 1, 3, 0)
+        // 珍藏品等级在 App 内部存 0-2（界面显示 1-3），线上统一传界面值；未填走哨兵 0
+        const stored = toInt(favorite.level)
+        level = stored === null ? 0 : pickField(stored + 1, 'favoriteLevelSsr', 0)
       }
     }
     bw.write(type, W.favoriteType)
@@ -334,7 +366,7 @@ function writeEquipments(bw, data, has) {
     for (let index = 0; index < 3; index++) {
       const line = lines[index]
       const typeIndex = line ? AFFIX_TYPES.indexOf(line.functionType) : -1
-      const tier = line ? pick(line.level, 1, 15, 0) : 0
+      const tier = line ? pickField(line.level, 'affixTier', 0) : 0
       if (typeIndex >= 0 && tier > 0) {
         bw.write(typeIndex + 1, W.affixType)
         bw.write(tier, W.affixTier)
@@ -437,10 +469,10 @@ export function encodeShareCode({ synchroLevel, research, characters, fields }) 
   bw.write(PAYLOAD_CHARACTERS, 8)
   bw.write(list.length, 8)
   bw.write(SHARE_FIELDS.reduce((mask, field) => (has(field.key) ? mask | (1 << field.bit) : mask), 0), 8)
-  bw.write(pick(synchroLevel, 1, 2000, DEFAULT_SYNCHRO_LEVEL), 16)
+  bw.write(pickField(synchroLevel, 'synchro', DEFAULT_SYNCHRO_LEVEL), 16)
   if (has('research')) {
     for (const [group, key] of WIRE_RESEARCH) {
-      bw.write(pick(research?.[group]?.[key], 0, 999, 0), W.research)
+      bw.write(pickField(research?.[group]?.[key], 'research', 0), W.research)
     }
   }
   for (const item of list) writeCharacter(bw, item.nameCode, item.record, has)

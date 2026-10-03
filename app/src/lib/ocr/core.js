@@ -605,3 +605,46 @@ export function matchTemplateInRegion(mask, width, template, { search, stride = 
   }
   return best
 }
+
+/**
+ * 原地删除"通长线"所在的整行 / 整列（就地清零 mask）
+ *
+ * 用途：游戏 UI 的效果条、卡片、面板都带边框。这些细线会在掩码里连成一条贯穿的墨迹，
+ * 把紧包围盒撑到区域全宽（或全高），并让"墨迹占比"之类的统计完全失真。
+ *
+ * 判据是**该行（列）最长连续墨迹段**，不是整行墨迹比例 —— 紧裁后的数字本身也可能
+ * 占该行大部分宽度，用比例会把正常字行误删。长度阈值同时给出绝对值下限与相对比例下限。
+ */
+export function stripThinRules(mask, width, height, { minimum = 24, ratio = 0.72 } = {}) {
+  const horizontalLimit = Math.max(minimum, Math.round(width * ratio))
+  for (let y = 0; y < height; y += 1) {
+    let run = 0
+    let longest = 0
+    for (let x = 0; x < width; x += 1) {
+      if (mask[(y * width) + x]) {
+        run += 1
+        if (run > longest) longest = run
+      } else {
+        run = 0
+      }
+    }
+    if (longest >= horizontalLimit) mask.fill(0, y * width, (y + 1) * width)
+  }
+  const verticalLimit = Math.max(minimum, Math.round(height * ratio))
+  for (let x = 0; x < width; x += 1) {
+    let run = 0
+    let longest = 0
+    for (let y = 0; y < height; y += 1) {
+      if (mask[(y * width) + x]) {
+        run += 1
+        if (run > longest) longest = run
+      } else {
+        run = 0
+      }
+    }
+    if (longest >= verticalLimit) {
+      for (let y = 0; y < height; y += 1) mask[(y * width) + x] = 0
+    }
+  }
+  return mask
+}

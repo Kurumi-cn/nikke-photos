@@ -1,0 +1,154 @@
+/* 方案管理：列表行沿用「存档行」的观感（弱边框、次级背景、悬停微反馈），不新造样式语言 */
+
+/* 弹窗比通用的 dlg-wide 再宽一点：一行里要放下摘要和三个按钮 */
+.dlg-scheme {
+  width: min(760px, calc(100vw - 32px));
+}
+
+.scheme-desc {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.scheme-manager {
+  display: grid;
+  gap: 10px;
+}
+
+.scheme-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scheme-toolbar .spacer {
+  margin-left: auto;
+}
+
+.scheme-list {
+  display: grid;
+  gap: 8px;
+}
+
+.scheme-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 14px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  transition: border-color var(--dur), background-color var(--dur);
+}
+
+.scheme-row:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-3);
+}
+
+.scheme-main {
+  min-width: 0;
+}
+
+.scheme-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.scheme-badge {
+  padding: 1px 6px;
+  background: var(--primary-soft);
+  border: 1px solid var(--primary-border);
+  border-radius: var(--radius-sm);
+  color: var(--primary-strong);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.scheme-meta {
+  margin-top: 3px;
+  color: var(--text-3);
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.scheme-actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 空态：进度区里没必要留那么高的空白 */
+.scheme-manager .empty {
+  padding: 34px 0;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+/* 「强制替换」勾选：放在编辑窗口最前面，先决定语义再填值 */
+.scheme-force {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.scheme-force input {
+  margin-top: 2px;
+  accent-color: var(--primary);
+}
+
+.scheme-force b {
+  display: block;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--text);
+}
+
+.scheme-force small {
+  display: block;
+  margin-top: 2px;
+  color: var(--text-2);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.scheme-note {
+  margin: 8px 0 0;
+  color: var(--text-3);
+  font-size: 11px;
+}
+
+/* 弹窗里的输入框复用 .inp 的越界表现（base.css 的选择器只覆盖 .inp） */
+.dlg-input.is-invalid,
+.dlg-input.is-invalid:focus {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px var(--danger-soft);
+}
+
+/* 「应用」二次确认里列出的字段变更 */
+.scheme-changes {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: var(--text-2);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.scheme-changes li::marker {
+  color: var(--text-3);
+}
