@@ -1,20 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import CharacterGrid from '../components/CharacterGrid.jsx'
 import FilterBar from '../components/FilterBar.jsx'
-import ImportDialog from '../components/ImportDialog.jsx'
-import ProfileDialog from '../components/ProfileDialog.jsx'
+import ProfileImportFlow from '../components/ProfileImportFlow.jsx'
 import { CHARACTERS, applyFilters, countActiveFilters } from '../lib/roster.js'
 import { ZOOM_PRESETS, loadGridZoom, saveGridZoom } from '../lib/gridZoom.js'
-import {
-  exportProfile,
-  getCurrentProfileId,
-  importAsNewProfile,
-  importIntoProfile,
-  listProfiles,
-  nextProfileName,
-  parseProfile,
-  recordedCodes,
-} from '../lib/profileStore.js'
+import { exportProfile, parseProfile, recordedCodes } from '../lib/profileStore.js'
 
 const NO_SELECTION = {}
 const DEFAULT_TOGGLES = { cnPublished: false, collectible: false, overSpec: false }
@@ -53,8 +43,6 @@ export default function CharacterListPage() {
   const [zoom, setZoom] = useState(() => loadGridZoom())
   const [recorded, setRecorded] = useState(() => new Set(recordedCodes()))
   const [importParsed, setImportParsed] = useState(null)
-  const [importDraft, setImportDraft] = useState(null)
-  const [importError, setImportError] = useState('')
   const [message, setMessage] = useState('')
   const fileRef = useRef(null)
 
@@ -107,8 +95,6 @@ export default function CharacterListPage() {
   const finishImport = (result, label) => {
     setRecorded(new Set(recordedCodes()))
     setImportParsed(null)
-    setImportDraft(null)
-    setImportError('')
     const schemeNote = result.schemes ? `，方案 ${result.schemes} 个` : ''
     const renameNote = result.schemeRenames?.length
       ? `（方案重名已改为 ${result.schemeRenames.map((item) => `「${item.to}」`).join('、')}）`
@@ -121,33 +107,16 @@ export default function CharacterListPage() {
     event.target.value = ''
     if (!file) return
     setMessage('')
-    setImportError('')
+    // 解析失败时弹窗压根不会出现，所以只能把原因写到工具栏的提示位上
     try {
       const parsed = parseProfile(await file.text())
       if (!parsed.count) {
-        setImportError('文件里没有角色记录')
+        setMessage(`${file.name}：文件里没有角色记录`)
         return
       }
       setImportParsed(parsed)
     } catch (error) {
-      setImportError(`导入失败：${error?.message || error}`)
-    }
-  }
-
-  const handleOverwrite = (id) => {
-    try {
-      const name = listProfiles().find((item) => item.id === id)?.name || '存档'
-      finishImport(importIntoProfile(id, importParsed), `「${name}」`)
-    } catch (error) {
-      setImportError(`导入失败：${error?.message || error}`)
-    }
-  }
-
-  const handleNewImport = (values) => {
-    try {
-      finishImport(importAsNewProfile(importDraft, values), `「${values.name}」`)
-    } catch (error) {
-      setImportError(`导入失败：${error?.message || error}`)
+      setMessage(`${file.name}：读取失败，${error?.message || error}`)
     }
   }
 
@@ -225,29 +194,10 @@ export default function CharacterListPage() {
       )}
 
       {importParsed ? (
-        <ImportDialog
-          key={`${importParsed.count}-${importParsed.name}`}
+        <ProfileImportFlow
           parsed={importParsed}
-          profiles={listProfiles()}
-          currentId={getCurrentProfileId()}
-          error={importError}
-          onClose={() => { setImportParsed(null); setImportError('') }}
-          onOverwrite={handleOverwrite}
-          onNew={() => { setImportDraft(importParsed); setImportParsed(null); setImportError('') }}
-        />
-      ) : null}
-
-      {importDraft ? (
-        <ProfileDialog
-          key="import-new"
-          mode="create"
-          initial={{
-            name: importDraft.name || nextProfileName(),
-            synchroLevel: importDraft.synchroLevel,
-            remark: importDraft.remark,
-          }}
-          onClose={() => setImportDraft(null)}
-          onSubmit={handleNewImport}
+          onDone={finishImport}
+          onClose={() => setImportParsed(null)}
         />
       ) : null}
     </main>

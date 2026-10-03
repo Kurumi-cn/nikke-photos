@@ -1,0 +1,61 @@
+{
+  "_note": [
+    "本仓库自带的「补充角色表」：Helper 上游角色表尚未收录、但官方目录已有的角色。",
+    "build-roster.mjs 会把它按 Helper 的同形状注入到主循环里，因此这三个角色走的是与上游角色完全相同的校验路径；",
+    "若将来 Helper 补齐了同一个 nameCode，这里会自动让位（见 build-roster.mjs 的去重逻辑），不会产生重复条目。",
+    "",
+    "字段来源（2026-10-03 核对）：",
+    "  · 身份 name_code / resource_id：Workshop 发布说明 MODIFICATIONS.md（c404=吉尔提：神力兔女郎、c405=森：疾速兔女郎；德雷克：终极反派 name_code 5181 / resource_id 104）",
+    "  · 其余字段：官方静态 CDN roledata，取法 roledata/<resourceId>-v2-<locale>.json（Workshop src/utils/gameResourcePath.js 的路径方案）",
+    "    zh-tw 文件直接给中文名、en 文件直接给英文名；element 取 element_details[0].element，weapon 取 shot_detail.weapon_type",
+    "    口径交叉验证：同一取法读 rid 400 得 Wind/SG、rid 401 得 Electronic/AR，与本项目已有角色「吉尔提」「森」逐项一致",
+    "  · 立绘：Workshop character-artwork 的 c104 / c404 / c405.webp（已随 npm run assets:sync 同步进 public）",
+    "  · 头像：nikke-db.github.io/images/sprite/si_c<rid>_00_s.png（Workshop 自己的头像 URL 也指向这个源）",
+    "  · 技能图标：Workshop 技能图标目录里只有 c104；c404 / c405 暂无（与国服独占两个角色一样留空，不影响卡片渲染）"
+  ],
+  "revision": "2026-10-03",
+  "characters": [
+    {
+      "nameCode": "5181",
+      "resourceId": "104",
+      "nameCn": "德雷克：终极反派",
+      "nameEn": "Drake: Great Villain",
+      "avatar": "avatars/si_c104_00_s.png",
+      "artworks": [{ "id": "default", "label": "默认", "file": "c104.webp" }],
+      "use_burst_skill": "Step3",
+      "weapon_type": "SG",
+      "original_rare": "SSR",
+      "element": "Wind",
+      "class": "Defender",
+      "corporation": "MISSILIS"
+    },
+    {
+      "nameCode": "5182",
+      "resourceId": "404",
+      "nameCn": "吉尔提：神力兔女郎",
+      "nameEn": "Guilty: Mighty Bunny",
+      "avatar": "avatars/si_c404_00_s.png",
+      "artworks": [{ "id": "default", "label": "默认", "file": "c404.webp" }],
+      "use_burst_skill": "Step3",
+      "weapon_type": "SR",
+      "original_rare": "SSR",
+      "element": "Water",
+      "class": "Attacker",
+      "corporation": "MISSILIS"
+    },
+    {
+      "nameCode": "5183",
+      "resourceId": "405",
+      "nameCn": "森：疾速兔女郎",
+      "nameEn": "Sin: Swift Bunny",
+      "avatar": "avatars/si_c405_00_s.png",
+      "artworks": [{ "id": "default", "label": "默认", "file": "c405.webp" }],
+      "use_burst_skill": "Step3",
+      "weapon_type": "SR",
+      "original_rare": "SSR",
+      "element": "Water",
+      "class": "Attacker",
+      "corporation": "MISSILIS"
+    }
+  ]
+}

@@ -30,6 +30,9 @@ export default function TopNav() {
           <NavLink to="/data" className={({ isActive }) => (isActive ? 'tab active' : 'tab')}>
             数据录入
           </NavLink>
+          <NavLink to="/stats" className={({ isActive }) => (isActive ? 'tab active' : 'tab')}>
+            词条统计
+          </NavLink>
           <NavLink to="/my" className={({ isActive }) => (isActive ? 'tab active' : 'tab')}>
             更多
           </NavLink>

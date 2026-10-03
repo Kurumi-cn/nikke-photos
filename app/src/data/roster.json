@@ -1,24 +1,25 @@
 {
-  "revision": "2026-10-02",
-  "generatedAt": "2026-10-02T17:00:51.320Z",
+  "revision": "2026-10-03",
+  "generatedAt": "2026-10-03T09:25:01.610Z",
   "sources": {
     "roster": "NIKKE Helper character-assets.json",
     "directory": "NIKKE Helper nikke-directory.json",
     "cnRoster": "NIKKE Helper cn-roster.json",
     "tags": "NIKKE Helper tags.json",
     "favoriteItemPool": "NIKKE Workshop characterObjectAssets.json（favorites）",
+    "extraCharacters": "scripts/extra-characters.json（本仓库补充，上游未收录的官方角色）",
     "sourceDir": "E:/桌面/NIKKE Helper/NIKKE Helper v1.0/src/renderer/src/data",
     "workshopObjectsPath": "E:/博哥/NIKKE WORKSHOP 1.0.14/NIKKE-Workshop-1.0.14/src/data/characterObjectAssets.json",
     "sourceGeneratedAt": "2026-09-01"
   },
   "counts": {
-    "characters": 201,
+    "characters": 204,
     "cnAvailable": 143,
     "collectible": 21,
     "collectibleCn": 12,
     "overSpec": 4,
     "chinaExclusive": 2,
-    "artworks": 379
+    "artworks": 382
   },
   "taxonomy": {
     "filters": [
@@ -7787,6 +7788,97 @@
       "original_rare": "SSR",
       "chinaExclusive": true,
       "cnAvailable": true,
+      "collectible": false,
+      "collectibleCn": false,
+      "favoriteItem": null,
+      "overSpec": false
+    },
+    {
+      "nameCode": "5181",
+      "resourceId": "104",
+      "nameCn": "德雷克：终极反派",
+      "nameEn": "Drake: Great Villain",
+      "aliases": [],
+      "pinyin": "dlkzjfp",
+      "avatar": "avatars/si_c104_00_s.png",
+      "artworks": [
+        {
+          "id": "default",
+          "label": "默认",
+          "file": "c104.webp"
+        }
+      ],
+      "skillIcons": {
+        "skill1": "ui-assets/nikke/skill-icons/generic/icn_skill_damage_01.png",
+        "skill2": "ui-assets/nikke/skill-icons/generic/icn_skill_stathp_01.png",
+        "burst": "ui-assets/nikke/skill-icons/burst/c104.png"
+      },
+      "class": "Defender",
+      "element": "Wind",
+      "use_burst_skill": "Step3",
+      "corporation": "MISSILIS",
+      "weapon_type": "SG",
+      "original_rare": "SSR",
+      "chinaExclusive": false,
+      "cnAvailable": false,
+      "collectible": false,
+      "collectibleCn": false,
+      "favoriteItem": null,
+      "overSpec": false
+    },
+    {
+      "nameCode": "5182",
+      "resourceId": "404",
+      "nameCn": "吉尔提：神力兔女郎",
+      "nameEn": "Guilty: Mighty Bunny",
+      "aliases": [],
+      "pinyin": "jetsltnl",
+      "avatar": "avatars/si_c404_00_s.png",
+      "artworks": [
+        {
+          "id": "default",
+          "label": "默认",
+          "file": "c404.webp"
+        }
+      ],
+      "skillIcons": null,
+      "class": "Attacker",
+      "element": "Water",
+      "use_burst_skill": "Step3",
+      "corporation": "MISSILIS",
+      "weapon_type": "SR",
+      "original_rare": "SSR",
+      "chinaExclusive": false,
+      "cnAvailable": false,
+      "collectible": false,
+      "collectibleCn": false,
+      "favoriteItem": null,
+      "overSpec": false
+    },
+    {
+      "nameCode": "5183",
+      "resourceId": "405",
+      "nameCn": "森：疾速兔女郎",
+      "nameEn": "Sin: Swift Bunny",
+      "aliases": [],
+      "pinyin": "sjstnl",
+      "avatar": "avatars/si_c405_00_s.png",
+      "artworks": [
+        {
+          "id": "default",
+          "label": "默认",
+          "file": "c405.webp"
+        }
+      ],
+      "skillIcons": null,
+      "class": "Attacker",
+      "element": "Water",
+      "use_burst_skill": "Step3",
+      "corporation": "MISSILIS",
+      "weapon_type": "SR",
+      "original_rare": "SSR",
+      "chinaExclusive": false,
+      "cnAvailable": false,
       "collectible": false,
       "collectibleCn": false,
       "favoriteItem": null,

@@ -1,0 +1,41 @@
+/* 账号数据导入弹窗：只补真正新增的两块（列表与摘要），其余复用 dlg-* / ocr-drop / import-* */
+
+/* 导入前的处理说明 / 导入后的结果说明 */
+.acc-notices {
+  margin: 0;
+  padding: 0 0 0 18px;
+  color: var(--text-2);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.acc-notices li::marker {
+  color: var(--text-3);
+}
+
+/* 来源信息摘要：两列对齐，数字用等宽字形免得跳动 */
+.acc-stats {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 12px;
+}
+
+.acc-stats div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.acc-stats span {
+  color: var(--text-3);
+}
+
+.acc-stats b {
+  color: var(--text);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}

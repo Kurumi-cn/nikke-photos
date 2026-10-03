@@ -133,10 +133,11 @@ export default function StatsPage() {
     setSelectedCodes((prev) => (prev.includes(code) ? prev.filter((item) => item !== code) : [...prev, code]))
   }
 
-  // 返回上一级：有历史则回退（“我的”页 → 词条统计），否则回“我的”
+  // 从「BOT 分享」的表格设置跳进来才显示返回；从顶部 Tab 直接进入则没有上级
+  const fromBotShare = location.state?.from === 'bot-share'
   const goBack = () => {
     if (location.key !== 'default') navigate(-1)
-    else navigate('/my')
+    else navigate('/bot-share')
   }
 
   const sortByElement = () => setSelectedCodes((prev) => sortCodesByElement(prev))
@@ -208,13 +209,15 @@ export default function StatsPage() {
 
   return (
     <main className="page">
-      <button type="button" className="back" onClick={goBack}>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <path d="M12.5 8h-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M7 4 3 8l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-        返回
-      </button>
+      {fromBotShare ? (
+        <button type="button" className="back" onClick={goBack}>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M12.5 8h-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M7 4 3 8l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          返回
+        </button>
+      ) : null}
 
       <div className="page-head">
         <div>

@@ -1,0 +1,74 @@
+/* 全局拖放导入：整页投放提示层 + 识别失败的提示条
+   提示层靠「虚框 + 半透明遮罩」表达可投放，沿用时项目一贯的克制做法：
+   不叠阴影、不做渐变、不加过渡动画 */
+
+.drop-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 55; /* 低于 .dlg-mask(60)：弹窗开着时提示层不会盖住弹窗 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(20, 24, 28, 0.28);
+  /* 纯提示层，不参与命中判定；否则它自己会成为 dragenter/dragleave 的目标，把计数搅乱 */
+  pointer-events: none;
+}
+
+.drop-layer-box {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  max-width: 420px;
+  padding: 26px 34px;
+  text-align: center;
+  background: var(--bg-2);
+  border: 1px dashed var(--primary);
+  border-radius: var(--radius-lg);
+}
+
+.drop-layer-box b {
+  font-size: 15px;
+  color: var(--text);
+}
+
+.drop-layer-box span {
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--text-2);
+}
+
+/* 识别失败的提示条：观感同 .sync-toast，但可以点掉——报错文案得让用户看清楚了再消失 */
+.drop-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(560px, calc(100vw - 32px));
+  padding: 9px 10px 9px 14px;
+  transform: translateX(-50%);
+  background: #242424;
+  color: #f2f3f5;
+  font-size: 12.5px;
+  line-height: 1.6;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-pop);
+}
+
+.drop-toast button {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  color: inherit;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.drop-toast button:hover {
+  background: rgba(255, 255, 255, 0.14);
+}

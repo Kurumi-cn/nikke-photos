@@ -26,6 +26,10 @@ const ARTWORK_DIR = path.join(PUBLIC_DIR, UI_ROOT, 'character-artwork')
 const ROSTER_PATH = path.join(APP_DIR, 'src', 'data', 'roster.json')
 const REPORT_PATH = path.join(SCRIPT_DIR, 'roster-report.json')
 
+// 本仓库自带的补充角色表：Helper 上游还没收录、但官方目录已有的角色。
+// 上游只读，补录在这里做（原因与字段来源见该文件内的 _note）
+const EXTRA_CHARACTERS_PATH = path.join(SCRIPT_DIR, 'extra-characters.json')
+
 const CHECK_ONLY = process.argv.includes('--check')
 
 // 分类定义：选项与中文标签照抄 NIKKE Helper（characterModel.js），图标来自 NIKKE分类图标 目录
@@ -120,13 +124,14 @@ const pinyinInitials = (text) =>
     .toLowerCase()
     .replace(/[^a-z0-9]/g, '')
 
-const [assetsFile, directoryFile, cnFile, tagsFile, workshopObjects, skillIconCatalog] = await Promise.all([
+const [assetsFile, directoryFile, cnFile, tagsFile, workshopObjects, skillIconCatalog, extraFile] = await Promise.all([
   readJson('character-assets.json'),
   readJson('nikke-directory.json'),
   readJson('cn-roster.json'),
   readJson('tags.json'),
   readJsonPath(WORKSHOP_OBJECTS_PATH),
   readJsonPath(WORKSHOP_SKILL_CATALOG),
+  readJsonPath(EXTRA_CHARACTERS_PATH),
 ])
 
 /** 技能图标：按资源号取 skill1/skill2/burst 三个文件名，转成 public 相对路径 */
@@ -137,7 +142,53 @@ const buildSkillIcons = (resourceId) => {
   return { skill1: toPath(entry.skill1), skill2: toPath(entry.skill2), burst: toPath(entry.burst) }
 }
 
-const dirByCode = new Map(directoryFile.map((item) => [String(item.name_code), item]))
+const errors = []
+const warnings = []
+
+// ---- 补充角色：按 Helper 的同形状注入，让下面那段唯一的主循环无需改动 ----
+// 去重按 nameCode：上游哪天补齐了同一个角色，这里会自动让位，不会出现重复条目
+const upstreamCodes = new Set(assetsFile.characters.map((item) => String(item.name_code)))
+const extras = (Array.isArray(extraFile.characters) ? extraFile.characters : []).filter((item) => {
+  const code = String(item.nameCode)
+  if (!code || !item.nameCn) {
+    errors.push(`补充角色缺少 nameCode 或 nameCn：${JSON.stringify(item)}`)
+    return false
+  }
+  if (upstreamCodes.has(code)) {
+    warnings.push(`补充角色上游已收录，已让位：${code} ${item.nameCn}`)
+    return false
+  }
+  return true
+})
+
+// 立绘 / 头像 / 国服独占标记 → character-assets.json 的形状
+const toAssetShape = (item) => ({
+  name_code: item.nameCode,
+  resource_id: item.resourceId,
+  name_cn: item.nameCn,
+  name_en: item.nameEn ?? '',
+  avatar: item.avatar,
+  artworks: Array.isArray(item.artworks) ? item.artworks : [],
+  china_exclusive: false,
+})
+
+// 六个分类字段 → nikke-directory.json 的形状
+const toDirectoryShape = (item) => ({
+  name_code: item.nameCode,
+  resource_id: item.resourceId,
+  name_cn: item.nameCn,
+  class: item.class,
+  element: item.element,
+  use_burst_skill: item.use_burst_skill,
+  corporation: item.corporation,
+  weapon_type: item.weapon_type,
+  original_rare: item.original_rare,
+})
+
+const allAssets = [...assetsFile.characters, ...extras.map(toAssetShape)]
+const allDirectory = [...directoryFile, ...extras.map(toDirectoryShape)]
+
+const dirByCode = new Map(allDirectory.map((item) => [String(item.name_code), item]))
 const cnSet = new Set(cnFile.cnRoster.map(String))
 // collectibleCn：国服已实装珍藏品（NIKKE Helper 标记，12 人）
 const collectibleSet = new Set(tagsFile.collectible.map(String))
@@ -148,9 +199,6 @@ const favoriteKeyByResourceId = new Map(
   Object.keys(workshopObjects.favorites || {})
     .map((key) => [String(Number(key.slice(1))), key]),
 )
-
-const errors = []
-const warnings = []
 
 // 校验分类选项与图标是否齐备
 const optionSetByKey = new Map()
@@ -169,7 +217,7 @@ const seenCodes = new Set()
 const characters = []
 let artworkTotal = 0
 
-for (const asset of assetsFile.characters) {
+for (const asset of allAssets) {
   const code = String(asset.name_code)
   if (seenCodes.has(code)) {
     errors.push(`重复的 name_code：${code}`)
@@ -342,6 +390,7 @@ const report = {
   workshopObjectsPath: WORKSHOP_OBJECTS_PATH,
   sourceGeneratedAt: assetsFile.generatedAt || null,
   counts,
+  extraCharacters: extras.map((item) => `${item.nameCode} ${item.nameCn}`),
   expectedCnRoster: cnFile.count ?? null,
   errors,
   warnings,
@@ -360,6 +409,7 @@ if (!CHECK_ONLY) {
       cnRoster: 'NIKKE Helper cn-roster.json',
       tags: 'NIKKE Helper tags.json',
       favoriteItemPool: 'NIKKE Workshop characterObjectAssets.json（favorites）',
+      extraCharacters: 'scripts/extra-characters.json（本仓库补充，上游未收录的官方角色）',
       sourceDir: SOURCE_DIR,
       workshopObjectsPath: WORKSHOP_OBJECTS_PATH,
       sourceGeneratedAt: assetsFile.generatedAt || null,
@@ -373,6 +423,9 @@ if (!CHECK_ONLY) {
 }
 
 console.log(`角色：${counts.characters}（国服 ${counts.cnAvailable} / 珍藏品 ${counts.collectible}（国服已实装 ${counts.collectibleCn}）/ 超标准 ${counts.overSpec} / 国服独占 ${counts.chinaExclusive}）`)
+if (extras.length > 0) {
+  console.log(`补充角色：${extras.length} 个（${extras.map((item) => `${item.nameCode} ${item.nameCn}`).join('、')}）`)
+}
 console.log(`立绘记录：${counts.artworks} 张（来源字段，素材本体在 M2 接入）`)
 console.log(`错误：${errors.length} 条，警告：${warnings.length} 条`)
 for (const item of errors) console.error(`  [错误] ${item}`)

@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import AccountImportDialog from '../components/AccountImportDialog.jsx'
 import FullyRecordedDialog from '../components/FullyRecordedDialog.jsx'
 import ProfileDialog from '../components/ProfileDialog.jsx'
 import { CHARACTERS, applyFilters, countActiveFilters, findCharacter } from '../lib/roster.js'
@@ -72,6 +73,7 @@ export default function ProfilesPage() {
   const [view, setView] = useState(restored.current)
   const [editor, setEditor] = useState(null) // { mode, profile? }
   const [confirmDelete, setConfirmDelete] = useState(null)
+  const [accountImport, setAccountImport] = useState(false)
 
   const gridRef = useRef(null)
   const gridScrollRef = useRef(restored.current.gridScroll)
@@ -190,6 +192,7 @@ export default function ProfilesPage() {
           <div className="desc">每个存档独立保存角色数据；点击存档行即可切换为当前存档</div>
         </div>
         <div className="head-actions">
+          <button type="button" className="btn" onClick={() => setAccountImport(true)}>导入账号数据</button>
           <button type="button" className="btn btn-primary" onClick={openCreate}>新建存档</button>
         </div>
       </div>
@@ -262,6 +265,10 @@ export default function ProfilesPage() {
           </div>
         ))}
       </div>
+
+      {accountImport ? (
+        <AccountImportDialog onClose={() => setAccountImport(false)} />
+      ) : null}
 
       {editor ? (
         <ProfileDialog

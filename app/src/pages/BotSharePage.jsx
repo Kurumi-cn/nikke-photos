@@ -116,7 +116,7 @@ export default function BotSharePage() {
               ? <span className="dlg-error">{codeError}</span>
               : <span>{rows} 行 · {code ? `${code.length} 字符` : '—'}</span>}
             <span className="bs-actions">
-              <button type="button" className="btn btn-sm" onClick={() => navigate('/stats')}>
+              <button type="button" className="btn btn-sm" onClick={() => navigate('/stats', { state: { from: 'bot-share' } })}>
                 去词条统计页调整
               </button>
               <button

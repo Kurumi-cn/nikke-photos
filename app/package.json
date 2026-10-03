@@ -1,7 +1,7 @@
 {
   "name": "nikke-photos",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,6 +12,7 @@
     "data:cubes": "node scripts/build-cubes.mjs",
     "data:affix-check": "node scripts/check-affix-summary.mjs",
     "store:migrate-check": "node scripts/check-migrations.mjs",
+    "account:check": "node scripts/check-account-import.mjs",
     "share:check": "node scripts/check-share-code.mjs",
     "ocr:scan": "node scripts/ocr-scan.mjs",
     "ocr:extract": "node scripts/extract-glyph-templates.mjs",

@@ -22,6 +22,9 @@ import { mergeSchemes, normalizeSchemes } from './schemes.js'
 import { isFullyRecorded } from './statsModel.js'
 
 export const STORE_VERSION = 1
+
+// 档案导出文件的格式标识：拖放导入靠它认出"这是本工具的档案"（见 lib/importSniff.js）
+export const PROFILE_FORMAT = 'nikke-photos-profile'
 /** 数据版本以迁移模块为准（两边必须一致，直接引过来免得又出现两份版本号） */
 const PROFILE_VERSION = CURRENT_DATA_VERSION
 
@@ -439,7 +442,7 @@ export function exportProfile() {
   const index = ensureIndex()
   const profile = currentOf(index)
   return JSON.stringify({
-    format: 'nikke-photos-profile',
+    format: PROFILE_FORMAT,
     version: STORE_VERSION,
     name: profile.name,
     synchroLevel: profile.synchroLevel,
