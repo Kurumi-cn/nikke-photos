@@ -1,4 +1,5 @@
-# NIKKE Photos
+<img width="875" height="306" alt="image" src="https://github.com/user-attachments/assets/a561987a-e99c-4ac2-8886-5887961a7145" /># 
+NIKKE Photos
 
 妮姬（NIKKE）角色卡片生成与练度管理工具，纯前端网页应用（React 19 + Vite，无后端）：角色列表、我的妮姬、数据录入、词条统计、BOT 分享五个页面，角色卡片实时预览并导出 1x/2x/3x PNG。
 
@@ -10,6 +11,9 @@ npm install
 npm run dev      # 开发服务器
 npm run build    # 构建，产物在 app/dist
 ```
+## 在线使用
+
+直接打开：https://kurumi-cn.github.io/nikke-photos/#/ 即可使用。
 
 ## 数据与素材
 
