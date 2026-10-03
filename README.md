@@ -31,7 +31,7 @@
 
 1. 安装浏览器扩展 **Tampermonkey**（油猴；Chrome / Edge / Firefox 均可）；
 2. 安装脚本：打开 https://kurumi-cn.github.io/nikke-photos/nikke-photos-import.user.js，Tampermonkey 会弹出安装页，点「安装」；
-3. 打开并登录 **https://www.blablalink.com**，页面右下角会出现「NIKKE Photos」面板，点「导出到 NIKKE Photos」，等它依次读取账号数据；
+3. 打开并登录 https://www.blablalink.com，页面右下角会出现「NIKKE Photos」面板，点「导出到 NIKKE Photos」，等它依次读取账号数据；
 4. 浏览器会下载一个 `nikke-photos-<昵称>-<时间>.json` 文件；
 5. 回到本站（任意页面），把 JSON 文件**拖进页面**；在弹窗里核对（存档名、同步器等级可改，可选「新建存档 / 覆盖同名存档」）→ 确认即完成导入。
 
