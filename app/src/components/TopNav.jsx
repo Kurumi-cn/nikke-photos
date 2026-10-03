@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
+import { CURRENT_VERSION } from '../data/changelog.js'
 import { getCurrentProfile, subscribeProfiles } from '../lib/profileStore.js'
 
 /**
@@ -37,7 +38,7 @@ export default function TopNav() {
           <Link className="current-profile" to="/profiles" title="切换 / 管理存档">
             当前存档：<strong>{profile.name}</strong>
           </Link>
-          <span className="version">v0.1</span>
+          <span className="version">v{CURRENT_VERSION}</span>
         </div>
       </div>
     </header>

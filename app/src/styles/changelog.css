@@ -1,0 +1,72 @@
+/* 版本更新提示（弹窗）与更新记录页 */
+
+/* 「v0.1 → v1.0」 */
+.cl-range {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 条目按 `1、2、…` 手工编号，所以关掉默认的项目符号与缩进 */
+.cl-items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+/* 日期右对齐 */
+.cl-date {
+  margin-top: 10px;
+  color: var(--text-3);
+  font-size: 12px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.cl-mute {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-2);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.cl-mute input {
+  accent-color: var(--primary);
+}
+
+.cl-list {
+  display: grid;
+  gap: 12px;
+}
+
+.cl-entry {
+  padding: 12px 14px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.cl-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.cl-badge {
+  padding: 1px 6px;
+  background: var(--primary-soft);
+  border: 1px solid var(--primary-border);
+  border-radius: var(--radius-sm);
+  color: var(--primary-strong);
+  font-size: 11px;
+  font-weight: 600;
+}

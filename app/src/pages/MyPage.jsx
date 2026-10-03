@@ -22,6 +22,11 @@ const ENTRIES = [
     title: '词条统计',
     desc: '把已录入角色的装备词条累加值汇总成表，支持按属性排列、拖拽排序与导出图片',
   },
+  {
+    to: '/changelog',
+    title: '更新记录',
+    desc: '查看历史版本都改了些什么',
+  },
 ]
 
 export default function MyPage() {
