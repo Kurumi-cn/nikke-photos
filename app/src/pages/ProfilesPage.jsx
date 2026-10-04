@@ -3,10 +3,12 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import AccountImportDialog from '../components/AccountImportDialog.jsx'
 import FullyRecordedDialog from '../components/FullyRecordedDialog.jsx'
 import ProfileDialog from '../components/ProfileDialog.jsx'
+import ProfileImportFlow from '../components/ProfileImportFlow.jsx'
 import { CHARACTERS, applyFilters, countActiveFilters, findCharacter } from '../lib/roster.js'
 import {
   createProfile,
   deleteProfile,
+  exportProfile,
   fullyRecordedCodes,
   getCurrentProfileId,
   listProfiles,
@@ -61,6 +63,11 @@ const formatTime = (iso) => {
   const date = new Date(iso)
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`
 }
+/** 导出文件名的时间戳：20261004-2130 */
+const stamp = () => {
+  const now = new Date()
+  return `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}`
+}
 
 /** 存档管理页：概览列表（当前档置顶）+ 新建 / 切换 / 详情编辑 / 删除 / 角色一览 */
 export default function ProfilesPage() {
@@ -74,6 +81,8 @@ export default function ProfilesPage() {
   const [editor, setEditor] = useState(null) // { mode, profile? }
   const [confirmDelete, setConfirmDelete] = useState(null)
   const [accountImport, setAccountImport] = useState(false)
+  const [profileImport, setProfileImport] = useState(null) // parseProfile 产物；非空时打开档案导入流程
+  const [notice, setNotice] = useState('')
 
   const gridRef = useRef(null)
   const gridScrollRef = useRef(restored.current.gridScroll)
@@ -160,6 +169,27 @@ export default function ProfilesPage() {
 
   const openCreate = () => setEditor({ mode: 'create', profile: { name: nextProfileName(), synchroLevel: '', remark: '' } })
 
+  /** 导出当前存档为一个 JSON 文件（只含当前档） */
+  const handleExportProfile = () => {
+    const blob = new Blob([exportProfile()], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `nikke-photos-档案-${stamp()}.json`
+    link.click()
+    URL.revokeObjectURL(url)
+  }
+
+  /** 档案类文件导入完成：列表刷新由 subscribeProfiles 负责，这里只给一条结果提示 */
+  const finishProfileImport = (result, label) => {
+    setProfileImport(null)
+    const schemeNote = result.schemes ? `，方案 ${result.schemes} 个` : ''
+    const renameNote = result.schemeRenames?.length
+      ? `（方案重名已改为 ${result.schemeRenames.map((item) => `「${item.to}」`).join('、')}）`
+      : ''
+    setNotice(`已导入 ${result.imported} 个角色记录到${label}${result.unknown.length ? `（${result.unknown.length} 个键未识别）` : ''}${schemeNote}${renameNote}`)
+  }
+
   const handleSubmit = (values) => {
     if (editor?.mode === 'create') createProfile(values)
     else if (editor?.profile?.id) updateProfile(editor.profile.id, values)
@@ -192,7 +222,8 @@ export default function ProfilesPage() {
           <div className="desc">每个存档独立保存角色数据；点击存档行即可切换为当前存档</div>
         </div>
         <div className="head-actions">
-          <button type="button" className="btn" onClick={() => setAccountImport(true)}>导入账号数据</button>
+          <button type="button" className="btn" onClick={handleExportProfile}>导出当前档案数据</button>
+          <button type="button" className="btn" onClick={() => setAccountImport(true)}>导入账号/档案数据</button>
           <button type="button" className="btn btn-primary" onClick={openCreate}>新建存档</button>
         </div>
       </div>
@@ -267,7 +298,28 @@ export default function ProfilesPage() {
       </div>
 
       {accountImport ? (
-        <AccountImportDialog onClose={() => setAccountImport(false)} />
+        <AccountImportDialog
+          onProfileParsed={(parsed) => {
+            setAccountImport(false)
+            setProfileImport(parsed)
+          }}
+          onClose={() => setAccountImport(false)}
+        />
+      ) : null}
+
+      {profileImport ? (
+        <ProfileImportFlow
+          parsed={profileImport}
+          onDone={finishProfileImport}
+          onClose={() => setProfileImport(null)}
+        />
+      ) : null}
+
+      {notice ? (
+        <div className="drop-toast" role="status">
+          <span>{notice}</span>
+          <button type="button" onClick={() => setNotice('')} aria-label="关闭">×</button>
+        </div>
       ) : null}
 
       {editor ? (

@@ -5,7 +5,7 @@
 //
 // 没有 format 的一律拒绝，不做"猜"：把一份恰好以角色号为键的陌生 JSON 猜成档案导进来，
 // 用户拿到的是一个说不出哪里错的半成品存档，比直接报错糟得多。
-// （旧版裸 characters 对象仍可走角色列表页的「导入档案」按钮，那条路是用户主动选的，不存在误判。）
+// （旧版裸 characters 对象仍可在存档管理页的「导入账号/档案数据」弹窗里选文件导入，那条路是用户主动选的，不存在误判。）
 import { ACCOUNT_FORMAT, parseAccountExport } from './accountImport.js'
 import { PROFILE_FORMAT, parseProfile } from './profileStore.js'
 

@@ -69,7 +69,12 @@ export default function App() {
       <ImportDropLayer onSniffed={handleSniffed} onError={handleDropError} />
 
       {dropped?.kind === IMPORT_KIND.account ? (
-        <AccountImportDialog onClose={() => setDropped(null)} />
+        // 拖放场景：把已解析好的结果直接传进去，弹窗一开就是确认态，不用再拖一次
+        <AccountImportDialog
+          initial={dropped.result}
+          onProfileParsed={(parsed) => setDropped({ kind: IMPORT_KIND.profile, parsed })}
+          onClose={() => setDropped(null)}
+        />
       ) : null}
       {dropped?.kind === IMPORT_KIND.profile ? (
         <ProfileImportFlow

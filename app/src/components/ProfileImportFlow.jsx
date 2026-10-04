@@ -1,5 +1,5 @@
 // 「档案导入」的两步流程：先选「覆盖某个存档 / 新建存档并导入」，再填新建存档的名称与同步器等级。
-// 角色列表页的「导入档案」按钮与全局拖放导入共用这一份实现，避免同一套判断写两遍。
+// 存档管理页的「导入账号/档案数据」弹窗与全局拖放导入共用这一份实现，避免同一套判断写两遍。
 import { useState } from 'react'
 import ImportDialog from './ImportDialog.jsx'
 import ProfileDialog from './ProfileDialog.jsx'

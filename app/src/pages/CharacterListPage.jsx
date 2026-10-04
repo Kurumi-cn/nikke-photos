@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import CharacterGrid from '../components/CharacterGrid.jsx'
 import FilterBar from '../components/FilterBar.jsx'
-import ProfileImportFlow from '../components/ProfileImportFlow.jsx'
 import { CHARACTERS, applyFilters, countActiveFilters } from '../lib/roster.js'
 import { ZOOM_PRESETS, loadGridZoom, saveGridZoom } from '../lib/gridZoom.js'
-import { exportProfile, parseProfile, recordedCodes } from '../lib/profileStore.js'
+import { recordedCodes } from '../lib/profileStore.js'
 
 const NO_SELECTION = {}
 const DEFAULT_TOGGLES = { cnPublished: false, collectible: false, overSpec: false }
@@ -29,22 +28,14 @@ const loadFilterState = () => {
   }
 }
 
-const stamp = () => {
-  const now = new Date()
-  const pad = (value) => String(value).padStart(2, '0')
-  return `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}`
-}
-
 export default function CharacterListPage() {
   const restored = useMemo(loadFilterState, [])
   const [search, setSearch] = useState(restored?.search ?? '')
   const [selected, setSelected] = useState(restored?.selected ?? NO_SELECTION)
   const [toggles, setToggles] = useState(restored?.toggles ?? DEFAULT_TOGGLES)
   const [zoom, setZoom] = useState(() => loadGridZoom())
-  const [recorded, setRecorded] = useState(() => new Set(recordedCodes()))
-  const [importParsed, setImportParsed] = useState(null)
-  const [message, setMessage] = useState('')
-  const fileRef = useRef(null)
+  // 已录入角色集合：挂载时读一次（导入入口在「存档管理」页，回到本页时会重新挂载）
+  const recorded = useMemo(() => new Set(recordedCodes()), [])
 
   // 筛选变化即写入会话存储（数据量很小，无需防抖）
   useEffect(() => {
@@ -80,44 +71,6 @@ export default function CharacterListPage() {
   const clearFilters = () => {
     setSelected(NO_SELECTION)
     setToggles(DEFAULT_TOGGLES)
-  }
-
-  const handleExportProfile = () => {
-    const blob = new Blob([exportProfile()], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `nikke-photos-档案-${stamp()}.json`
-    link.click()
-    URL.revokeObjectURL(url)
-  }
-
-  const finishImport = (result, label) => {
-    setRecorded(new Set(recordedCodes()))
-    setImportParsed(null)
-    const schemeNote = result.schemes ? `，方案 ${result.schemes} 个` : ''
-    const renameNote = result.schemeRenames?.length
-      ? `（方案重名已改为 ${result.schemeRenames.map((item) => `「${item.to}」`).join('、')}）`
-      : ''
-    setMessage(`已导入 ${result.imported} 个角色记录到${label}${result.unknown.length ? `（${result.unknown.length} 个键未识别）` : ''}${schemeNote}${renameNote}`)
-  }
-
-  const handleFileChange = async (event) => {
-    const file = event.target.files?.[0]
-    event.target.value = ''
-    if (!file) return
-    setMessage('')
-    // 解析失败时弹窗压根不会出现，所以只能把原因写到工具栏的提示位上
-    try {
-      const parsed = parseProfile(await file.text())
-      if (!parsed.count) {
-        setMessage(`${file.name}：文件里没有角色记录`)
-        return
-      }
-      setImportParsed(parsed)
-    } catch (error) {
-      setMessage(`${file.name}：读取失败，${error?.message || error}`)
-    }
   }
 
   return (
@@ -164,11 +117,6 @@ export default function CharacterListPage() {
         <span className="spacer" />
 
         <span className="archive-count">已录入 <strong>{recorded.size}</strong> 名</span>
-        <button type="button" className="btn btn-sm" onClick={handleExportProfile}>导出档案</button>
-        <button type="button" className="btn btn-sm" onClick={() => fileRef.current?.click()}>导入档案</button>
-        <input ref={fileRef} type="file" accept=".json,application/json" hidden onChange={handleFileChange} />
-
-        {message ? <span className="archive-msg">{message}</span> : null}
 
         <div className="zoom" role="group" aria-label="列表缩放">
           {ZOOM_PRESETS.map((item) => (
@@ -192,14 +140,6 @@ export default function CharacterListPage() {
           <div>换个关键词，或调整筛选条件</div>
         </div>
       )}
-
-      {importParsed ? (
-        <ProfileImportFlow
-          parsed={importParsed}
-          onDone={finishImport}
-          onClose={() => setImportParsed(null)}
-        />
-      ) : null}
     </main>
   )
 }

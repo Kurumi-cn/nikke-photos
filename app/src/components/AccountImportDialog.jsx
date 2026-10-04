@@ -1,4 +1,7 @@
-// 「导入账号数据」弹窗：读油猴脚本导出的 JSON → 新建或覆盖一个存档
+// 「导入账号/档案数据」弹窗：统一收三种 JSON ——
+//   ① 油猴脚本导出的账号数据：本弹窗内直接确认新建 / 覆盖；
+//   ② 本工具导出的档案、③ 旧版无 format 的裸 characters 对象：交给 onProfileParsed，
+//      由调用方打开 ProfileImportFlow 走「覆盖哪个存档 / 新建存档」两步流程。
 //
 // 入口放在「存档管理」页而不是「数据录入」页：导入会新建存档并切换当前存档，
 // 这是存档级操作；而数据录入页的状态是挂载时读一次的、没订阅存档变更，
@@ -6,13 +9,15 @@
 import { useRef, useState } from 'react'
 import ConfirmDialog from './ConfirmDialog.jsx'
 import NumField from './NumField.jsx'
-import { parseAccountExport } from '../lib/accountImport.js'
+import { ACCOUNT_FORMAT, parseAccountExport } from '../lib/accountImport.js'
 import {
   NAME_MAX,
+  PROFILE_FORMAT,
   importAsNewProfile,
   importIntoProfile,
   listProfiles,
   nextProfileName,
+  parseProfile,
   setCurrentProfile,
 } from '../lib/profileStore.js'
 import { assetUrl } from '../lib/roster.js'
@@ -33,13 +38,17 @@ const uniqueProfileName = (base, taken) => {
   return candidate
 }
 
-export default function AccountImportDialog({ onClose }) {
+/**
+ * @param initial          拖放场景下已解析好的账号数据（parseAccountExport 产物），非空时直接进确认态
+ * @param onProfileParsed  读到档案类文件时交出 parseProfile 产物，由调用方打开 ProfileImportFlow
+ */
+export default function AccountImportDialog({ onClose, initial = null, onProfileParsed }) {
   const fileRef = useRef(null)
   const [dragActive, setDragActive] = useState(false)
   const [error, setError] = useState('')
-  const [result, setResult] = useState(null)
-  const [name, setName] = useState('')
-  const [synchro, setSynchro] = useState(null)
+  const [result, setResult] = useState(initial)
+  const [name, setName] = useState(() => (initial ? initial.parsed.name || nextProfileName() : ''))
+  const [synchro, setSynchro] = useState(() => initial?.parsed?.synchroLevel ?? null)
   const [pending, setPending] = useState(null)
   const [done, setDone] = useState(null)
 
@@ -59,15 +68,46 @@ export default function AccountImportDialog({ onClose }) {
       setError('读取文件失败，请重试')
       return
     }
-    const parsed = parseAccountExport(text)
-    if (!parsed.ok) {
-      setResult(null)
-      setError(parsed.errors.join('；'))
+    let raw
+    try {
+      raw = JSON.parse(text)
+    } catch {
+      setError('不是有效的 JSON 文件')
       return
     }
-    setResult(parsed)
-    setName(parsed.parsed.name || nextProfileName())
-    setSynchro(parsed.parsed.synchroLevel)
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+      setError('文件内容不是一个对象')
+      return
+    }
+
+    if (raw.format === ACCOUNT_FORMAT) {
+      const parsed = parseAccountExport(text)
+      if (!parsed.ok) {
+        setResult(null)
+        setError(parsed.errors.join('；'))
+        return
+      }
+      setResult(parsed)
+      setName(parsed.parsed.name || nextProfileName())
+      setSynchro(parsed.parsed.synchroLevel)
+      return
+    }
+
+    // 本工具导出的档案；无 format 的是旧版裸 characters 对象，parseProfile 本身兼容
+    if (raw.format === PROFILE_FORMAT || raw.format == null) {
+      try {
+        const parsed = parseProfile(text)
+        if (!parsed.count) throw new Error('文件里没有角色记录')
+        onProfileParsed(parsed)
+      } catch (problem) {
+        setResult(null)
+        setError(`读取失败：${problem?.message || problem}`)
+      }
+      return
+    }
+
+    setResult(null)
+    setError(`认不出这个文件（format=${raw.format}）。只支持油猴脚本导出的「账号数据」或本工具导出的「档案」`)
   }
 
   /** 落库：两个分支都要保证「导入完就是当前存档」 */
@@ -100,9 +140,9 @@ export default function AccountImportDialog({ onClose }) {
         if (event.target === event.currentTarget) onClose()
       }}
     >
-      <div className="dlg dlg-wide" role="dialog" aria-label="导入账号数据">
+      <div className="dlg dlg-wide" role="dialog" aria-label="导入账号/档案数据">
         <div className="dlg-head">
-          <h2>导入账号数据</h2>
+          <h2>导入账号/档案数据</h2>
           <button type="button" className="dlg-x" onClick={onClose} aria-label="关闭">×</button>
         </div>
 
@@ -165,7 +205,7 @@ export default function AccountImportDialog({ onClose }) {
           ) : (
             <>
               <p className="dlg-text">
-                这个功能读取的是 BlaBlaLink 账号里的角色数据，需要先在浏览器里装一个油猴脚本：
+                BlaBlaLink 账号数据需要先在浏览器里装一个油猴脚本：
                 脚本在你的浏览器内直接向官方接口取数，数据只留在本机，不会上传到任何服务器。
               </p>
               <div
@@ -181,7 +221,9 @@ export default function AccountImportDialog({ onClose }) {
                   readFile([...(event.dataTransfer?.files || [])][0])
                 }}
               >
-                <p className="ocr-drop-text">把脚本导出的 JSON 文件拖拽至此，或选择本地文件</p>
+                <p className="ocr-drop-text">
+                  把 BlaBlaLink 账号导出的 JSON（油猴脚本）或本工具导出的档案拖拽至此，或选择本地文件
+                </p>
                 <div className="ocr-drop-actions">
                   <button type="button" className="btn btn-sm" onClick={() => fileRef.current?.click()}>选择文件</button>
                 </div>
