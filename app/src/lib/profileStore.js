@@ -257,6 +257,16 @@ export function nextProfileName() {
   return `存档${max + 1}`
 }
 
+/** Workshop 图鉴导入的默认存档名：现存「workshop导入N」的最大编号 + 1（不补空号） */
+export function nextWorkshopProfileName() {
+  let max = 0
+  for (const item of ensureIndex().profiles) {
+    const matched = /^workshop导入(\d+)$/i.exec(String(item.name || '').trim())
+    if (matched) max = Math.max(max, Number(matched[1]))
+  }
+  return `workshop导入${max + 1}`
+}
+
 /** 某存档下「已完善」角色（四件装备全录入）的 nameCode 列表 */
 export function fullyRecordedCodes(id) {
   const characters = readCharacters(id) || {}

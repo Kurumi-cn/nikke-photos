@@ -10,6 +10,7 @@ import { useRef, useState } from 'react'
 import ConfirmDialog from './ConfirmDialog.jsx'
 import NumField from './NumField.jsx'
 import { ACCOUNT_FORMAT, parseAccountExport } from '../lib/accountImport.js'
+import { isWorkbookFile } from '../lib/importSniff.js'
 import {
   NAME_MAX,
   PROFILE_FORMAT,
@@ -21,6 +22,7 @@ import {
   setCurrentProfile,
 } from '../lib/profileStore.js'
 import { assetUrl } from '../lib/roster.js'
+import { parseWorkshopExcel } from '../lib/workshopImport.js'
 import '../styles/accountImport.css'
 
 const SCRIPT_FILE = 'nikke-photos-import.user.js'
@@ -61,6 +63,26 @@ export default function AccountImportDialog({ onClose, initial = null, onProfile
   const readFile = async (file) => {
     setError('')
     if (!file) return
+
+    // Workshop 图鉴是二进制 xlsx，走单独的解析链路；产物同样是「档案」形状，交给 onProfileParsed
+    if (isWorkbookFile(file)) {
+      let buffer
+      try {
+        buffer = await file.arrayBuffer()
+      } catch {
+        setError('读取文件失败，请重试')
+        return
+      }
+      try {
+        const { parsed } = await parseWorkshopExcel(buffer)
+        onProfileParsed(parsed)
+      } catch (problem) {
+        setResult(null)
+        setError(`读取失败：${problem?.message || problem}`)
+      }
+      return
+    }
+
     let text
     try {
       text = await file.text()
@@ -222,7 +244,7 @@ export default function AccountImportDialog({ onClose, initial = null, onProfile
                 }}
               >
                 <p className="ocr-drop-text">
-                  把 BlaBlaLink 账号导出的 JSON（油猴脚本）或本工具导出的档案拖拽至此，或选择本地文件
+                  把 BlaBlaLink 账号导出的 JSON（油猴脚本）、本工具导出的档案，或 NIKKE Workshop 导出的图鉴 xlsx 拖拽至此，或选择本地文件
                 </p>
                 <div className="ocr-drop-actions">
                   <button type="button" className="btn btn-sm" onClick={() => fileRef.current?.click()}>选择文件</button>
@@ -231,7 +253,7 @@ export default function AccountImportDialog({ onClose, initial = null, onProfile
               <input
                 ref={fileRef}
                 type="file"
-                accept=".json,application/json"
+                accept=".json,application/json,.xlsx"
                 hidden
                 onChange={(event) => {
                   const file = event.target.files?.[0]

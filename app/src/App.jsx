@@ -76,7 +76,8 @@ export default function App() {
           onClose={() => setDropped(null)}
         />
       ) : null}
-      {dropped?.kind === IMPORT_KIND.profile ? (
+      {dropped?.kind === IMPORT_KIND.profile || dropped?.kind === IMPORT_KIND.workshop ? (
+        // Workshop 图鉴 xlsx 解析后与本工具档案同形状（只有 synchroLevel 为 null），走同一条导入流程
         <ProfileImportFlow
           parsed={dropped.parsed}
           onDone={finishProfileImport}

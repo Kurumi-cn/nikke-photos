@@ -405,6 +405,19 @@
   line-height: 1.6;
 }
 
+/* 导入说明（如 Workshop 图鉴的处理说明）：与 hint 同层级，但需要逐条可读 */
+.import-notes {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--text-2);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.import-notes li::marker {
+  color: var(--text-3);
+}
+
 /* ---------- 数据录入表单：分区标题行 / 只读字段 ---------- */
 .form-block-head {
   display: flex;

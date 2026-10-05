@@ -24,8 +24,14 @@ export default function ImportDialog({ parsed, profiles, currentId, error, onClo
         <div className="dlg-body">
           <p className="dlg-text">
             读入 <strong>{parsed.count}</strong> 个角色记录
-            {parsed.unknown.length ? `（${parsed.unknown.length} 个键未识别，将被跳过）` : ''}。
+            {parsed.unknown.length ? `（${parsed.unknown.length} 个未识别，将被跳过）` : ''}。
           </p>
+
+          {Array.isArray(parsed.notices) && parsed.notices.length ? (
+            <ul className="import-notes">
+              {parsed.notices.map((item) => <li key={item}>{item}</li>)}
+            </ul>
+          ) : null}
 
           <div className="import-block">
             <h3>覆盖某个存档</h3>
@@ -39,7 +45,10 @@ export default function ImportDialog({ parsed, profiles, currentId, error, onClo
                 ))}
               </select>
             </div>
-            <p className="import-hint">保留目标存档的名称与备注，替换其角色数据；同步器等级取导入文件里的值。</p>
+            <p className="import-hint">
+              保留目标存档的名称与备注，替换其角色数据；
+              {parsed.synchroLevel == null ? '本文件不含同步器等级，保留目标存档的原值。' : '同步器等级取导入文件里的值。'}
+            </p>
             <button type="button" className="btn" onClick={() => onOverwrite(targetId)}>
               覆盖「{target?.name || ''}」
             </button>
@@ -47,7 +56,13 @@ export default function ImportDialog({ parsed, profiles, currentId, error, onClo
 
           <div className="import-block">
             <h3>新建存档并导入</h3>
-            <p className="import-hint">按导入文件里的名称与同步器等级预填，可在下一步修改。</p>
+            <p className="import-hint">
+              {parsed.origin === 'workshop'
+                ? '存档名会自动编号为「workshop导入N」，可在下一步确认；同步器等级与研究等级也需要填写。'
+                : parsed.synchroLevel == null
+                  ? '可在下一步填写名称、同步器等级与研究等级。'
+                  : '按导入文件里的名称与同步器等级预填，可在下一步修改。'}
+            </p>
             <button type="button" className="btn btn-primary" onClick={onNew}>新建存档并导入</button>
           </div>
 

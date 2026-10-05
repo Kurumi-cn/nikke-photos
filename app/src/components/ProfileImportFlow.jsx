@@ -9,6 +9,7 @@ import {
   importIntoProfile,
   listProfiles,
   nextProfileName,
+  nextWorkshopProfileName,
 } from '../lib/profileStore.js'
 
 /**
@@ -23,8 +24,11 @@ export default function ProfileImportFlow({ parsed, onDone, onClose }) {
 
   const overwrite = (id) => {
     try {
-      const name = listProfiles().find((item) => item.id === id)?.name || '存档'
-      onDone(importIntoProfile(id, parsed), `「${name}」`)
+      const target = listProfiles().find((item) => item.id === id)
+      // 导入文件里不含同步器等级时（如 Workshop 图鉴导入）保留目标存档的原值，不要把它清掉；
+      // 档案 JSON / 账号数据都带同步器等级，走原样覆盖
+      const payload = parsed.synchroLevel == null && target ? { ...parsed, synchroLevel: target.synchroLevel } : parsed
+      onDone(importIntoProfile(id, payload), `「${target?.name || '存档'}」`)
     } catch (problem) {
       setError(`导入失败：${problem?.message || problem}`)
     }
@@ -43,7 +47,12 @@ export default function ProfileImportFlow({ parsed, onDone, onClose }) {
       <ProfileDialog
         key="import-new"
         mode="create"
-        initial={{ name: draft.name || nextProfileName(), synchroLevel: draft.synchroLevel, remark: draft.remark }}
+        initial={{
+          // Workshop 图鉴导入按「workshop导入N」自动编号，其他导入沿用「存档N」
+          name: draft.name || (draft.origin === 'workshop' ? nextWorkshopProfileName() : nextProfileName()),
+          synchroLevel: draft.synchroLevel,
+          remark: draft.remark,
+        }}
         // 取消新建 → 退回上一步，而不是把整个导入丢掉
         onClose={() => setDraft(null)}
         onSubmit={create}

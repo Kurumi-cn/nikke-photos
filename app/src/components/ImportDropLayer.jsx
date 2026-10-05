@@ -7,7 +7,7 @@
 //   2. 落在已打开的弹窗内的拖放直接放行 —— 账号导入、装备识别那些弹窗自带投放区，
 //      不拦的话同一次投放会被处理两遍。
 import { useEffect, useRef, useState } from 'react'
-import { sniffImport } from '../lib/importSniff.js'
+import { sniffImportFile } from '../lib/importSniff.js'
 import '../styles/importDrop.css'
 
 const carriesFiles = (event) => Array.from(event.dataTransfer?.types || []).includes('Files')
@@ -56,15 +56,8 @@ export default function ImportDropLayer({ onSniffed, onError }) {
       const file = event.dataTransfer?.files?.[0]
       if (!file) return
 
-      let text
       try {
-        text = await file.text()
-      } catch {
-        onError(`读取 ${file.name} 失败，请重试`)
-        return
-      }
-      try {
-        onSniffed(sniffImport(text), file.name)
+        onSniffed(await sniffImportFile(file), file.name)
       } catch (problem) {
         onError(`${file.name}：${problem?.message || problem}`)
       }
@@ -88,7 +81,7 @@ export default function ImportDropLayer({ onSniffed, onError }) {
     <div className="drop-layer">
       <div className="drop-layer-box">
         <b>松手即导入</b>
-        <span>支持本工具导出的「档案」，以及油猴脚本导出的「BlaBlaLink 账号数据」</span>
+        <span>支持本工具导出的「档案」、油猴脚本导出的「账号数据」，以及 NIKKE Workshop 导出的图鉴 xlsx</span>
       </div>
     </div>
   )

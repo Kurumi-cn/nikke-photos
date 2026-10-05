@@ -13,6 +13,7 @@
     "data:affix-check": "node scripts/check-affix-summary.mjs",
     "store:migrate-check": "node scripts/check-migrations.mjs",
     "account:check": "node scripts/check-account-import.mjs",
+    "workshop:check": "node scripts/check-workshop-import.mjs",
     "share:check": "node scripts/check-share-code.mjs",
     "ocr:scan": "node scripts/ocr-scan.mjs",
     "ocr:extract": "node scripts/extract-glyph-templates.mjs",
