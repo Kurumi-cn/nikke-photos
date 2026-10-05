@@ -99,3 +99,17 @@
 .bs-section .toolbar + .share-fields {
   margin-top: 0;
 }
+
+/* ---------- 窄屏：手机（≤768px）---------- */
+
+@media (max-width: 768px) {
+  /* 分区标题行：标题块与计数放不下时换行 */
+  .bs-head {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .bs-section {
+    padding: 12px 12px 14px;
+  }
+}

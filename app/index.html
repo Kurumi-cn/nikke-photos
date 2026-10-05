@@ -6,6 +6,20 @@
     <!-- 相对路径：vite.config 的 base 是 './'（GitHub Pages 子路径部署），写 '/favicon.ico' 会在子路径下 404 -->
     <link rel="icon" type="image/x-icon" href="./favicon.ico" />
     <title>NIKKE Photos</title>
+    <script>
+      // 首屏前应用主题，避免深色用户看到一瞬浅色（key 与 src/lib/theme.js 保持一致）
+      ;(function () {
+        try {
+          var saved = localStorage.getItem('nikke-photos:theme')
+          var theme = saved === 'dark' || saved === 'light'
+            ? saved
+            : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          document.documentElement.setAttribute('data-theme', theme)
+        } catch (error) {
+          document.documentElement.setAttribute('data-theme', 'light')
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

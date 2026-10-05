@@ -1,20 +1,22 @@
-// 词条统计页：左侧多选已录入角色（四件装备齐全），右侧实时汇总为统计表；
-// 支持按属性排列、拖拽调整行序、放大预览与导出高清 PNG
+// 词条统计页：页面以统计表为主体；角色的增删收在「编辑表格角色」大弹窗里
+//（弹窗照搬「我的妮姬」的筛选与分组网格，点选即时生效）
+// 支持按属性排列、拖拽调整行序、表格左上角署名、放大预览与导出高清 PNG
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { toBlob } from 'html-to-image'
 import CardPreviewDialog from '../components/CardPreviewDialog.jsx'
+import EditTableDialog from '../components/EditTableDialog.jsx'
 import ShareCodeDialog from '../components/ShareCodeDialog.jsx'
-import { CHARACTERS, assetUrl, findCharacter, matchesSearch } from '../lib/roster.js'
+import { CHARACTERS, findCharacter } from '../lib/roster.js'
 import { loadRecord } from '../lib/profileStore.js'
 import { encodeTableShareCode } from '../lib/shareCode.js'
+import { loadStatsCredit, saveStatsCredit } from '../lib/statsCredit.js'
 import { loadStatsSelection, saveStatsSelection, sortCodesByElement } from '../lib/statsSelection.js'
 import {
   STATS_COLUMNS,
   buildCharacterStats,
   cellToneOf,
   elementColorOf,
-  elementLabelOf,
   isFullyRecorded,
 } from '../lib/statsModel.js'
 import '../styles/stats.css'
@@ -26,13 +28,15 @@ const stamp = () => {
 }
 
 /** 统计表本体（导出目标；预览弹窗内复用，不接拖拽） */
-function StatsSheet({ rows, sheetRef, drag }) {
+function StatsSheet({ rows, sheetRef, drag, credit = '' }) {
   return (
     <div className="st-sheet" ref={sheetRef}>
       <table className="st-table">
         <thead>
           <tr>
-            <th className="st-corner" aria-label="角色" />
+            <th className="st-corner" aria-label="署名">
+              {credit ? <span className="st-credit">{credit}</span> : null}
+            </th>
             {STATS_COLUMNS.map((column) => <th key={column.key}>{column.label}</th>)}
             <th>阶数</th>
           </tr>
@@ -90,9 +94,11 @@ function StatsSheet({ rows, sheetRef, drag }) {
 export default function StatsPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const [search, setSearch] = useState('')
   // 名单存到会话里：BOT 分享页的「表格设置」要读同一份顺序，不能只活在组件状态里
   const [selectedCodes, setSelectedCodes] = useState(() => loadStatsSelection())
+  // 署名：全局一份（本机浏览器），与存档、会话无关
+  const [credit, setCredit] = useState(() => loadStatsCredit())
+  const [editOpen, setEditOpen] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(false)
   const [tableCodeOpen, setTableCodeOpen] = useState(false)
   const [exporting, setExporting] = useState(false)
@@ -106,6 +112,10 @@ export default function StatsPage() {
     saveStatsSelection(selectedCodes)
   }, [selectedCodes])
 
+  useEffect(() => {
+    saveStatsCredit(credit)
+  }, [credit])
+
   // 待选：四件装备都已录入的档案；选中顺序即表格行顺序
   const candidates = useMemo(
     () => CHARACTERS
@@ -113,11 +123,7 @@ export default function StatsPage() {
       .filter(({ record }) => isFullyRecorded(record)),
     [],
   )
-
-  const filtered = useMemo(
-    () => (search.trim() ? candidates.filter(({ character }) => matchesSearch(character, search)) : candidates),
-    [candidates, search],
-  )
+  const candidateCharacters = useMemo(() => candidates.map(({ character }) => character), [candidates])
 
   const rows = useMemo(
     () => selectedCodes
@@ -224,6 +230,9 @@ export default function StatsPage() {
           <h1>词条统计</h1>
           <div className="desc">汇总已录入角色的装备词条累加值；可拖拽行排序、按属性排列，导出高清图片或给 BOT 的表格码</div>
         </div>
+        <button type="button" className="btn stats-edit-btn" onClick={() => setEditOpen(true)}>
+          编辑表格角色
+        </button>
         <div className="head-actions">
           <button type="button" className="btn" onClick={sortByElement} disabled={rows.length < 2}>按属性排列</button>
           <button type="button" className="btn" onClick={() => setPreviewOpen(true)} disabled={rows.length === 0}>放大预览</button>
@@ -234,70 +243,43 @@ export default function StatsPage() {
         </div>
       </div>
 
-      <div className="data-workspace">
-        <aside className="data-picker">
-          <label className="data-search">
-            <input
-              type="text"
-              value={search}
-              placeholder="搜索：中文 / 英文 / 资源号 / 拼音首字母"
-              onChange={(event) => setSearch(event.target.value)}
-            />
-            {search ? (
-              <button type="button" className="search-clear" onClick={() => setSearch('')} aria-label="清空搜索">×</button>
-            ) : null}
-          </label>
-          <div className="data-list">
-            {filtered.map(({ character }) => {
-              const active = selectedCodes.includes(character.nameCode)
-              return (
-                <button
-                  key={character.nameCode}
-                  type="button"
-                  className={active ? 'data-item active' : 'data-item'}
-                  onClick={() => toggleCharacter(character.nameCode)}
-                >
-                  {character.avatar
-                    ? <img src={assetUrl(character.avatar)} alt="" loading="lazy" decoding="async" />
-                    : <span className="data-avatar-ph" />}
-                  <span className="data-name">{character.nameCn}</span>
-                  <span className="data-element" style={{ color: elementColorOf(character.element) || undefined }}>
-                    {elementLabelOf(character.element)}
-                  </span>
-                  {active ? <i className="data-done" title="已选" /> : null}
-                </button>
-              )
-            })}
-            {filtered.length === 0 ? <p className="data-empty">没有可统计的角色（需四件装备均已录入）</p> : null}
-          </div>
-        </aside>
-
-        <section className="stats-main">
-          <div className="stats-head">
-            <span>
-              已选 <strong>{rows.length}</strong> 名 · 可统计 <strong>{candidates.length}</strong> 名（四件装备均已录入）
-            </span>
-            {rows.length > 0 ? (
-              <button type="button" className="btn btn-sm" onClick={() => setSelectedCodes([])}>清空</button>
-            ) : null}
-          </div>
-
+      <section className="stats-main">
+        <div className="stats-head">
+          <span>
+            已选 <strong>{rows.length}</strong> 名 · 可统计 <strong>{candidates.length}</strong> 名（四件装备均已录入）
+          </span>
           {rows.length > 0 ? (
-            <StatsSheet rows={rows} sheetRef={sheetRef} drag={drag} />
-          ) : (
-            <div className="empty">
-              <div className="t">从左侧选择角色</div>
-              <div>点击角色加入统计表，再点一次可移出；表格行可拖拽调整顺序</div>
-            </div>
-          )}
+            <button type="button" className="btn btn-sm" onClick={() => setSelectedCodes([])}>清空</button>
+          ) : null}
+        </div>
 
-          {message ? <p className="dlg-error">{message}</p> : null}
-        </section>
-      </div>
+        {rows.length > 0 ? (
+          <StatsSheet rows={rows} sheetRef={sheetRef} drag={drag} credit={credit} />
+        ) : (
+          <div className="empty">
+            <div className="t">暂无角色</div>
+            <div>可点击上方「编辑表格角色」进行编辑</div>
+          </div>
+        )}
+
+        {message ? <p className="dlg-error">{message}</p> : null}
+      </section>
 
       <CardPreviewDialog open={previewOpen} onClose={() => setPreviewOpen(false)} autoSize>
-        <StatsSheet rows={rows} />
+        <StatsSheet rows={rows} credit={credit} />
       </CardPreviewDialog>
+
+      {editOpen ? (
+        <EditTableDialog
+          characters={candidateCharacters}
+          selectedCodes={selectedCodes}
+          credit={credit}
+          onToggle={toggleCharacter}
+          onClear={() => setSelectedCodes([])}
+          onCreditChange={setCredit}
+          onClose={() => setEditOpen(false)}
+        />
+      ) : null}
 
       <ShareCodeDialog
         open={tableCodeOpen}

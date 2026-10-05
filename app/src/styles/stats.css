@@ -17,6 +17,9 @@
   display: grid;
   gap: 10px;
   min-width: 0;
+  /* 表格改自然宽度后可能比容器宽：滚动发生在这里，表格自身保持完整（导出的就是它） */
+  overflow-x: auto;
+  padding-bottom: 2px;
 }
 
 .stats-head {
@@ -33,7 +36,16 @@
 }
 
 .st-sheet {
-  overflow: auto;
+  /* 表格是"纸张"：夜间模式下也保持浅色原版（页面显示与导出图片完全一致）。
+     表格内部引用到主题变量的地方，在这里钉回浅色值（深色主题不影响这张表） */
+  --text: #1f2225;
+  --border: #e3e5e8;
+  --primary: #e8611c;
+
+  /* 自然紧凑宽度：列宽由内容决定（左栏撤掉后不再被容器拉散），导出图片也更紧凑 */
+  width: max-content;
+  /* 始终水平居中；表格比容器还宽时 auto margin 自动归零（退成左对齐，保证能滚到左边缘） */
+  margin: 0 auto;
   background: #fff;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -61,8 +73,25 @@
   font-family: 'NIKKE Text', 'Microsoft YaHei', sans-serif;
 }
 
-.st-corner {
-  width: 168px;
+/* 第一列（署名 + 角色名）：宽度按内容自适应——由角色名与署名里最长的那个决定，
+   不再固定预留 168px（署名短时左边不会空一大块） */
+.st-table th.st-corner {
+  white-space: normal;
+}
+
+.st-credit {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  /* 署名最多占原来那格的文字宽度（两行足够放下 20 字），超长折行后截断 */
+  max-width: 144px;
+  font-family: 'NIKKE Text', 'Microsoft YaHei', sans-serif;
+  font-weight: 900;
+  font-size: 13px;
+  line-height: 1.35;
+  color: #5b636e;
 }
 
 .st-row {
@@ -78,7 +107,7 @@
 }
 
 .st-name {
-  text-align: left;
+  text-align: center;
   font-family: 'NIKKE Text', 'Microsoft YaHei', sans-serif;
   font-weight: 900;
   font-size: 13px;
@@ -159,4 +188,155 @@
   font-size: 12.5px;
   line-height: 1.6;
   color: var(--text-2);
+}
+
+/* ---------- 「编辑表格角色」入口按钮 ---------- */
+
+/* 比常规按钮大一号、主色描边浅底：显眼，但不和右侧橙色实心的「导出图片」抢焦点 */
+.stats-edit-btn {
+  height: 36px;
+  padding: 0 18px;
+  border: 1px solid var(--primary-border);
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.stats-edit-btn:hover {
+  border-color: var(--primary);
+}
+
+/* ---------- 「编辑表格角色」弹窗 ---------- */
+
+/* 骨架与「角色一览」弹窗（profiles.css 的 .dlg-tall / .fr-*）同规格，
+   但自持一份：直接打开统计页时 profiles.css 不会加载，不能借用那些类 */
+.et-dialog {
+  display: flex;
+  flex-direction: column;
+  width: min(920px, calc(100vw - 32px));
+  max-height: min(82vh, 780px);
+}
+
+.et-credit {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.et-credit .dlg-label {
+  flex: none;
+}
+
+.et-credit-input {
+  flex: none;
+  width: 260px;
+}
+
+.et-credit-hint {
+  color: var(--text-3);
+  font-size: 11px;
+}
+
+.et-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.et-toolbar .spacer {
+  margin-left: auto;
+}
+
+/* 「查看已选择」开着时的样子：主色系轻提示，不喧宾夺主 */
+.et-only.is-on {
+  border-color: var(--primary-border);
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+}
+
+.et-body {
+  flex: 1 1 auto;
+  overflow: auto;
+  padding: 14px;
+}
+
+/* 选择网格：固定 76px 小头像（比「我的妮姬」默认档更小），一行能看更多人 */
+.et-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+  gap: 14px 10px;
+}
+
+/* 网格项是 button（点击选中），把浏览器默认样式抹掉，外观沿用 .tile */
+.et-tile {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+
+.et-tile.is-selected .thumb {
+  border-color: var(--primary);
+}
+
+/* 行序徽标：右上角数字 = 表格里的行号（与时间顺序一致） */
+.et-order {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--primary);
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.85);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 18px;
+  text-align: center;
+}
+
+.et-foot {
+  align-items: center;
+}
+
+.et-foot-note {
+  margin-right: auto;
+  color: var(--text-3);
+  font-size: 12px;
+}
+
+/* ---------- 窄屏：手机（≤768px）---------- */
+
+@media (max-width: 768px) {
+  /* 计数行（已选 N 名 · 清空）放不下时换行 */
+  .stats-head {
+    flex-wrap: wrap;
+  }
+
+  /* 编辑表格角色弹窗：贴边 + dvh */
+  .et-dialog {
+    width: calc(100vw - 16px);
+    max-height: calc(100dvh - 32px);
+  }
+
+  /* 署名输入行：说明文字放不下时换行 */
+  .et-credit {
+    flex-wrap: wrap;
+  }
+
+  .et-credit .dlg-label {
+    flex: 0 0 auto;
+  }
 }

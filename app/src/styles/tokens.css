@@ -30,6 +30,24 @@
   --danger: #d24a43;
   /* 越界输入框的聚焦光圈（与 --primary-soft 同一手法，只是换成警示色） */
   --danger-soft: rgba(210, 74, 67, 0.1);
+  --danger-strong: #b83f39;
+
+  /* 控件 hover 边框（比 --border-strong 再深一档，用于按钮/开关等可点元素） */
+  --border-hover: #c3c8cd;
+  /* 开关关闭态的轨道灰 */
+  --switch-track: #cfd4d9;
+
+  /* 遮罩（弹窗/抽屉是全遮罩，拖放提示层是轻遮罩） */
+  --overlay: rgba(20, 24, 28, 0.38);
+  --overlay-soft: rgba(20, 24, 28, 0.28);
+
+  /* 黑底提示条（导入结果 / 同步器提示） */
+  --toast-bg: #242424;
+  --toast-text: #f2f3f5;
+  --toast-hover: rgba(255, 255, 255, 0.14);
+
+  /* 卡片舞台的细点阵底纹 */
+  --dot-grid: rgba(140, 150, 160, 0.12);
 
   /* 圆角分级：容器中、控件中小、标签略圆 */
   --radius-lg: 10px;
@@ -47,4 +65,50 @@
 
   /* 列表头像尺寸（由缩放控件切换） */
   --tile-size: 92px;
+}
+
+/* ---------- 深色主题（夜间模式）----------
+   同一套变量换一组值；由 html[data-theme="dark"] 切换，首屏前在 index.html 内联脚本里应用。
+   方向：深灰工具感（不做纯黑）；层级靠"背景三档 + 细边框"，阴影让位于边框。 */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: #1b1d20;
+  --bg-2: #232529;
+  --bg-3: #2b2e32;
+  --bg-hover: #2a2d31;
+
+  --border: #33363b;
+  --border-strong: #42464c;
+
+  --text: #e6e8ea;
+  --text-2: #a0a6ad;
+  --text-3: #737a82;
+
+  /* 主色橙在深底上提亮一档，hover 再亮一点（浅色下是"加深"，深色下反过来） */
+  --primary: #f2702a;
+  --primary-strong: #ff8343;
+  --primary-soft: rgba(242, 112, 42, 0.14);
+  --primary-border: rgba(242, 112, 42, 0.42);
+
+  --success: #3fb47f;
+  --warning: #d3982f;
+  --danger: #e06058;
+  --danger-soft: rgba(224, 96, 88, 0.14);
+  --danger-strong: #c94f48;
+
+  --border-hover: #4a4f55;
+  --switch-track: #4a4e54;
+
+  --overlay: rgba(0, 0, 0, 0.55);
+  --overlay-soft: rgba(0, 0, 0, 0.45);
+
+  /* 深色里 #242424 贴着背景看不见，提示条改用比面板亮一档的灰 */
+  --toast-bg: #3a3e44;
+  --toast-text: #e6e8ea;
+  --toast-hover: rgba(255, 255, 255, 0.12);
+
+  --dot-grid: rgba(150, 160, 170, 0.16);
+
+  --shadow-pop: 0 10px 26px rgba(0, 0, 0, 0.5);
 }

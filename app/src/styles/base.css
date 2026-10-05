@@ -123,6 +123,27 @@ input {
   font-size: 12px;
 }
 
+/* 外观切换（浅色 / 深色）：一个图标按钮，不占地方 */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background-color var(--dur), color var(--dur);
+}
+
+.theme-toggle:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
 /* ---------- 页面骨架 ---------- */
 
 .page {
@@ -272,7 +293,7 @@ input {
 }
 
 .fgroup-btn:hover {
-  border-color: #c3c8cd;
+  border-color: var(--border-hover);
   color: var(--text);
 }
 
@@ -382,7 +403,7 @@ input {
 }
 
 .switch:hover {
-  border-color: #c3c8cd;
+  border-color: var(--border-hover);
   color: var(--text);
 }
 
@@ -391,7 +412,7 @@ input {
   width: 26px;
   height: 15px;
   border-radius: var(--radius-pill);
-  background: #cfd4d9;
+  background: var(--switch-track);
   transition: background var(--dur);
 }
 
@@ -712,27 +733,6 @@ input {
   line-height: 1.7;
 }
 
-/* ---------- 窄屏（桌面优先，仅保证不崩） ---------- */
-
-@media (max-width: 720px) {
-  .topbar-inner {
-    padding: 0 12px;
-    gap: 14px;
-  }
-
-  .page {
-    padding: 14px 12px 32px;
-  }
-
-  .search {
-    flex: 1 1 100%;
-  }
-
-  .toolbar .spacer {
-    display: none;
-  }
-}
-
 /* ---------- 角色页：卡片工作区 ---------- */
 
 .head-actions {
@@ -757,13 +757,14 @@ input {
 
 .stage {
   display: grid;
-  place-items: center;
-  /* safe center：卡片大于预览区时从左上开始显示，可在预览区内滚动查看（不裁切） */
-  place-items: safe center;
+  /* 顶部起始 + 水平居中：自动档按"首屏可视"缩放后，卡片顶部与预览区对齐、整卡在首屏可见；
+     卡片高于预览区时（手动大档）也从头开始，滚动查看完整内容（不裁切） */
+  align-items: start;
+  justify-items: center;
   min-height: 560px;
   flex: 1;
   background:
-    radial-gradient(circle, rgba(140, 150, 160, 0.12) 0 0.5px, transparent 0.7px) 0 0 / 10px 10px,
+    radial-gradient(circle, var(--dot-grid) 0 0.5px, transparent 0.7px) 0 0 / 10px 10px,
     var(--bg-3);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -815,13 +816,13 @@ input {
 }
 
 .hint-zoom button:hover {
-  border-color: #c3c8cd;
+  border-color: var(--border-hover);
   color: var(--text);
 }
 
 .hint-zoom button.active {
   background: var(--bg);
-  border-color: #c3c8cd;
+  border-color: var(--border-hover);
   color: var(--text);
 }
 
@@ -905,7 +906,7 @@ input {
 }
 
 .btn:hover {
-  border-color: #c3c8cd;
+  border-color: var(--border-hover);
 }
 
 .btn-primary {
@@ -1138,7 +1139,7 @@ input {
   z-index: 60;
   display: grid;
   place-items: center;
-  background: rgba(20, 24, 28, 0.38);
+  background: var(--overlay);
 }
 
 .dlg {
@@ -1225,23 +1226,6 @@ input {
   gap: 8px;
   padding: 12px 14px;
   border-top: 1px solid var(--border);
-}
-
-@media (max-width: 1040px) {
-  .workspace {
-    grid-template-columns: 1fr;
-  }
-
-  .config {
-    position: static;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  }
-
-  .stage {
-    height: auto;
-    min-height: 520px;
-    padding: 16px 0;
-  }
 }
 
 /* 已录入数据的标记（列表头像右上角小圆点） */
@@ -1432,8 +1416,8 @@ input {
   gap: 12px;
 }
 
-/* 窄屏（视口 < 720px）退化为单列 4 行 */
-@media (max-width: 720px) {
+/* 窄屏（视口 < 768px）退化为单列 4 行 */
+@media (max-width: 768px) {
   .equip-grid {
     grid-template-columns: 1fr;
   }
@@ -1476,7 +1460,7 @@ input {
 }
 
 .mini:hover:not(:disabled) {
-  border-color: #c3c8cd;
+  border-color: var(--border-hover);
   color: var(--text);
 }
 
@@ -1507,7 +1491,7 @@ input {
 }
 
 .mini-btn:hover {
-  border-color: #c3c8cd;
+  border-color: var(--border-hover);
   color: var(--text);
 }
 
@@ -1641,4 +1625,267 @@ input {
   margin: 2px 0 0;
   color: var(--text-3);
   font-size: 11px;
+}
+
+/* ---------- 顶部导航：手机抽屉（桌面完全不显示，具体样式在下方窄屏区） ---------- */
+
+.nav-burger {
+  display: none;
+}
+
+.nav-drawer-mask {
+  display: none;
+}
+
+@keyframes nav-drawer-in {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes nav-mask-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* ========== 窄屏适配 ==========
+   统一放文件末尾，保证能覆盖上面所有基础规则（同优先级下后出现的生效）；
+   桌面优先：只加窄屏规则，≥1280 的观感保持不变 */
+
+/* ---------- 平板 / 窄桌面（≤1024px）---------- */
+
+@media (max-width: 1024px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .config {
+    position: static;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+
+  .stage {
+    height: auto;
+    min-height: 520px;
+    padding: 16px 0;
+  }
+
+  /* 数据录入：左侧角色选择器改上下排列，选择器保持内部滚动（角色多时不推远编辑区） */
+  .data-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .data-picker {
+    position: static;
+    max-height: 320px;
+  }
+}
+
+/* ---------- 手机（≤768px）---------- */
+
+@media (max-width: 768px) {
+  /* 顶部导航：文字 Tab 收进左侧抽屉，「亖」按钮打开；右侧存档/版本也移进抽屉 */
+  .topbar-inner {
+    padding: 0 12px;
+    gap: 12px;
+  }
+
+  .nav-burger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: var(--radius-sm);
+    color: var(--text-2);
+    cursor: pointer;
+    transition: background-color var(--dur), color var(--dur);
+  }
+
+  .nav-burger:hover {
+    background: var(--bg-hover);
+    color: var(--text);
+  }
+
+  .tabs {
+    display: none;
+  }
+
+  .topbar-right {
+    display: none;
+  }
+
+  /* 抽屉：从左侧滑出，遮罩轻压暗；动作幅度小、时长 140ms（与全站动效一致） */
+  .nav-drawer-mask {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: var(--overlay);
+    animation: nav-mask-in var(--dur) ease-out;
+  }
+
+  .nav-drawer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    width: min(272px, 82vw);
+    background: var(--bg-2);
+    border-right: 1px solid var(--border-strong);
+    box-shadow: var(--shadow-pop);
+    animation: nav-drawer-in var(--dur) ease-out;
+  }
+
+  .nav-drawer-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 48px;
+    padding: 0 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+  }
+
+  .nav-drawer-head .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
+    background: var(--primary);
+  }
+
+  .nav-drawer-tabs {
+    display: grid;
+    gap: 2px;
+    padding: 10px;
+  }
+
+  .nav-drawer-tab {
+    display: flex;
+    align-items: center;
+    height: 42px;
+    padding: 0 12px;
+    border-radius: var(--radius-md);
+    color: var(--text-2);
+    font-size: 14px;
+    text-decoration: none;
+    transition: color var(--dur), background-color var(--dur);
+  }
+
+  .nav-drawer-tab:hover {
+    background: var(--bg-hover);
+    color: var(--text);
+  }
+
+  .nav-drawer-tab.active {
+    background: var(--bg-3);
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .nav-drawer-foot {
+    margin-top: auto;
+    display: grid;
+    gap: 6px;
+    padding: 12px 14px calc(12px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--border);
+  }
+
+  .nav-drawer-profile {
+    overflow: hidden;
+    color: var(--text-2);
+    font-size: 12.5px;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .nav-drawer-profile strong {
+    color: var(--text);
+  }
+
+  .nav-drawer-version {
+    color: var(--text-3);
+    font-size: 11.5px;
+  }
+
+  /* 抽屉底部的外观切换行 */
+  .nav-drawer-theme {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 10px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-2);
+    font-size: 12.5px;
+    cursor: pointer;
+    transition: border-color var(--dur), color var(--dur);
+  }
+
+  .nav-drawer-theme:hover {
+    border-color: var(--border-hover);
+    color: var(--text);
+  }
+
+  .page {
+    padding: 14px 12px 32px;
+  }
+
+  .search {
+    flex: 1 1 100%;
+  }
+
+  .toolbar .spacer {
+    display: none;
+  }
+
+  /* 页头与按钮行：容器允许换行、按钮自身不折字（保证按钮内文字不越界） */
+  .page-head {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .head-actions {
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    white-space: nowrap;
+  }
+
+  .dlg-foot {
+    flex-wrap: wrap;
+  }
+
+  /* 弹窗贴边；高度用 dvh（手机地址栏伸缩时 vh 会算错） */
+  .dlg,
+  .dlg-wide {
+    width: calc(100vw - 16px);
+  }
+
+  .pv-box {
+    width: calc(100vw - 16px);
+    height: calc(100dvh - 24px);
+  }
 }

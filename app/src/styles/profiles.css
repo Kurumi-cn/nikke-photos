@@ -33,8 +33,8 @@
   z-index: 80;
   transform: translateX(-50%);
   padding: 8px 14px;
-  background: #242424;
-  color: #f2f3f5;
+  background: var(--toast-bg);
+  color: var(--toast-text);
   font-size: 12.5px;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-pop);
@@ -373,8 +373,8 @@
 }
 
 .btn-danger:hover {
-  background: #b83f39;
-  border-color: #b83f39;
+  background: var(--danger-strong);
+  border-color: var(--danger-strong);
 }
 
 /* ---------- 导入档案弹窗 ---------- */
@@ -504,7 +504,7 @@
 
 .link-btn {
   padding: 0;
-  color: var(--accent, #e8611c);
+  color: var(--accent, var(--primary));
   font-size: 11.5px;
   background: none;
   border: none;
@@ -582,4 +582,30 @@
   color: var(--text-2);
   font-size: 12px;
   cursor: pointer;
+}
+
+/* ---------- 窄屏：手机（≤768px）---------- */
+
+@media (max-width: 768px) {
+  /* 存档行：信息在上、操作按钮行在下（横向排不下） */
+  .profile-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .profile-actions {
+    flex-wrap: wrap;
+  }
+
+  /* 角色一览弹窗：贴边 + dvh */
+  .dlg-tall {
+    width: calc(100vw - 16px);
+    max-height: calc(100dvh - 32px);
+  }
+
+  /* 分享码页脚行（字符数 + 复制按钮）放不下时换行 */
+  .share-meta {
+    flex-wrap: wrap;
+  }
 }

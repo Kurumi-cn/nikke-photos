@@ -80,6 +80,9 @@
   justify-items: center;
   grid-template-rows: 64px 20px;
   filter: drop-shadow(0 2px 1px rgb(34 29 40 / 18%));
+  /* 与 BOT 出图规格对齐（BOT 的 _FAVORITE_SCALE=1.25）：整块等比放大，锚点仍是左上角 */
+  transform: scale(1.25);
+  transform-origin: top left;
 }
 
 .np-favorite-mascot {
@@ -141,9 +144,10 @@
 .np-favorite.is-sr .np-favorite-stars { background: #9447c9; }
 .np-favorite.is-ssr .np-favorite-stars { background: #ec8a32; }
 
-/* 有珍藏品时魔方下移到其下方（缩小品块高 104px + 8px 间距），形成同一条左竖轴 */
+/* 有珍藏品时魔方下移到其下方（品块高与间距按珍藏品放大倍数 1.25 一并折算：
+   20(顶) + (64+20+8)×1.25 = 135），与 BOT 出图的折算公式一致 */
 .np-card.has-favorite .np-cube {
-  top: 112px;
+  top: 135px;
 }
 
 /* ---------- 右侧身份信息区 ---------- */
@@ -481,6 +485,9 @@
   display: grid;
   gap: 8px;
   justify-items: start;
+  /* 与 BOT 出图规格对齐（BOT 的 _SKILL_SCALE=1.5）：整组等比放大，底边锚定不动 */
+  transform: scale(1.5);
+  transform-origin: bottom left;
 }
 
 .np-standard-skills {
@@ -560,6 +567,9 @@
   height: 64px;
   place-items: center;
   color: #34383c;
+  /* 与 BOT 出图规格对齐（BOT 的 _CUBE_SCALE=1.5）：整块等比放大，锚点左上角 */
+  transform: scale(1.5);
+  transform-origin: top left;
 }
 
 .np-cube-art {

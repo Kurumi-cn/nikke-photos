@@ -120,17 +120,31 @@ export default function CharacterPage() {
     if (latest?.dirty && Object.keys(latest.profile || {}).length) saveRecord(latest.code, latest.profile)
   }, [])
 
-  // 预览自适应缩放（导出对象本身不缩放）；stage 与右侧配置栏等高，卡片随之对齐放大
+  // 预览自适应缩放（导出对象本身不缩放）
+  // 自动档 = 适配「首屏可视」：卡片不高于 stage 顶部到视口底之间的剩余高度，
+  // 打开页面整张卡一屏可见、不用滚（此前只看容器，容器与右栏等高，
+  // 配置项一多就把卡放大到屏幕外）。手动 60/80/100 档仍按容器缩放、页面滚动看细节
   useEffect(() => {
     const stage = stageRef.current
     if (!stage) return undefined
     const update = () => {
-      setFitScale(Math.min(1, stage.clientWidth / CARD_WIDTH, stage.clientHeight / CARD_HEIGHT))
+      const room = Math.max(240, window.innerHeight - stage.getBoundingClientRect().top - 20)
+      setFitScale(Math.min(
+        1,
+        stage.clientWidth / CARD_WIDTH,
+        stage.clientHeight / CARD_HEIGHT,
+        room / CARD_HEIGHT,
+      ))
     }
     update()
     const observer = new ResizeObserver(update)
     observer.observe(stage)
-    return () => observer.disconnect()
+    // 视口高度变化不一定会改变 stage 尺寸（它跟着右栏长度走），要单独听 window
+    window.addEventListener('resize', update)
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', update)
+    }
   }, [character])
 
   // 手动档位取真实值（如 100% 即原尺寸）；预览区放不下时可在其中滚动查看，不做缩小或裁切
