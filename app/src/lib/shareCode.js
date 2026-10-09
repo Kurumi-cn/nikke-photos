@@ -56,6 +56,7 @@
 //   掩码里没开的字段，BOT 端按 SHARE_DEFAULTS 填默认值（App 侧也会提示用户）。
 import { AFFIX_TIER_VALUES } from '../data/affixTiers.js'
 import { FIELD_RANGES } from './fieldRanges.js'
+import { t, tData } from './i18n.js'
 import { DEFAULT_SYNCHRO_LEVEL, RESEARCH_CLASSES, RESEARCH_CORPORATIONS } from './profileStore.js'
 
 /** 单次分享的角色上限（协议侧写死，UI 与校验共用） */
@@ -95,16 +96,19 @@ export const FAVORITE_TYPE_R = 1
 export const FAVORITE_TYPE_SR = 2
 const FAVORITE_TYPE_BASE = 3
 
-/** 可导出字段：数组顺序即掩码位序，也是界面上勾选项的顺序 */
+/** 可导出字段：数组顺序即掩码位序，也是界面上勾选项的顺序
+ *  label 用 getter：繁体模式下取到字形映射后的名词（读取时才求值，别把语言钉死在模块加载时） */
+const shareField = (key, bit, label, extra = {}) => ({ key, bit, get label() { return tData(label) }, ...extra })
+
 export const SHARE_FIELDS = [
-  { key: 'equip', bit: 0, label: '装备词条', locked: true },
-  { key: 'research', bit: 1, label: '研究等级' },
-  { key: 'skills', bit: 2, label: '技能等级' },
-  { key: 'cube', bit: 3, label: '魔方' },
-  { key: 'favorite', bit: 4, label: '收藏品' },
-  { key: 'limitBreak', bit: 5, label: '星级 / 突破' },
-  { key: 'affection', bit: 6, label: '好感度' },
-  { key: 'combat', bit: 7, label: '战斗力' },
+  shareField('equip', 0, '装备词条', { locked: true }),
+  shareField('research', 1, '研究等级'),
+  shareField('skills', 2, '技能等级'),
+  shareField('cube', 3, '魔方'),
+  shareField('favorite', 4, '收藏品'),
+  shareField('limitBreak', 5, '星级 / 突破'),
+  shareField('affection', 6, '好感度'),
+  shareField('combat', 7, '战斗力'),
 ]
 export const ALL_SHARE_FIELDS = SHARE_FIELDS.map((field) => field.key)
 /** 默认只勾装备词条 */
@@ -233,7 +237,7 @@ class BitReader {
     let value = 0
     for (let i = 0; i < width; i++) {
       const byte = this.bytes[this.pos >> 3]
-      if (byte === undefined) throw new Error('分享码内容不完整')
+      if (byte === undefined) throw new Error(t('分享码内容不完整'))
       value = (value << 1) | ((byte >> (7 - (this.pos & 7))) & 1)
       this.pos++
     }
@@ -288,12 +292,12 @@ function seal(bw) {
 /** 拆码、验 CRC，返回去掉 CRC 的字节流 */
 function open(text) {
   const matched = CODE_RE.exec(String(text || '').trim())
-  if (!matched) throw new Error('分享码格式不正确')
+  if (!matched) throw new Error(t('分享码格式不正确'))
   const payload = b64urlToBytes(matched[1])
-  if (payload.length < 8) throw new Error('分享码内容不完整')
+  if (payload.length < 8) throw new Error(t('分享码内容不完整'))
   const body = payload.subarray(0, payload.length - 4)
   const view = new DataView(payload.buffer, payload.byteOffset + body.length, 4)
-  if (crc32(body) !== view.getUint32(0, false)) throw new Error('分享码已损坏，请重新复制')
+  if (crc32(body) !== view.getUint32(0, false)) throw new Error(t('分享码已损坏，请重新复制'))
   return body
 }
 
@@ -448,7 +452,7 @@ function readHeader(br) {
   const version = br.read(16)
   if (version !== SHARE_VERSION) {
     const text = `${Math.floor(version / 100)}.${version % 100}`
-    throw new Error(`分享码版本 ${text} 与当前版本 ${SHARE_VERSION_TEXT} 不一致，请到网页端重新导出`)
+    throw new Error(t('分享码版本 {text} 与当前版本 {version} 不一致，请到网页端重新导出', { text, version: SHARE_VERSION_TEXT }))
   }
   return { version, payloadType: br.read(8), count: br.read(8) }
 }
@@ -459,8 +463,8 @@ function readHeader(br) {
  */
 export function encodeShareCode({ synchroLevel, research, characters, fields }) {
   const list = Array.isArray(characters) ? characters : []
-  if (list.length === 0) throw new Error('至少选择一个角色')
-  if (list.length > SHARE_MAX_COUNT) throw new Error(`一次最多分享 ${SHARE_MAX_COUNT} 个角色`)
+  if (list.length === 0) throw new Error(t('至少选择一个角色'))
+  if (list.length > SHARE_MAX_COUNT) throw new Error(t('一次最多分享 {count} 个角色', { count: SHARE_MAX_COUNT }))
   const selected = Array.isArray(fields) && fields.length > 0 ? fields : ALL_SHARE_FIELDS
   const has = (key) => selected.includes(key)
 
@@ -485,8 +489,8 @@ export function encodeShareCode({ synchroLevel, research, characters, fields }) 
  */
 export function encodeTableShareCode({ nameCodes }) {
   const list = (Array.isArray(nameCodes) ? nameCodes : []).map((code) => String(code))
-  if (list.length === 0) throw new Error('表格里至少放一个角色')
-  if (list.length > TABLE_MAX_COUNT) throw new Error(`表格最多分享 ${TABLE_MAX_COUNT} 个角色`)
+  if (list.length === 0) throw new Error(t('表格里至少放一个角色'))
+  if (list.length > TABLE_MAX_COUNT) throw new Error(t('表格最多分享 {count} 个角色', { count: TABLE_MAX_COUNT }))
 
   const bw = new BitWriter()
   bw.write(SHARE_VERSION, 16)

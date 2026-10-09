@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { labelFor } from '../lib/roster.js'
+import { t } from '../lib/i18n.js'
 import {
   NAME_MAX,
   REMARK_MAX,
@@ -75,18 +76,18 @@ export default function ProfileDialog({ mode = 'create', initial, onClose, onSub
   const submit = () => {
     const trimmed = name.trim()
     if (!trimmed) {
-      setError('请输入存档名称（不能为空白）')
+      setError(t('请输入存档名称（不能为空白）'))
       nameRef.current?.focus()
       return
     }
     const value = Number(level)
     if (!Number.isInteger(value) || value < SYNCHRO_MIN || value > SYNCHRO_MAX) {
-      setError(`同步器等级需为 ${SYNCHRO_MIN}–${SYNCHRO_MAX} 的整数`)
+      setError(t('同步器等级需为 {min}–{max} 的整数', { min: SYNCHRO_MIN, max: SYNCHRO_MAX }))
       return
     }
     const researchTable = collectResearch()
     if (!researchTable) {
-      setError(`研究等级需为 ${RESEARCH_MIN}–${RESEARCH_MAX} 的整数，不能留空`)
+      setError(t('研究等级需为 {min}–{max} 的整数，不能留空', { min: RESEARCH_MIN, max: RESEARCH_MAX }))
       return
     }
     onSubmit({ name: trimmed, synchroLevel: value, research: researchTable, remark })
@@ -99,21 +100,21 @@ export default function ProfileDialog({ mode = 'create', initial, onClose, onSub
         if (event.target === event.currentTarget) onClose()
       }}
     >
-      <div className="dlg" role="dialog" aria-label={mode === 'create' ? '新建存档' : '编辑存档'}>
+      <div className="dlg" role="dialog" aria-label={mode === 'create' ? t('新建存档') : t('编辑存档')}>
         <div className="dlg-head">
-          <h2>{mode === 'create' ? '新建存档' : '编辑存档'}</h2>
-          <button type="button" className="dlg-x" onClick={onClose} aria-label="关闭">×</button>
+          <h2>{mode === 'create' ? t('新建存档') : t('编辑存档')}</h2>
+          <button type="button" className="dlg-x" onClick={onClose} aria-label={t('关闭')}>×</button>
         </div>
 
         <div className="dlg-body dlg-body-scroll">
           <div className="dlg-row">
-            <span className="dlg-label">名称</span>
+            <span className="dlg-label">{t('名称')}</span>
             <input
               ref={nameRef}
               className="dlg-input"
               value={name}
               maxLength={NAME_MAX}
-              placeholder="例如：主号"
+              placeholder={t('例如：主号')}
               onChange={(event) => setName(event.target.value)}
               onKeyDown={(event) => {
                 if (event.key === 'Enter') submit()
@@ -122,24 +123,24 @@ export default function ProfileDialog({ mode = 'create', initial, onClose, onSub
           </div>
 
           <div className="dlg-row">
-            <span className="dlg-label">同步器等级</span>
+            <span className="dlg-label">{t('同步器等级')}</span>
             <input
               className="dlg-input dlg-input-sm"
               type="number"
               min={SYNCHRO_MIN}
               max={SYNCHRO_MAX}
               value={level}
-              placeholder={`${SYNCHRO_MIN}-${SYNCHRO_MAX}，必填`}
+              placeholder={t('{min}-{max}，必填', { min: SYNCHRO_MIN, max: SYNCHRO_MAX })}
               onChange={(event) => setLevel(event.target.value)}
               onKeyDown={(event) => {
                 if (event.key === 'Enter') submit()
               }}
             />
-            <span className="dlg-hint">全体妮姬共用</span>
+            <span className="dlg-hint">{t('全体妮姬共用')}</span>
           </div>
 
           <div className="dlg-block">
-            <div className="dlg-block-head">研究所等级</div>
+            <div className="dlg-block-head">{t('研究所等级')}</div>
             <div className="research-row">
               {['Attacker', 'Defender', 'Supporter'].map((key) => (
                 <label className="research-cell" key={key}>
@@ -172,17 +173,17 @@ export default function ProfileDialog({ mode = 'create', initial, onClose, onSub
                 ))}
               </div>
             ))}
-            <p className="research-note">嫌麻烦的话研究等级随便填写就行</p>
+            <p className="research-note">{t('嫌麻烦的话研究等级随便填写就行')}</p>
           </div>
 
           <div className="dlg-row dlg-row-top">
-            <span className="dlg-label">备注</span>
+            <span className="dlg-label">{t('备注')}</span>
             <textarea
               className="dlg-input dlg-textarea"
               rows={3}
               maxLength={REMARK_MAX}
               value={remark}
-              placeholder={`选填，最多 ${REMARK_MAX} 字`}
+              placeholder={t('选填，最多 {max} 字', { max: REMARK_MAX })}
               onChange={(event) => setRemark(event.target.value)}
             />
           </div>
@@ -191,9 +192,9 @@ export default function ProfileDialog({ mode = 'create', initial, onClose, onSub
         </div>
 
         <div className="dlg-foot">
-          <button type="button" className="btn" onClick={onClose}>取消</button>
+          <button type="button" className="btn" onClick={onClose}>{t('取消')}</button>
           <button type="button" className="btn btn-primary" onClick={submit}>
-            {mode === 'create' ? '创建' : '保存'}
+            {mode === 'create' ? t('创建') : t('保存')}
           </button>
         </div>
       </div>

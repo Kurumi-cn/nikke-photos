@@ -4,6 +4,7 @@ import FilterBar from '../components/FilterBar.jsx'
 import { CHARACTERS, applyFilters, countActiveFilters } from '../lib/roster.js'
 import { ZOOM_PRESETS, loadGridZoom, saveGridZoom } from '../lib/gridZoom.js'
 import { recordedCodes } from '../lib/profileStore.js'
+import { t } from '../lib/i18n.js'
 
 const NO_SELECTION = {}
 const DEFAULT_TOGGLES = { cnPublished: false, collectible: false, overSpec: false }
@@ -77,12 +78,12 @@ export default function CharacterListPage() {
     <main className="page">
       <div className="page-head">
         <div>
-          <h1>角色列表</h1>
-          <div className="desc">点击角色进入角色详情：调整卡片并导出图片；数据录入见顶部「数据录入」页</div>
+          <h1>{t('角色列表')}</h1>
+          <div className="desc">{t('点击角色进入角色详情：调整卡片并导出图片；数据录入见顶部「数据录入」页')}</div>
         </div>
         <div className="count">
-          匹配 <strong>{filtered.length}</strong> / {CHARACTERS.length} 名
-          {activeCount > 0 && ` · 已筛选 ${activeCount} 项`}
+          {t('匹配')} <strong>{filtered.length}</strong> / {CHARACTERS.length} {t('名')}
+          {activeCount > 0 && ` · ${t('已筛选 {count} 项', { count: activeCount })}`}
         </div>
       </div>
 
@@ -97,11 +98,11 @@ export default function CharacterListPage() {
           <input
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="搜索：中文名 / 英文名 / 资源号 / 拼音首字母"
+            placeholder={t('搜索：中文名 / 英文名 / 资源号 / 拼音首字母')}
             spellCheck={false}
           />
           {search ? (
-            <button type="button" className="search-clear" onClick={() => setSearch('')} aria-label="清空搜索">×</button>
+            <button type="button" className="search-clear" onClick={() => setSearch('')} aria-label={t('清空搜索')}>×</button>
           ) : null}
         </label>
 
@@ -116,9 +117,9 @@ export default function CharacterListPage() {
 
         <span className="spacer" />
 
-        <span className="archive-count">已录入 <strong>{recorded.size}</strong> 名</span>
+        <span className="archive-count">{t('已录入')} <strong>{recorded.size}</strong> {t('名')}</span>
 
-        <div className="zoom" role="group" aria-label="列表缩放">
+        <div className="zoom" role="group" aria-label={t('列表缩放')}>
           {ZOOM_PRESETS.map((item) => (
             <button
               key={item.key}
@@ -126,7 +127,7 @@ export default function CharacterListPage() {
               className={item.key === zoom ? 'active' : ''}
               onClick={() => setZoom(item.key)}
             >
-              {item.label}
+              {t(item.label)}
             </button>
           ))}
         </div>
@@ -136,8 +137,8 @@ export default function CharacterListPage() {
         <CharacterGrid characters={filtered} tileSize={zoomPreset.size} recordedCodes={recorded} />
       ) : (
         <div className="empty">
-          <div className="t">没有匹配的角色</div>
-          <div>换个关键词，或调整筛选条件</div>
+          <div className="t">{t('没有匹配的角色')}</div>
+          <div>{t('换个关键词，或调整筛选条件')}</div>
         </div>
       )}
     </main>

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useReducer, useState } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import AccountImportDialog from './components/AccountImportDialog.jsx'
 import BackToTop from './components/BackToTop.jsx'
@@ -17,6 +17,7 @@ import ProfilesPage from './pages/ProfilesPage.jsx'
 import SchemesPage from './pages/SchemesPage.jsx'
 import StatsPage from './pages/StatsPage.jsx'
 import { IMPORT_KIND } from './lib/importSniff.js'
+import { applyLocale, currentLocale, subscribeLocale, t } from './lib/i18n.js'
 import { shouldShowUpdateNotice } from './lib/updateNotice.js'
 
 /** 拖放导入统一落到这一页：它订阅了存档变更，导入完列表会立刻刷新 */
@@ -30,6 +31,13 @@ export default function App() {
   /** 拖放进来的文件识别结果；非空时按 kind 弹对应的确认框 */
   const [dropped, setDropped] = useState(null)
   const [notice, setNotice] = useState('')
+
+  // 语言：与首屏内联脚本对齐一次；切换时整棵树重渲染（文案在渲染期取 t()，不另存状态）
+  const [, refreshLocale] = useReducer((count) => count + 1, 0)
+  useEffect(() => {
+    applyLocale(currentLocale())
+    return subscribeLocale(() => refreshLocale())
+  }, [])
 
   const handleSniffed = useCallback((sniffed) => {
     setNotice('')
@@ -88,7 +96,7 @@ export default function App() {
       {notice ? (
         <div className="drop-toast" role="status">
           <span>{notice}</span>
-          <button type="button" onClick={() => setNotice('')} aria-label="关闭">×</button>
+          <button type="button" onClick={() => setNotice('')} aria-label={t('关闭')}>×</button>
         </div>
       ) : null}
 

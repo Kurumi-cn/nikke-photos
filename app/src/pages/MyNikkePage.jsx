@@ -6,6 +6,7 @@ import { CHARACTERS, TAXONOMY, applyFilters, assetUrl, countActiveFilters } from
 import { ELEMENT_ORDER, elementColorOf, elementLabelOf } from '../lib/statsModel.js'
 import { fullyRecordedCodes, getCurrentProfile, getCurrentProfileId, subscribeProfiles } from '../lib/profileStore.js'
 import { ZOOM_PRESETS, loadGridZoom, saveGridZoom } from '../lib/gridZoom.js'
+import { t, tData } from '../lib/i18n.js'
 import '../styles/myNikke.css'
 
 const NO_SELECTION = {}
@@ -134,22 +135,22 @@ export default function MyNikkePage() {
     <main className="page">
       <div className="page-head">
         <div>
-          <h1>我的妮姬</h1>
-          <div className="desc">「{profile.name}」中四件装备已录入完整的角色，点击头像进入角色详情</div>
+          <h1>{t('我的妮姬')}</h1>
+          <div className="desc">{t('「{name}」中四件装备已录入完整的角色，点击头像进入角色详情', { name: profile.name })}</div>
         </div>
         <div className="count">
-          已完善 <strong>{completed.length}</strong> 名
-          {activeCount > 0 && ` · 匹配 ${filtered.length}`}
+          {t('已完善')} <strong>{completed.length}</strong> {t('名')}
+          {activeCount > 0 && ` · ${t('匹配 {count}', { count: filtered.length })}`}
         </div>
       </div>
 
       {completed.length === 0 ? (
         <div className="empty mn-empty">
-          <div className="t">当前还没有已完善的角色</div>
+          <div className="t">{t('当前还没有已完善的角色')}</div>
           <div>
-            点击
-            <Link className="btn btn-sm mn-empty-btn" to="/data">数据录入</Link>
-            前往登记角色
+            {t('点击')}
+            <Link className="btn btn-sm mn-empty-btn" to="/data">{t('数据录入')}</Link>
+            {t('前往登记角色')}
           </div>
         </div>
       ) : (
@@ -165,11 +166,11 @@ export default function MyNikkePage() {
               <input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="搜索：中文名 / 英文名 / 资源号 / 拼音首字母"
+                placeholder={t('搜索：中文名 / 英文名 / 资源号 / 拼音首字母')}
                 spellCheck={false}
               />
               {search ? (
-                <button type="button" className="search-clear" onClick={() => setSearch('')} aria-label="清空搜索">×</button>
+                <button type="button" className="search-clear" onClick={() => setSearch('')} aria-label={t('清空搜索')}>×</button>
               ) : null}
             </label>
 
@@ -196,11 +197,11 @@ export default function MyNikkePage() {
                     style={active ? { '--el-color': elementColorOf(item.value) } : undefined}
                     disabled={count === 0}
                     aria-pressed={active}
-                    title={count === 0 ? `没有已完善的${item.label}角色` : `${item.label} ${count} 名`}
+                    title={count === 0 ? t('没有已完善的{label}角色', { label: tData(item.label) }) : t('{label} {count} 名', { label: tData(item.label), count })}
                     onClick={() => setElement(active ? '' : item.label)}
                   >
                     {item.icon ? <img src={assetUrl(item.icon)} alt="" /> : null}
-                    <span>{item.label}</span>
+                    <span>{tData(item.label)}</span>
                     <b>{count}</b>
                   </button>
                 )
@@ -208,7 +209,7 @@ export default function MyNikkePage() {
 
               <span className="spacer" />
 
-              <div className="zoom" role="group" aria-label="列表缩放">
+              <div className="zoom" role="group" aria-label={t('列表缩放')}>
                 {ZOOM_PRESETS.map((item) => (
                   <button
                     key={item.key}
@@ -216,7 +217,7 @@ export default function MyNikkePage() {
                     className={item.key === zoom ? 'active' : ''}
                     onClick={() => setZoom(item.key)}
                   >
-                    {item.label}
+                    {t(item.label)}
                   </button>
                 ))}
               </div>
@@ -230,7 +231,7 @@ export default function MyNikkePage() {
                   className="mn-group-head"
                   style={group.label ? { color: elementColorOf(ELEMENT_BUTTONS.find((item) => item.label === group.label)?.value) } : undefined}
                 >
-                  {group.label || '其他'}
+                  {group.label ? tData(group.label) : t('其他')}
                   <b>{group.characters.length}</b>
                 </h2>
                 <CharacterGrid characters={group.characters} tileSize={zoomPreset.size} />
@@ -238,8 +239,8 @@ export default function MyNikkePage() {
             ))
           ) : (
             <div className="empty">
-              <div className="t">没有匹配的角色</div>
-              <div>换个关键词，或调整筛选条件</div>
+              <div className="t">{t('没有匹配的角色')}</div>
+              <div>{t('换个关键词，或调整筛选条件')}</div>
             </div>
           )}
         </>

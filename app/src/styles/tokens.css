@@ -67,6 +67,12 @@
   --tile-size: 92px;
 }
 
+/* 繁体：字体栈优先 TC 字形（台服玩家的系统字体习惯），简体保持上面的原栈 */
+:root[data-locale='zh-Hant'] {
+  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang TC',
+    'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
+}
+
 /* ---------- 深色主题（夜间模式）----------
    同一套变量换一组值；由 html[data-theme="dark"] 切换，首屏前在 index.html 内联脚本里应用。
    方向：深灰工具感（不做纯黑）；层级靠"背景三档 + 细边框"，阴影让位于边框。 */

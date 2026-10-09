@@ -11,6 +11,7 @@ import {
   coreFrameAsset,
 } from './cardAssets.js'
 import { FUNCTION_LABELS } from '../data/affixTiers.js'
+import { tData } from './i18n.js'
 
 export { FUNCTION_LABELS }
 
@@ -54,7 +55,7 @@ export function normalizeEquipments(equipments) {
       if (byPosition.has(position)) return
       byPosition.set(position, {
         functionType: String(line.functionType),
-        label: FUNCTION_LABELS[line.functionType] || String(line.functionType),
+        label: tData(FUNCTION_LABELS[line.functionType] || String(line.functionType)),
         value: toNumber(line.value),
         level: toNumber(line.level),
       })
@@ -103,7 +104,7 @@ function resolveEquipmentDisplays(character) {
     isOverload: true,
     className,
     manufacturer: '',
-    label: `${SLOT_LABELS[slotIndex]} · T10`,
+    label: tData(`${SLOT_LABELS[slotIndex]} · T10`),
   }))
 }
 
@@ -130,16 +131,16 @@ export function buildCardData(character, record, options = {}) {
   const skillIcons = character.skillIcons || {}
   const skillLevels = { skill1: data.skills?.skill1, skill2: data.skills?.skill2, burst: data.skills?.burst }
   const skills = Object.entries(skillLevels)
-    .map(([key, level]) => ({ key, label: key === 'burst' ? '爆裂技能' : `技能 ${key === 'skill1' ? 1 : 2}`, url: skillIcons[key] || '', level: toNumber(level) }))
+    .map(([key, level]) => ({ key, label: tData(key === 'burst' ? '爆裂技能' : `技能 ${key === 'skill1' ? 1 : 2}`), url: skillIcons[key] || '', level: toNumber(level) }))
     .filter((skill) => skill.url && Number.isFinite(skill.level) && skill.level >= 1 && skill.level <= 10)
 
   const cubeLevel = toNumber(data.cube?.level)
   const cube = (data.cube?.resourceId || Number.isFinite(cubeLevel))
-    ? { name: data.cube?.nameCn || '魔方', asset: cubeIconAsset(data.cube?.resourceId), level: cubeLevel }
+    ? { name: tData(data.cube?.nameCn || '魔方'), asset: cubeIconAsset(data.cube?.resourceId), level: cubeLevel }
     : null
 
   return {
-    name: character.nameCn,
+    name: tData(character.nameCn),
     rarity: character.original_rare || '',
     rarityAsset: rarityAsset(character.original_rare),
     level: toNumber(synchroLevel) ?? toNumber(data.level),

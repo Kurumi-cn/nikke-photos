@@ -5,7 +5,8 @@
 // 点一下选入、再点一下移出——即时生效，没有「确定/取消」，关掉弹窗就是完成。
 import { useMemo, useState } from 'react'
 import FilterBar from './FilterBar.jsx'
-import { TAXONOMY, applyFilters, assetUrl, countActiveFilters, findCharacter, iconFor } from '../lib/roster.js'
+import { t } from '../lib/i18n.js'
+import { TAXONOMY, applyFilters, assetUrl, countActiveFilters, displayName, findCharacter, iconFor } from '../lib/roster.js'
 import { CREDIT_MAX } from '../lib/statsCredit.js'
 import { ELEMENT_ORDER, elementColorOf, elementLabelOf } from '../lib/statsModel.js'
 import '../styles/myNikke.css'
@@ -103,14 +104,14 @@ export default function EditTableDialog({
             key={character.nameCode}
             type="button"
             className={order ? 'tile et-tile is-selected' : 'tile et-tile'}
-            title={order ? `第 ${order} 行 · 再点移出` : '点击加入表格'}
+            title={order ? t('第 {row} 行 · 再点移出', { row: order }) : t('点击加入表格')}
             onClick={() => onToggle(character.nameCode)}
           >
             <div className="thumb">
               {character.avatar ? (
                 <img src={assetUrl(character.avatar)} alt="" loading="lazy" decoding="async" />
               ) : (
-                <span className="ph">无头像</span>
+                <span className="ph">{t('无头像')}</span>
               )}
               {elementIcon ? (
                 <img className="elem" src={assetUrl(elementIcon)} alt="" title={elementLabelOf(character.element)} />
@@ -118,7 +119,7 @@ export default function EditTableDialog({
               {burstIcon ? <img className="burst" src={assetUrl(burstIcon)} alt="" /> : null}
               {order ? <span className="et-order">{order}</span> : null}
             </div>
-            <div className="name">{character.nameCn}</div>
+            <div className="name">{displayName(character)}</div>
           </button>
         )
       })}
@@ -132,23 +133,23 @@ export default function EditTableDialog({
         if (event.target === event.currentTarget) onClose()
       }}
     >
-      <div className="dlg et-dialog" role="dialog" aria-label="编辑表格角色">
+      <div className="dlg et-dialog" role="dialog" aria-label={t('编辑表格角色')}>
         <div className="dlg-head">
-          <h2>编辑表格角色</h2>
-          <button type="button" className="dlg-x" onClick={onClose} aria-label="关闭">×</button>
+          <h2>{t('编辑表格角色')}</h2>
+          <button type="button" className="dlg-x" onClick={onClose} aria-label={t('关闭')}>×</button>
         </div>
 
         <div className="et-credit">
-          <label className="dlg-label" htmlFor="et-credit-input">表格署名</label>
+          <label className="dlg-label" htmlFor="et-credit-input">{t('表格署名')}</label>
           <input
             id="et-credit-input"
             className="dlg-input et-credit-input"
             value={credit}
             maxLength={CREDIT_MAX}
-            placeholder={`选填，最多 ${CREDIT_MAX} 字`}
+            placeholder={t('选填，最多 {max} 字', { max: CREDIT_MAX })}
             onChange={(event) => onCreditChange(event.target.value)}
           />
-          <span className="et-credit-hint">显示在表格左上角，随图片一起导出</span>
+          <span className="et-credit-hint">{t('显示在表格左上角，随图片一起导出')}</span>
         </div>
 
         <div className="et-toolbar">
@@ -162,11 +163,11 @@ export default function EditTableDialog({
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="搜索：中文名 / 英文名 / 资源号 / 拼音首字母"
+              placeholder={t('搜索：中文名 / 英文名 / 资源号 / 拼音首字母')}
               spellCheck={false}
             />
             {search ? (
-              <button type="button" className="search-clear" onClick={() => setSearch('')} aria-label="清空搜索">×</button>
+              <button type="button" className="search-clear" onClick={() => setSearch('')} aria-label={t('清空搜索')}>×</button>
             ) : null}
           </label>
 
@@ -194,11 +195,11 @@ export default function EditTableDialog({
                 style={active ? { '--el-color': elementColorOf(item.value) } : undefined}
                 disabled={count === 0}
                 aria-pressed={active}
-                title={count === 0 ? `没有可统计的${item.label}角色` : `${item.label} ${count} 名`}
+                title={count === 0 ? t('没有可统计的{label}角色', { label: t(item.label) }) : t('{label} {count} 名', { label: t(item.label), count })}
                 onClick={() => setElement(active ? '' : item.label)}
               >
                 {item.icon ? <img src={assetUrl(item.icon)} alt="" /> : null}
-                <span>{item.label}</span>
+                <span>{t(item.label)}</span>
                 <b>{count}</b>
               </button>
             )
@@ -210,10 +211,10 @@ export default function EditTableDialog({
             type="button"
             className="btn btn-sm"
             disabled={selectedCodes.length === 0}
-            title={selectedCodes.length === 0 ? '还没有选中任何角色' : '把已选角色全部移出表格'}
+            title={selectedCodes.length === 0 ? t('还没有选中任何角色') : t('把已选角色全部移出表格')}
             onClick={onClear}
           >
-            清空全部选中
+            {t('清空全部选中')}
           </button>
 
           <button
@@ -221,7 +222,7 @@ export default function EditTableDialog({
             className={onlySelected ? 'btn btn-sm et-only is-on' : 'btn btn-sm et-only'}
             onClick={() => setOnlySelected((prev) => !prev)}
           >
-            {onlySelected ? '显示全部角色' : `查看已选择 ${selectedCodes.length}`}
+            {onlySelected ? t('显示全部角色') : t('查看已选择 {count}', { count: selectedCodes.length })}
           </button>
         </div>
 
@@ -229,8 +230,8 @@ export default function EditTableDialog({
           {onlySelected ? (
             chosen.length > 0 ? renderGrid(chosen) : (
               <div className="empty">
-                <div className="t">还没有选任何角色</div>
-                <div>在上面的列表里点击头像即可加入表格</div>
+                <div className="t">{t('还没有选任何角色')}</div>
+                <div>{t('在上面的列表里点击头像即可加入表格')}</div>
               </div>
             )
           ) : (
@@ -242,23 +243,22 @@ export default function EditTableDialog({
                     color: elementColorOf(ELEMENT_BUTTONS.find((item) => item.label === group.label)?.value),
                   } : undefined}
                 >
-                  {group.label || '其他'}
+                  {group.label ? t(group.label) : t('其他')}
                   <b>{group.characters.length}</b>
                 </h2>
                 {renderGrid(group.characters)}
               </section>
             )) : (
               <div className="empty">
-                <div className="t">没有匹配的角色</div>
-                <div>换个关键词，或调整筛选条件</div>
+                <div className="t">{t('没有匹配的角色')}</div>
+                <div>{t('换个关键词，或调整筛选条件')}</div>
               </div>
-            )
-          )}
+            ))}
         </div>
 
         <div className="dlg-foot et-foot">
-          <span className="et-foot-note">已选 {selectedCodes.length} 名 · 点选顺序即表格行序</span>
-          <button type="button" className="btn btn-primary" onClick={onClose}>完成</button>
+          <span className="et-foot-note">{t('已选 {count} 名 · 点选顺序即表格行序', { count: selectedCodes.length })}</span>
+          <button type="button" className="btn btn-primary" onClick={onClose}>{t('完成')}</button>
         </div>
       </div>
     </div>

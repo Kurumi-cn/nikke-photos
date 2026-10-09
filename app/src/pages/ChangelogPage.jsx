@@ -1,6 +1,7 @@
 // 更新记录：历史所有版本一览（「更多」里的入口）
 import { useLocation, useNavigate } from 'react-router-dom'
 import { CHANGELOG, CURRENT_VERSION, displayDate } from '../data/changelog.js'
+import { t } from '../lib/i18n.js'
 import '../styles/changelog.css'
 
 export default function ChangelogPage() {
@@ -18,13 +19,13 @@ export default function ChangelogPage() {
           <path d="M12.5 8h-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
           <path d="M7 4 3 8l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-        返回
+        {t('返回')}
       </button>
 
       <div className="page-head">
         <div>
-          <h1>更新记录</h1>
-          <div className="desc">当前版本 v{CURRENT_VERSION}</div>
+          <h1>{t('更新记录')}</h1>
+          <div className="desc">{t('当前版本 v{version}', { version: CURRENT_VERSION })}</div>
         </div>
       </div>
 
@@ -33,7 +34,7 @@ export default function ChangelogPage() {
           <section className="cl-entry" key={entry.version}>
             <div className="cl-head">
               <b>v{entry.version}</b>
-              {entry.version === CURRENT_VERSION ? <span className="cl-badge">当前版本</span> : null}
+              {entry.version === CURRENT_VERSION ? <span className="cl-badge">{t('当前版本')}</span> : null}
             </div>
             <ol className="cl-items">
               {entry.items.map((item, index) => (

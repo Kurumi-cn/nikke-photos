@@ -4,6 +4,7 @@ import { CUBES } from '../lib/cubes.js'
 import { FUNCTION_LABELS, SLOT_LABELS } from '../lib/cardModel.js'
 import { AFFIX_TIER_VALUES, affixTierText } from '../data/affixTiers.js'
 import { loadOcrAssets } from '../lib/ocr/assets.js'
+import { t, tData } from '../lib/i18n.js'
 import EquipmentOcrDialog from './EquipmentOcrDialog.jsx'
 import NumField, { parseNumber } from './NumField.jsx'
 
@@ -91,20 +92,20 @@ export default function CharacterForm({ value, onChange, synchroLevel, onSynchro
   return (
     <div className="form">
       <div className="form-toolbar">
-        <span className="form-note">改动即时生效并自动保存到本机；留空表示暂无该项数据</span>
+        <span className="form-note">{t('改动即时生效并自动保存到本机；留空表示暂无该项数据')}</span>
         <span className="form-toolbar-actions">
           {hasStored ? (
-            <button type="button" className="btn btn-sm" onClick={onClearStored}>清空该角色数据</button>
+            <button type="button" className="btn btn-sm" onClick={onClearStored}>{t('清空该角色数据')}</button>
           ) : null}
           {hasSample ? (
-            <button type="button" className="btn btn-sm" onClick={onRestoreSample}>恢复示例数据</button>
+            <button type="button" className="btn btn-sm" onClick={onRestoreSample}>{t('恢复示例数据')}</button>
           ) : null}
         </span>
       </div>
 
       <div className="form-grid">
         <section className="form-block">
-          <h3>基础</h3>
+          <h3>{t('基础')}</h3>
           <NumField
             label="等级（同步器）"
             value={synchroLevel}
@@ -120,30 +121,30 @@ export default function CharacterForm({ value, onChange, synchroLevel, onSynchro
 
         <section className="form-block">
           <div className="form-block-head">
-            <h3>研究所与技能</h3>
+            <h3>{t('研究所与技能')}</h3>
             <button
               type="button"
               className="btn btn-sm"
               disabled={!skillsReady}
-              title={skillsReady ? '把当前技能等级同步给已完善的角色' : '先把技能 1 / 技能 2 / 爆裂技能 都填好'}
+              title={skillsReady ? t('把当前技能等级同步给已完善的角色') : t('先把技能 1 / 技能 2 / 爆裂技能 都填好')}
               onClick={() => onSyncSkills?.({
                 skill1: Number(skills.skill1),
                 skill2: Number(skills.skill2),
                 burst: Number(skills.burst),
               })}
             >
-              同步技能等级
+              {t('同步技能等级')}
             </button>
           </div>
           <div className="form-row">
-            <span className="form-label">职业等级</span>
+            <span className="form-label">{t('职业等级')}</span>
             <span className="form-static">{classLevel ?? '—'}</span>
-            <span className="form-hint">{classLabel || '职业'} · 在存档编辑中修改</span>
+            <span className="form-hint">{t('{label} · 在存档编辑中修改', { label: classLabel || t('职业') })}</span>
           </div>
           <div className="form-row">
-            <span className="form-label">企业等级</span>
+            <span className="form-label">{t('企业等级')}</span>
             <span className="form-static">{corporationLevel ?? '—'}</span>
-            <span className="form-hint">{corporationLabel || '企业'} · 在存档编辑中修改</span>
+            <span className="form-hint">{t('{label} · 在存档编辑中修改', { label: corporationLabel || t('企业') })}</span>
           </div>
           <NumField label="技能 1" value={skills.skill1} onChange={(v) => setSkills({ skill1: v })} rangeKey="skill" />
           <NumField label="技能 2" value={skills.skill2} onChange={(v) => setSkills({ skill2: v })} rangeKey="skill" />
@@ -151,9 +152,9 @@ export default function CharacterForm({ value, onChange, synchroLevel, onSynchro
         </section>
 
         <section className="form-block">
-          <h3>魔方与收藏品</h3>
+          <h3>{t('魔方与收藏品')}</h3>
           <label className="form-row">
-            <span className="form-label">魔方</span>
+            <span className="form-label">{t('魔方')}</span>
             <select
               className="inp"
               value={cube.resourceId ?? ''}
@@ -163,25 +164,25 @@ export default function CharacterForm({ value, onChange, synchroLevel, onSynchro
                 setCube({ resourceId, nameCn: found?.nameCn || '', nameEn: found?.nameEn || '' })
               }}
             >
-              <option value="">未设置</option>
+              <option value="">{t('未设置')}</option>
               {CUBES.map((item) => (
-                <option key={item.resourceId} value={item.resourceId}>{item.nameCn}</option>
+                <option key={item.resourceId} value={item.resourceId}>{tData(item.nameCn)}</option>
               ))}
             </select>
           </label>
           <NumField label="魔方等级" value={cube.level} onChange={(v) => setCube({ level: v })} rangeKey="cubeLevel" />
           <label className="form-row">
-            <span className="form-label">收藏品</span>
+            <span className="form-label">{t('收藏品')}</span>
             <select
               className="inp"
               value={favorite.rarity || ''}
               onChange={(event) => setFavorite({ rarity: event.target.value })}
             >
-              <option value="">未设置</option>
+              <option value="">{t('未设置')}</option>
               {BASE_RARITIES.map((rarity) => (
                 <option key={rarity} value={rarity}>{rarity}</option>
               ))}
-              {favoriteCharacter ? <option value="SSR">SSR（专属珍藏品）</option> : null}
+              {favoriteCharacter ? <option value="SSR">{t('SSR（专属珍藏品）')}</option> : null}
             </select>
           </label>
           <NumField
@@ -191,13 +192,13 @@ export default function CharacterForm({ value, onChange, synchroLevel, onSynchro
             rangeKey={isFavoriteSsr ? 'favoriteLevelSsr' : 'favoriteLevel'}
           />
           <p className="form-hint">
-            {isFavoriteSsr ? '将使用该角色专属的珍藏品图标' : '将按武器类型显示该角色的收藏品玩偶'}
-            {hasSample ? '（示例档案含收藏品数据）' : ''}
+            {isFavoriteSsr ? t('将使用该角色专属的珍藏品图标') : t('将按武器类型显示该角色的收藏品玩偶')}
+            {hasSample ? t('（示例档案含收藏品数据）') : ''}
           </p>
         </section>
 
         <section className="form-block form-block-wide">
-          <h3>四件装备与词条</h3>
+          <h3>{t('四件装备与词条')}</h3>
           <div className="equip-grid">
             {SLOT_LABELS.map((slotLabel, slot) => {
               const lines = Array.isArray(equipments[slot]) ? equipments[slot] : [null, null, null]
@@ -205,14 +206,14 @@ export default function CharacterForm({ value, onChange, synchroLevel, onSynchro
                 <div className="equip-block" key={slotLabel}>
                   <div className="equip-head">
                     <span className="equip-title">
-                      <strong>{slotLabel}</strong>
+                      <strong>{tData(slotLabel)}</strong>
                       <button
                         type="button"
                         className="mini-btn"
                         onClick={() => setOcrSlot(slot)}
-                        title="从装备面板截图识别词条"
+                        title={t('从装备面板截图识别词条')}
                       >
-                        图像识别
+                        {t('图像识别')}
                       </button>
                     </span>
                   </div>
@@ -248,9 +249,9 @@ export default function CharacterForm({ value, onChange, synchroLevel, onSynchro
                             window.setTimeout(() => focusTierSelect(`${slot}-${lineIndex}`), 0)
                           }}
                         >
-                          <option value="">未获得</option>
+                          <option value="">{t('未获得')}</option>
                           {FUNCTION_OPTIONS.map(([code, label]) => (
-                            <option key={code} value={code}>{label}</option>
+                            <option key={code} value={code}>{tData(label)}</option>
                           ))}
                         </select>
                         <select
@@ -271,17 +272,17 @@ export default function CharacterForm({ value, onChange, synchroLevel, onSynchro
                             })
                           }}
                         >
-                          <option value="">{lineValue ? '请选择档位' : '—'}</option>
+                          <option value="">{lineValue ? t('请选择档位') : '—'}</option>
                           {tiers
                             ? tiers.map((_, index) => (
-                              <option key={index} value={index + 1}>{`第 ${index + 1} 档 · ${affixTierText(lineValue.functionType, index + 1)}`}</option>
+                              <option key={index} value={index + 1}>{t('第 {tier} 档 · {text}', { tier: index + 1, text: affixTierText(lineValue.functionType, index + 1) })}</option>
                             ))
                             : null}
                         </select>
                         <button
                           type="button"
                           className="mini"
-                          title="清空该行"
+                          title={t('清空该行')}
                           disabled={!lineValue}
                           onClick={() => setAffix(slot, lineIndex, null)}
                         >
@@ -299,7 +300,7 @@ export default function CharacterForm({ value, onChange, synchroLevel, onSynchro
 
       <EquipmentOcrDialog
         open={ocrSlot !== null}
-        slotLabel={ocrSlot !== null ? SLOT_LABELS[ocrSlot] : ''}
+        slotLabel={ocrSlot !== null ? tData(SLOT_LABELS[ocrSlot]) : ''}
         onClose={() => setOcrSlot(null)}
         onApply={applyOcr}
       />

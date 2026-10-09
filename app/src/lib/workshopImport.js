@@ -15,6 +15,7 @@
 // （共享字符串 / 内联字符串 / 数字 / 布尔）。不读样式、图片与公式，这张三表够用了。
 import { AFFIX_TIER_VALUES, FUNCTION_LABELS, snapAffixValue } from '../data/affixTiers.js'
 import { isEmptyValue, isInRange } from './fieldRanges.js'
+import { t, tData } from './i18n.js'
 import { defaultResearch } from './profileStore.js'
 import { CHARACTERS } from './roster.js'
 
@@ -265,21 +266,24 @@ function buildNotices(report) {
   const notices = []
   if (report.unmatched.length) {
     const head = report.unmatched.slice(0, 5).join('、')
-    notices.push(`图鉴未收录，已跳过 ${report.unmatched.length} 个角色（${head}${report.unmatched.length > 5 ? ' 等' : ''}）——多为 Workshop 的自定义角色`)
+    notices.push(t('图鉴未收录，已跳过 {count} 个角色（{head}{more}）——多为 Workshop 的自定义角色', {
+      count: report.unmatched.length,
+      head,
+      more: report.unmatched.length > 5 ? t(' 等') : '',
+    }))
   }
-  if (report.emptySkipped) notices.push(`有 ${report.emptySkipped} 个角色只有本工具不保存的字段（如等级），没有可导入的数据，已跳过`)
+  if (report.emptySkipped) notices.push(t('有 {count} 个角色只有本工具不保存的字段（如等级），没有可导入的数据，已跳过', { count: report.emptySkipped }))
   if (report.levelFieldCharacters) {
-    notices.push(`文件里的「等级 / 职业等级 / 企业等级」是按角色填写的（共 ${report.levelFieldCharacters} 个角色有值），`
-      + '本工具的同步器等级与研究等级是全档共用的一个值，所以这三列没有逐个导入，请在下一步统一填写')
+    notices.push(t('文件里的「等级 / 职业等级 / 企业等级」是按角色填写的（共 {count} 个角色有值），本工具的同步器等级与研究等级是全档共用的一个值，所以这三列没有逐个导入，请在下一步统一填写', { count: report.levelFieldCharacters }))
   }
-  if (report.unknownTypes) notices.push(`有 ${report.unknownTypes} 条词条的类型代码不在本工具的档位表里，已跳过`)
-  if (report.badPlacements) notices.push(`有 ${report.badPlacements} 条词条的装备序号 / 位置超出 1~4 / 1~3，已跳过`)
-  if (report.badTiers) notices.push(`有 ${report.badTiers} 条词条既没有有效档位、数值也对不上档位表，已跳过`)
-  if (report.snappedTiers) notices.push(`有 ${report.snappedTiers} 条词条缺档位，已按数值吸附到最近的档位`)
-  if (report.positionConflicts) notices.push(`同一位置出现多条词条，已取首条：${report.positionConflicts} 处`)
-  if (report.valueMismatch) notices.push(`文件里的词条数值与档位对应值不一致（已按本工具的档位表为准）：${report.valueMismatch} 处`)
-  for (const [label, count] of Object.entries(report.fieldIssues)) notices.push(`${label}：${count} 处数值越界，已留空`)
-  notices.push('Workshop 的导出文件不含同步器等级、魔方与收藏品数据：同步器等级在下一步填写，魔方与收藏品可在「数据录入」页补填')
+  if (report.unknownTypes) notices.push(t('有 {count} 条词条的类型代码不在本工具的档位表里，已跳过', { count: report.unknownTypes }))
+  if (report.badPlacements) notices.push(t('有 {count} 条词条的装备序号 / 位置超出 1~4 / 1~3，已跳过', { count: report.badPlacements }))
+  if (report.badTiers) notices.push(t('有 {count} 条词条既没有有效档位、数值也对不上档位表，已跳过', { count: report.badTiers }))
+  if (report.snappedTiers) notices.push(t('有 {count} 条词条缺档位，已按数值吸附到最近的档位', { count: report.snappedTiers }))
+  if (report.positionConflicts) notices.push(t('同一位置出现多条词条，已取首条：{count} 处', { count: report.positionConflicts }))
+  if (report.valueMismatch) notices.push(t('文件里的词条数值与档位对应值不一致（已按本工具的档位表为准）：{count} 处', { count: report.valueMismatch }))
+  for (const [label, count] of Object.entries(report.fieldIssues)) notices.push(t('{label}：{count} 处数值越界，已留空', { label: tData(label), count }))
+  notices.push(t('Workshop 的导出文件不含同步器等级、魔方与收藏品数据：同步器等级在下一步填写，魔方与收藏品可在「数据录入」页补填'))
   return notices
 }
 

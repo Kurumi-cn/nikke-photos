@@ -3,6 +3,7 @@ import { assetUrl } from '../../lib/roster.js'
 import { CARD_HEIGHT, CARD_WIDTH, DEFAULT_MODULES } from '../../lib/cardLayout.js'
 import { buildCardData, formatPercent } from '../../lib/cardModel.js'
 import { coreFrameAsset, decorAsset, metaAsset, overloadBadgeAsset, starAsset } from '../../lib/cardAssets.js'
+import { t } from '../../lib/i18n.js'
 import './characterCard.css'
 
 const ARTWORK_ROOT = 'ui-assets/nikke/character-artwork'
@@ -29,7 +30,9 @@ function LevelBadge({ value, label }) {
 function MetaItem({ group, value, kind, level }) {
   const src = metaAsset(group, value)
   const hasLevel = group === 'class' || group === 'manufacturer'
-  const label = `${value || '未知'}${hasLevel ? `，等级 ${level ?? '—'}` : ''}`
+  const label = hasLevel
+    ? t('{name}，等级 {level}', { name: value || t('未知'), level: level ?? '—' })
+    : (value || t('未知'))
   return (
     <span className={`np-meta ${kind}`} title={label} aria-label={label}>
       {src ? <img src={src} alt="" /> : <span aria-hidden="true">—</span>}
@@ -50,7 +53,7 @@ function FavoriteItemPanel({ data }) {
   return (
     <section
       className={`np-favorite is-${rarity || 'unknown'}${item.isFavorite && item.asset ? ' has-icon' : ''}`}
-      aria-label={`${item.isFavorite ? '珍藏品' : '收藏品'} ${item.rarity}，${item.stars ?? '—'}星`}
+      aria-label={t('{kind} {rarity}，{stars}星', { kind: item.isFavorite ? t('珍藏品') : t('收藏品'), rarity: item.rarity, stars: item.stars ?? '—' })}
     >
       <span className="np-favorite-mascot" aria-hidden="true">
         {item.asset ? <img src={item.asset} alt="" /> : null}
@@ -74,11 +77,11 @@ function SkillPanel({ data }) {
     <span className={`np-skill is-${skill.key}`} key={skill.key} title={`${skill.label} LV.${skill.level}`}>
       <Decoration name="skill-frame" className="np-skill-frame" />
       <img className="np-skill-glyph" src={assetUrl(skill.url)} alt={skill.label} />
-      <LevelBadge value={skill.level} label={`等级 ${skill.level}`} />
+      <LevelBadge value={skill.level} label={t('等级 {level}', { level: skill.level })} />
     </span>
   )
   return (
-    <section className="np-skills" aria-label="技能等级">
+    <section className="np-skills" aria-label={t('技能等级')}>
       <span className="np-standard-skills">{standard.map(renderSkill)}</span>
       {burst ? renderSkill(burst) : null}
     </section>
@@ -88,11 +91,11 @@ function SkillPanel({ data }) {
 function CubePanel({ data }) {
   if (!data.cube) return null
   return (
-    <section className="np-cube" aria-label={`${data.cube.name}，等级 ${data.cube.level ?? '未知'}`} title={data.cube.name}>
+    <section className="np-cube" aria-label={t('{name}，等级 {level}', { name: data.cube.name, level: data.cube.level ?? t('未知') })} title={data.cube.name}>
       <span className="np-cube-art" aria-hidden="true">
         {data.cube.asset ? <img src={data.cube.asset} alt="" /> : <b>◇</b>}
       </span>
-      <LevelBadge value={data.cube.level ?? '—'} label={`等级 ${data.cube.level ?? '未知'}`} />
+      <LevelBadge value={data.cube.level ?? '—'} label={t('等级 {level}', { level: data.cube.level ?? t('未知') })} />
     </section>
   )
 }
@@ -103,13 +106,13 @@ function IdentityPanel({ data, modules }) {
     .some((key) => modules[key])
   if (!hasContent) return null
   return (
-    <section className="np-identity" aria-label={`${data.name}角色信息`}>
+    <section className="np-identity" aria-label={t('{name}角色信息', { name: data.name })}>
       {modules.rarity ? (
         <div className="np-rarity-row">
           {data.rarityAsset
-            ? <img className="np-rarity" src={data.rarityAsset} alt={`稀有度 ${data.rarity}`} />
+            ? <img className="np-rarity" src={data.rarityAsset} alt={t('稀有度 {rarity}', { rarity: data.rarity })} />
             : <span className="np-rarity np-rarity-fallback">{data.rarity || '—'}</span>}
-          <div className="np-breakthrough" aria-label={`${filledStars}星，核心突破 ${data.limitBreak.coreBadge || 0}`}>
+          <div className="np-breakthrough" aria-label={t('{stars}星，核心突破 {core}', { stars: filledStars, core: data.limitBreak.coreBadge || 0 })}>
             <span className="np-stars" aria-hidden="true">
               {[0, 1, 2].map((index) => (
                 <img key={index} src={starAsset(index < filledStars)} alt="" />
@@ -135,7 +138,7 @@ function IdentityPanel({ data, modules }) {
       ) : null}
 
       {modules.affection ? (
-        <div className="np-affection" aria-label={`好感度 ${data.affection ?? '未知'}`}>
+        <div className="np-affection" aria-label={t('好感度 {value}', { value: data.affection ?? t('未知') })}>
           <Decoration name="affection-frame" />
           <span className="np-affection-caption"><b aria-hidden="true">»</b> attraction</span>
           <strong>RANK</strong>
@@ -148,7 +151,7 @@ function IdentityPanel({ data, modules }) {
 
       {modules.combat ? (
         <div className="np-combat">
-          <span>战斗力</span>
+          <span>{t('战斗力')}</span>
           <strong>{data.combat ?? '—'}</strong>
           <b>BATTLE</b>
         </div>
@@ -184,7 +187,7 @@ function AffixValue({ line }) {
     <>
       <span className="np-affix-name" title={line.label}>{line.label}</span>
       <span className="np-affix-values">
-        <span>【<span className="np-num">{line.level ?? '—'}</span>档】</span>
+        <span>【<span className="np-num">{line.level ?? '—'}</span>{t('档')}】</span>
         <strong>{formatPercent(line.value)}</strong>
       </span>
     </>
@@ -204,7 +207,7 @@ function EquipmentCard({ data, slotIndex }) {
       >
         {equipment.icon
           ? <img className="np-equipment-art" src={equipment.icon} alt="" />
-          : <span className="np-equipment-placeholder">{equipment.state === 'empty' ? '未装备' : '暂无图标'}</span>}
+          : <span className="np-equipment-placeholder">{equipment.state === 'empty' ? t('未装备') : t('暂无图标')}</span>}
         <span className="np-equipment-badges" aria-hidden="true">
           {equipment.isOverload ? (
             <span className="np-overload-badge"><img src={overloadBadgeAsset()} alt="" /></span>
@@ -238,13 +241,13 @@ function EquipmentCard({ data, slotIndex }) {
 function EquipmentPanel({ data, modules }) {
   if (!modules.affixSummary && !modules.equipments) return null
   return (
-    <section className="np-equipment-panel" aria-label="四件装备和词条">
+    <section className="np-equipment-panel" aria-label={t('四件装备和词条')}>
       {modules.affixSummary && data.topAffixes.length ? (
-        <div className="np-affix-summary" aria-label="档位合计最高的三个词条">
+        <div className="np-affix-summary" aria-label={t('档位合计最高的三个词条')}>
           {data.topAffixes.map((item) => (
             <div key={item.functionType}>
               <span title={item.label}>{item.label}</span>
-              <span><span>【<span className="np-num">{item.totalLevel}</span>档】</span><strong>{formatPercent(item.totalValue)}</strong></span>
+              <span><span>【<span className="np-num">{item.totalLevel}</span>{t('档')}】</span><strong>{formatPercent(item.totalValue)}</strong></span>
             </div>
           ))}
         </div>
@@ -297,19 +300,19 @@ export default function CharacterCard({
         '--card-height': `${CARD_HEIGHT}px`,
         '--panel-scale': String(panelScale / 100),
       }}
-      aria-label={`${data.name}角色卡`}
+      aria-label={t('{name}角色卡', { name: data.name })}
     >
       {showArtwork ? (
         <img
           className="np-card-art"
           src={artworkUrl}
-          alt={`${data.name}立绘`}
+          alt={t('{name}立绘', { name: data.name })}
           draggable={false}
           style={{ transform: `translate(${offsetX}%, ${offsetY}%) scale(${scale / 100})` }}
           onError={() => setFailedArtwork(artworkUrl)}
         />
       ) : (
-        <div className="np-card-art-placeholder"><span>暂无可用全身立绘</span></div>
+        <div className="np-card-art-placeholder"><span>{t('暂无可用全身立绘')}</span></div>
       )}
 
       {modules.favoriteItem && data.favoriteItem ? <FavoriteItemPanel data={data} /> : null}

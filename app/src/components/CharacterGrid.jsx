@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { assetUrl, iconFor, labelFor } from '../lib/roster.js'
+import { t } from '../lib/i18n.js'
+import { assetUrl, displayName, iconFor, labelFor } from '../lib/roster.js'
 
 export default function CharacterGrid({ characters, tileSize, recordedCodes }) {
   return (
@@ -12,13 +13,13 @@ export default function CharacterGrid({ characters, tileSize, recordedCodes }) {
             key={character.nameCode}
             className="tile"
             to={`/character/${character.nameCode}`}
-            title={character.nameCn}
+            title={displayName(character)}
           >
             <div className="thumb">
               {character.avatar ? (
-                <img src={assetUrl(character.avatar)} alt={character.nameCn} loading="lazy" decoding="async" />
+                <img src={assetUrl(character.avatar)} alt={displayName(character)} loading="lazy" decoding="async" />
               ) : (
-                <span className="ph">无头像</span>
+                <span className="ph">{t('无头像')}</span>
               )}
               {elementIcon && (
                 <img
@@ -36,9 +37,9 @@ export default function CharacterGrid({ characters, tileSize, recordedCodes }) {
                   title={labelFor('use_burst_skill', character.use_burst_skill)}
                 />
               )}
-              {recordedCodes?.has(character.nameCode) ? <span className="recorded" title="已录入数据" /> : null}
+              {recordedCodes?.has(character.nameCode) ? <span className="recorded" title={t('已录入数据')} /> : null}
             </div>
-            <div className="name">{character.nameCn}</div>
+            <div className="name">{displayName(character)}</div>
           </Link>
         )
       })}

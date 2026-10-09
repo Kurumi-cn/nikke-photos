@@ -10,6 +10,7 @@ import { useRef, useState } from 'react'
 import ConfirmDialog from './ConfirmDialog.jsx'
 import NumField from './NumField.jsx'
 import { ACCOUNT_FORMAT, parseAccountExport } from '../lib/accountImport.js'
+import { t } from '../lib/i18n.js'
 import { isWorkbookFile } from '../lib/importSniff.js'
 import {
   NAME_MAX,
@@ -70,7 +71,7 @@ export default function AccountImportDialog({ onClose, initial = null, onProfile
       try {
         buffer = await file.arrayBuffer()
       } catch {
-        setError('读取文件失败，请重试')
+        setError(t('读取文件失败，请重试'))
         return
       }
       try {
@@ -78,7 +79,7 @@ export default function AccountImportDialog({ onClose, initial = null, onProfile
         onProfileParsed(parsed)
       } catch (problem) {
         setResult(null)
-        setError(`读取失败：${problem?.message || problem}`)
+        setError(t('读取失败：{message}', { message: problem?.message || problem }))
       }
       return
     }
@@ -87,18 +88,18 @@ export default function AccountImportDialog({ onClose, initial = null, onProfile
     try {
       text = await file.text()
     } catch {
-      setError('读取文件失败，请重试')
+      setError(t('读取文件失败，请重试'))
       return
     }
     let raw
     try {
       raw = JSON.parse(text)
     } catch {
-      setError('不是有效的 JSON 文件')
+      setError(t('不是有效的 JSON 文件'))
       return
     }
     if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
-      setError('文件内容不是一个对象')
+      setError(t('文件内容不是一个对象'))
       return
     }
 
@@ -119,17 +120,17 @@ export default function AccountImportDialog({ onClose, initial = null, onProfile
     if (raw.format === PROFILE_FORMAT || raw.format == null) {
       try {
         const parsed = parseProfile(text)
-        if (!parsed.count) throw new Error('文件里没有角色记录')
+        if (!parsed.count) throw new Error(t('文件里没有角色记录'))
         onProfileParsed(parsed)
       } catch (problem) {
         setResult(null)
-        setError(`读取失败：${problem?.message || problem}`)
+        setError(t('读取失败：{message}', { message: problem?.message || problem }))
       }
       return
     }
 
     setResult(null)
-    setError(`认不出这个文件（format=${raw.format}）。只支持油猴脚本导出的「账号数据」或本工具导出的「档案」`)
+    setError(t('认不出这个文件（format={format}）。只支持油猴脚本导出的「账号数据」、本工具导出的「档案」，或 NIKKE Workshop 导出的「图鉴 xlsx」', { format: raw.format }))
   }
 
   /** 落库：两个分支都要保证「导入完就是当前存档」 */
@@ -162,38 +163,37 @@ export default function AccountImportDialog({ onClose, initial = null, onProfile
         if (event.target === event.currentTarget) onClose()
       }}
     >
-      <div className="dlg dlg-wide" role="dialog" aria-label="导入账号/档案数据">
+      <div className="dlg dlg-wide" role="dialog" aria-label={t('导入账号/档案数据')}>
         <div className="dlg-head">
-          <h2>导入账号/档案数据</h2>
-          <button type="button" className="dlg-x" onClick={onClose} aria-label="关闭">×</button>
+          <h2>{t('导入账号/档案数据')}</h2>
+          <button type="button" className="dlg-x" onClick={onClose} aria-label={t('关闭')}>×</button>
         </div>
 
         <div className="dlg-body dlg-body-scroll">
           {done ? (
             <>
               <p className="dlg-text">
-                已{done.overwritten ? '更新' : '创建'}存档「<strong>{done.profileName}</strong>」并切换为当前存档，
-                写入 <strong>{done.imported}</strong> 个角色{done.unknown.length ? `，跳过 ${done.unknown.length} 个图鉴未收录的角色` : ''}。
+                {done.overwritten ? t('已更新') : t('已创建')}{t('存档「')}<strong>{done.profileName}</strong>{t('」并切换为当前存档，写入 ')}<strong>{done.imported}</strong>{t(' 个角色')}{done.unknown.length ? t('，跳过 {count} 个图鉴未收录的角色', { count: done.unknown.length }) : ''}{t('。')}
               </p>
               {notices.length > 0 ? (
                 <>
-                  <p className="dlg-text">导入时的处理说明：</p>
+                  <p className="dlg-text">{t('导入时的处理说明：')}</p>
                   <ul className="acc-notices">
                     {notices.map((item) => <li key={item}>{item}</li>)}
                   </ul>
                 </>
               ) : null}
-              <p className="import-hint">角色数据已按下表口径写入；如果需要修改，去「数据录入」页编辑即可。</p>
+              <p className="import-hint">{t('角色数据已按下表口径写入；如果需要修改，去「数据录入」页编辑即可。')}</p>
             </>
           ) : result ? (
             <>
               <div className="dlg-row">
-                <span className="dlg-label">存档名</span>
+                <span className="dlg-label">{t('存档名')}</span>
                 <input
                   className="dlg-input"
                   value={name}
                   maxLength={NAME_MAX}
-                  placeholder="存档名称"
+                  placeholder={t('存档名称')}
                   onChange={(event) => setName(event.target.value)}
                 />
               </div>
@@ -206,10 +206,10 @@ export default function AccountImportDialog({ onClose, initial = null, onProfile
               />
 
               <div className="acc-stats">
-                <div><span>来源</span><b>BlaBlaLink{result.meta.areaId ? ` · area ${result.meta.areaId}` : ''}</b></div>
-                <div><span>导出时间</span><b>{result.meta.stamp || '未知'}</b></div>
-                <div><span>将写入角色</span><b>{result.parsed.count} 个</b></div>
-                <div><span>图鉴未收录</span><b>{unmatched.length} 个</b></div>
+                <div><span>{t('来源')}</span><b>BlaBlaLink{result.meta.areaId ? ` · area ${result.meta.areaId}` : ''}</b></div>
+                <div><span>{t('导出时间')}</span><b>{result.meta.stamp || t('未知')}</b></div>
+                <div><span>{t('将写入角色')}</span><b>{t('{count} 个', { count: result.parsed.count })}</b></div>
+                <div><span>{t('图鉴未收录')}</span><b>{t('{count} 个', { count: unmatched.length })}</b></div>
               </div>
 
               {notices.length > 0 ? (
@@ -217,18 +217,17 @@ export default function AccountImportDialog({ onClose, initial = null, onProfile
                   {notices.map((item) => <li key={item}>{item}</li>)}
                 </ul>
               ) : (
-                <p className="import-hint">没有需要特别说明的处理，数据都能直接对上。</p>
+                <p className="import-hint">{t('没有需要特别说明的处理，数据都能直接对上。')}</p>
               )}
 
               <p className="import-hint">
-                导入会新建或替换一个存档；当前档不会被动到，导入完成后会自动切到新存档。
+                {t('导入会新建或替换一个存档；当前档不会被动到，导入完成后会自动切到新存档。')}
               </p>
             </>
           ) : (
             <>
               <p className="dlg-text">
-                BlaBlaLink 账号数据需要先在浏览器里装一个油猴脚本：
-                脚本在你的浏览器内直接向官方接口取数，数据只留在本机，不会上传到任何服务器。
+                {t('BlaBlaLink 账号数据需要先在浏览器里装一个油猴脚本：脚本在你的浏览器内直接向官方接口取数，数据只留在本机，不会上传到任何服务器。')}
               </p>
               <div
                 className={dragActive ? 'ocr-drop active' : 'ocr-drop'}
@@ -244,10 +243,10 @@ export default function AccountImportDialog({ onClose, initial = null, onProfile
                 }}
               >
                 <p className="ocr-drop-text">
-                  把 BlaBlaLink 账号导出的 JSON（油猴脚本）、本工具导出的档案，或 NIKKE Workshop 导出的图鉴 xlsx 拖拽至此，或选择本地文件
+                  {t('把 BlaBlaLink 账号导出的 JSON（油猴脚本）、本工具导出的档案，或 NIKKE Workshop 导出的图鉴 xlsx 拖拽至此，或选择本地文件')}
                 </p>
                 <div className="ocr-drop-actions">
-                  <button type="button" className="btn btn-sm" onClick={() => fileRef.current?.click()}>选择文件</button>
+                  <button type="button" className="btn btn-sm" onClick={() => fileRef.current?.click()}>{t('选择文件')}</button>
                 </div>
               </div>
               <input
@@ -262,9 +261,9 @@ export default function AccountImportDialog({ onClose, initial = null, onProfile
                 }}
               />
               <p className="import-hint">
-                还没装脚本？
-                <a href={assetUrl(SCRIPT_FILE)} target="_blank" rel="noreferrer">下载油猴脚本</a>
-                （需要浏览器先装 Tampermonkey；脚本装好后在 BlaBlaLink 页面点「导出到 NIKKE Photos」）。
+                {t('还没装脚本？')}
+                <a href={assetUrl(SCRIPT_FILE)} target="_blank" rel="noreferrer">{t('下载油猴脚本')}</a>
+                {t('（需要浏览器先装 Tampermonkey；脚本装好后在 BlaBlaLink 页面点「导出到 NIKKE Photos」）。')}
               </p>
             </>
           )}
@@ -274,31 +273,31 @@ export default function AccountImportDialog({ onClose, initial = null, onProfile
 
         <div className="dlg-foot">
           {done ? (
-            <button type="button" className="btn btn-primary" onClick={onClose}>完成</button>
+            <button type="button" className="btn btn-primary" onClick={onClose}>{t('完成')}</button>
           ) : result ? (
             <>
-              <button type="button" className="btn" onClick={() => { setResult(null); setError('') }}>重新选择文件</button>
+              <button type="button" className="btn" onClick={() => { setResult(null); setError('') }}>{t('重新选择文件')}</button>
               {sameNameProfile ? (
                 <button
                   type="button"
                   className="btn"
                   onClick={() => setPending({ mode: 'overwrite', id: sameNameProfile.id, name: sameNameProfile.name })}
                 >
-                  覆盖「{sameNameProfile.name}」存档
+                  {t('覆盖「{name}」存档', { name: sameNameProfile.name })}
                 </button>
               ) : null}
               <button
                 type="button"
                 className="btn btn-primary"
                 disabled={!trimmedName}
-                title={trimmedName ? '' : '存档名不能为空'}
+                title={trimmedName ? '' : t('存档名不能为空')}
                 onClick={() => setPending({ mode: 'new' })}
               >
-                新建存档
+                {t('新建存档')}
               </button>
             </>
           ) : (
-            <button type="button" className="btn" onClick={onClose}>取消</button>
+            <button type="button" className="btn" onClick={onClose}>{t('取消')}</button>
           )}
         </div>
       </div>
@@ -310,14 +309,12 @@ export default function AccountImportDialog({ onClose, initial = null, onProfile
           confirmText={pending.mode === 'overwrite' ? '覆盖' : '新建并导入'}
           message={pending.mode === 'overwrite' ? (
             <p className="dlg-text">
-              将用导入的数据替换存档「<strong>{pending.name}</strong>」的角色数据：该存档里<b>其他角色的记录会被清掉</b>，
-              只保留这次导入的 {result?.parsed.count} 个角色；存档名与备注不变。此操作无法撤销。
+              {t('将用导入的数据替换存档「')}<strong>{pending.name}</strong>{t('」的角色数据：该存档里')}<b>{t('其他角色的记录会被清掉')}</b>{t('，只保留这次导入的 {count} 个角色；存档名与备注不变。此操作无法撤销。', { count: result?.parsed.count })}
             </p>
           ) : (
             <p className="dlg-text">
-              将新建存档「<strong>{newName}</strong>」（同步器等级 {synchro}）并切换为当前存档，
-              写入 {result?.parsed.count} 个角色。原有存档不受影响。
-              {newName !== trimmedName ? '（该名称已被占用，已自动加上序号）' : ''}
+              {t('将新建存档「')}<strong>{newName}</strong>{t('」（同步器等级 {level}）并切换为当前存档，写入 {count} 个角色。原有存档不受影响。', { level: synchro, count: result?.parsed.count })}
+              {newName !== trimmedName ? t('（该名称已被占用，已自动加上序号）') : ''}
             </p>
           )}
           onConfirm={commit}

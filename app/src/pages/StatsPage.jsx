@@ -7,7 +7,7 @@ import { toBlob } from 'html-to-image'
 import CardPreviewDialog from '../components/CardPreviewDialog.jsx'
 import EditTableDialog from '../components/EditTableDialog.jsx'
 import ShareCodeDialog from '../components/ShareCodeDialog.jsx'
-import { CHARACTERS, findCharacter } from '../lib/roster.js'
+import { CHARACTERS, displayName, findCharacter } from '../lib/roster.js'
 import { loadRecord } from '../lib/profileStore.js'
 import { encodeTableShareCode } from '../lib/shareCode.js'
 import { loadStatsCredit, saveStatsCredit } from '../lib/statsCredit.js'
@@ -19,6 +19,7 @@ import {
   elementColorOf,
   isFullyRecorded,
 } from '../lib/statsModel.js'
+import { t } from '../lib/i18n.js'
 import '../styles/stats.css'
 
 const pad = (value) => String(value).padStart(2, '0')
@@ -34,11 +35,11 @@ function StatsSheet({ rows, sheetRef, drag, credit = '' }) {
       <table className="st-table">
         <thead>
           <tr>
-            <th className="st-corner" aria-label="署名">
+            <th className="st-corner" aria-label={t('署名')}>
               {credit ? <span className="st-credit">{credit}</span> : null}
             </th>
-            {STATS_COLUMNS.map((column) => <th key={column.key}>{column.label}</th>)}
-            <th>阶数</th>
+            {STATS_COLUMNS.map((column) => <th key={column.key}>{t(column.label)}</th>)}
+            <th>{t('阶数')}</th>
           </tr>
         </thead>
         <tbody>
@@ -70,7 +71,7 @@ function StatsSheet({ rows, sheetRef, drag, credit = '' }) {
                 onDragEnd={draggable ? () => drag.onEnd() : undefined}
               >
                 <td className="st-name" style={{ color: elementColorOf(character.element) || undefined }}>
-                  {character.nameCn}
+                  {displayName(character)}
                 </td>
                 {STATS_COLUMNS.map((column) => {
                   const cell = stats.byFunction[column.key]
@@ -199,11 +200,11 @@ export default function StatsPage() {
         backgroundColor: '#ffffff',
         style: { margin: '0' },
       })
-      if (!blob) throw new Error('导出失败：未生成图片数据')
+      if (!blob) throw new Error(t('导出失败：未生成图片数据'))
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
-      link.download = `nikke-词条统计-${stamp()}.png`
+      link.download = `nikke-${t('词条统计')}-${stamp()}.png`
       link.click()
       URL.revokeObjectURL(url)
     } catch (error) {
@@ -221,24 +222,24 @@ export default function StatsPage() {
             <path d="M12.5 8h-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             <path d="M7 4 3 8l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          返回
+          {t('返回')}
         </button>
       ) : null}
 
       <div className="page-head">
         <div>
-          <h1>词条统计</h1>
-          <div className="desc">汇总已录入角色的装备词条累加值；可拖拽行排序、按属性排列，导出高清图片或给 BOT 的表格码</div>
+          <h1>{t('词条统计')}</h1>
+          <div className="desc">{t('汇总已录入角色的装备词条累加值；可拖拽行排序、按属性排列，导出高清图片或给 BOT 的表格码')}</div>
         </div>
         <button type="button" className="btn stats-edit-btn" onClick={() => setEditOpen(true)}>
-          编辑表格角色
+          {t('编辑表格角色')}
         </button>
         <div className="head-actions">
-          <button type="button" className="btn" onClick={sortByElement} disabled={rows.length < 2}>按属性排列</button>
-          <button type="button" className="btn" onClick={() => setPreviewOpen(true)} disabled={rows.length === 0}>放大预览</button>
-          <button type="button" className="btn" onClick={() => setTableCodeOpen(true)} disabled={rows.length === 0}>导出表格码</button>
+          <button type="button" className="btn" onClick={sortByElement} disabled={rows.length < 2}>{t('按属性排列')}</button>
+          <button type="button" className="btn" onClick={() => setPreviewOpen(true)} disabled={rows.length === 0}>{t('放大预览')}</button>
+          <button type="button" className="btn" onClick={() => setTableCodeOpen(true)} disabled={rows.length === 0}>{t('导出表格码')}</button>
           <button type="button" className="btn btn-primary" onClick={handleExport} disabled={exporting || rows.length === 0}>
-            {exporting ? '导出中…' : '导出图片'}
+            {exporting ? t('导出中…') : t('导出图片')}
           </button>
         </div>
       </div>
@@ -246,10 +247,10 @@ export default function StatsPage() {
       <section className="stats-main">
         <div className="stats-head">
           <span>
-            已选 <strong>{rows.length}</strong> 名 · 可统计 <strong>{candidates.length}</strong> 名（四件装备均已录入）
+            {t('已选')} <strong>{rows.length}</strong> {t('名 · 可统计')} <strong>{candidates.length}</strong> {t('名（四件装备均已录入）')}
           </span>
           {rows.length > 0 ? (
-            <button type="button" className="btn btn-sm" onClick={() => setSelectedCodes([])}>清空</button>
+            <button type="button" className="btn btn-sm" onClick={() => setSelectedCodes([])}>{t('清空')}</button>
           ) : null}
         </div>
 
@@ -257,8 +258,8 @@ export default function StatsPage() {
           <StatsSheet rows={rows} sheetRef={sheetRef} drag={drag} credit={credit} />
         ) : (
           <div className="empty">
-            <div className="t">暂无角色</div>
-            <div>可点击上方「编辑表格角色」进行编辑</div>
+            <div className="t">{t('暂无角色')}</div>
+            <div>{t('可点击上方「编辑表格角色」进行编辑')}</div>
           </div>
         )}
 
@@ -286,10 +287,10 @@ export default function StatsPage() {
         onClose={() => setTableCodeOpen(false)}
         code={tableCode}
         count={selectedCodes.length}
-        unit="行"
+        unit={t('行')}
         error={tableCodeError}
-        title="表格配置码"
-        hint="发给 BOT：/妮姬导入 <表格码>，之后 /妮姬练度统计 就按这份名单和顺序出表。"
+        title={t('表格配置码')}
+        hint={t('发给 BOT：/妮姬导入 <表格码>，之后 /妮姬练度统计 就按这份名单和顺序出表。')}
       />
     </main>
   )

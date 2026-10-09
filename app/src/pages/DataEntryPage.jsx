@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-do
 import CharacterForm from '../components/CharacterForm.jsx'
 import ConfirmDialog from '../components/ConfirmDialog.jsx'
 import SchemeDialog from '../components/SchemeDialog.jsx'
-import { CHARACTERS, applyFilters, assetUrl, findCharacter, labelFor } from '../lib/roster.js'
+import { CHARACTERS, applyFilters, assetUrl, displayName, findCharacter, labelFor } from '../lib/roster.js'
 import { applyScheme, changeText } from '../lib/schemes.js'
 import {
   fullyRecordedCodes,
@@ -19,6 +19,7 @@ import {
   syncSkillsToFullyRecorded,
 } from '../lib/profileStore.js'
 import { getTestProfile } from '../data/testProfiles.js'
+import { t } from '../lib/i18n.js'
 
 const pad = (value) => String(value).padStart(2, '0')
 const formatTime = (iso) => {
@@ -82,8 +83,8 @@ export default function DataEntryPage() {
   const list = useMemo(() => applyFilters(CHARACTERS, { search }), [search])
 
   const dataState = hasStored
-    ? (savedAt ? `已保存到本机 · ${formatTime(savedAt)}` : '已保存到本机')
-    : sample ? '示例数据，未保存到本机' : '暂无录入数据'
+    ? (savedAt ? `${t('已保存到本机')} · ${formatTime(savedAt)}` : t('已保存到本机'))
+    : sample ? t('示例数据，未保存到本机') : t('暂无录入数据')
 
   const handleClearStored = () => {
     removeRecord(selectedCode)
@@ -113,7 +114,7 @@ export default function DataEntryPage() {
     const stamp = Date.now()
     if (stamp - lastToastRef.current < 3000) return
     lastToastRef.current = stamp
-    showToast(`已同步全体妮姬等级为 ${applied}`)
+    showToast(t('已同步全体妮姬等级为 {level}', { level: applied }))
   }
 
   // 技能同步：只作用于「已完善」角色，先弹二次确认
@@ -124,7 +125,7 @@ export default function DataEntryPage() {
   const confirmSyncSkills = () => {
     const applied = syncSkillsToFullyRecorded(syncSkills.values)
     setSyncSkills(null)
-    showToast(`已同步 ${applied} 名妮姬的技能等级`)
+    showToast(t('已同步 {count} 名妮姬的技能等级', { count: applied }))
   }
 
   // 方案应用：只填/覆盖方案里指定了的项（强制替换才会覆盖），装备词条不受影响
@@ -134,16 +135,16 @@ export default function DataEntryPage() {
     setSchemeOpen(false)
     setPendingApply(null)
     const parts = []
-    if (outcome.filled.length > 0) parts.push(`填入 ${outcome.filled.length} 项`)
-    if (outcome.overwritten.length > 0) parts.push(`覆盖 ${outcome.overwritten.length} 项`)
+    if (outcome.filled.length > 0) parts.push(t('填入 {count} 项', { count: outcome.filled.length }))
+    if (outcome.overwritten.length > 0) parts.push(t('覆盖 {count} 项', { count: outcome.overwritten.length }))
     const notes = outcome.notes.length > 0 ? `（${outcome.notes.join('；')}）` : ''
-    showToast(`已应用方案：${parts.join('，')}${notes}`)
+    showToast(`${t('已应用方案：')}${parts.join('，')}${notes}`)
   }
 
   const handleSchemeApply = (scheme) => {
     const outcome = applyScheme(record, scheme, { isFavoriteCharacter: Boolean(character?.favoriteItem) })
     if (outcome.filled.length === 0 && outcome.overwritten.length === 0) {
-      showToast(outcome.notes.length > 0 ? `未应用：${outcome.notes.join('；')}` : '该方案没有可写入的值')
+      showToast(outcome.notes.length > 0 ? `${t('未应用：')}${outcome.notes.join('；')}` : t('该方案没有可写入的值'))
       return
     }
     // 会覆盖已填内容 → 先把要覆盖的字段列清楚，确认后再落库
@@ -162,18 +163,18 @@ export default function DataEntryPage() {
             <path d="M12.5 8h-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             <path d="M7 4 3 8l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          返回
+          {t('返回')}
         </button>
       ) : null}
       <div className="page-head">
         <div>
-          <h1>数据录入</h1>
+          <h1>{t('数据录入')}</h1>
           <div className="desc">{fromDetail
-            ? '编辑该角色的数据与装备词条；卡片效果在「角色详情」查看'
-            : '选择角色，录入角色数据与装备词条；卡片效果在「角色详情」查看'}</div>
+            ? t('编辑该角色的数据与装备词条；卡片效果在「角色详情」查看')
+            : t('选择角色，录入角色数据与装备词条；卡片效果在「角色详情」查看')}</div>
         </div>
         <div className="count">
-          已录入 <strong>{recorded.size}</strong> / {CHARACTERS.length} 名
+          {t('已录入')} <strong>{recorded.size}</strong> / {CHARACTERS.length} {t('名')}
         </div>
       </div>
 
@@ -184,11 +185,11 @@ export default function DataEntryPage() {
             <input
               type="text"
               value={search}
-              placeholder="搜索：中文 / 英文 / 资源号 / 拼音首字母"
+              placeholder={t('搜索：中文 / 英文 / 资源号 / 拼音首字母')}
               onChange={(event) => setSearch(event.target.value)}
             />
             {search ? (
-              <button type="button" className="search-clear" onClick={() => setSearch('')} aria-label="清空搜索">×</button>
+              <button type="button" className="search-clear" onClick={() => setSearch('')} aria-label={t('清空搜索')}>×</button>
             ) : null}
           </label>
           <div className="data-list">
@@ -204,8 +205,8 @@ export default function DataEntryPage() {
                   {item.avatar
                     ? <img src={assetUrl(item.avatar)} alt="" loading="lazy" decoding="async" />
                     : <span className="data-avatar-ph" />}
-                  <span className="data-name">{item.nameCn}</span>
-                  {recorded.has(String(item.nameCode)) ? <i className="data-done" title="已录入" /> : null}
+                  <span className="data-name">{displayName(item)}</span>
+                  {recorded.has(String(item.nameCode)) ? <i className="data-done" title={t('已录入')} /> : null}
                 </button>
               )
             })}
@@ -218,15 +219,15 @@ export default function DataEntryPage() {
             <>
               <div className="data-editor-head">
                 <div className="char-head">
-                  {character.avatar ? <img className="avatar" src={assetUrl(character.avatar)} alt={character.nameCn} /> : null}
+                  {character.avatar ? <img className="avatar" src={assetUrl(character.avatar)} alt={displayName(character)} /> : null}
                   <div>
-                    <h2>{character.nameCn}</h2>
+                    <h2>{displayName(character)}</h2>
                     <div className="desc">{character.nameEn} · {character.nameCode} · {dataState}</div>
                   </div>
                 </div>
                 <div className="head-actions">
-                  <button type="button" className="btn" onClick={() => setSchemeOpen(true)}>方案管理</button>
-                  <Link className="btn" to={`/character/${character.nameCode}`}>查看角色详情</Link>
+                  <button type="button" className="btn" onClick={() => setSchemeOpen(true)}>{t('方案管理')}</button>
+                  <Link className="btn" to={`/character/${character.nameCode}`}>{t('查看角色详情')}</Link>
                 </div>
               </div>
               <CharacterForm
@@ -251,8 +252,8 @@ export default function DataEntryPage() {
             </>
           ) : (
             <div className="empty">
-              <div className="t">从左侧选择角色</div>
-              <div>选中后即可录入数据与装备词条</div>
+              <div className="t">{t('从左侧选择角色')}</div>
+              <div>{t('选中后即可录入数据与装备词条')}</div>
             </div>
           )}
         </section>
@@ -260,17 +261,17 @@ export default function DataEntryPage() {
 
       {syncSkills ? (
         <ConfirmDialog
-          title="同步技能等级"
+          title={t('同步技能等级')}
           message={(
             <>
               <p className="dlg-text">
-                将把技能 <b>{syncSkills.values.skill1} / {syncSkills.values.skill2} / {syncSkills.values.burst}</b>
-                （技能 1 / 技能 2 / 爆裂技能）同步至已完善的 <b>{syncSkills.count}</b> 名妮姬。
+                {t('将把技能')} <b>{syncSkills.values.skill1} / {syncSkills.values.skill2} / {syncSkills.values.burst}</b>
+                {t('（技能 1 / 技能 2 / 爆裂技能）同步至已完善的')} <b>{syncSkills.count}</b> {t('名妮姬。')}
               </p>
-              <p className="dlg-text">这些角色原有的技能等级会被覆盖。</p>
+              <p className="dlg-text">{t('这些角色原有的技能等级会被覆盖。')}</p>
             </>
           )}
-          confirmText="同步"
+          confirmText={t('同步')}
           onConfirm={confirmSyncSkills}
           onClose={() => setSyncSkills(null)}
         />
@@ -278,7 +279,7 @@ export default function DataEntryPage() {
 
       {schemeOpen && character ? (
         <SchemeDialog
-          targetName={character.nameCn}
+          targetName={displayName(character)}
           onApply={handleSchemeApply}
           onClose={() => setSchemeOpen(false)}
         />
@@ -286,22 +287,22 @@ export default function DataEntryPage() {
 
       {pendingApply ? (
         <ConfirmDialog
-          title="应用方案会覆盖已填字段"
+          title={t('应用方案会覆盖已填字段')}
           message={(
             <>
-              <p className="dlg-text">方案「{pendingApply.scheme.name}」勾选了强制替换，下列已填字段会被覆盖：</p>
+              <p className="dlg-text">{t('方案「{name}」勾选了强制替换，下列已填字段会被覆盖：', { name: pendingApply.scheme.name })}</p>
               <ul className="scheme-changes">
                 {pendingApply.outcome.overwritten.map((item) => (
                   <li key={item.label}>{changeText(item)}</li>
                 ))}
               </ul>
               {pendingApply.outcome.filled.length > 0 ? (
-                <p className="dlg-text">另有 {pendingApply.outcome.filled.length} 项空白字段会被填入。</p>
+                <p className="dlg-text">{t('另有 {count} 项空白字段会被填入。', { count: pendingApply.outcome.filled.length })}</p>
               ) : null}
-              <p className="dlg-text">装备词条不受影响。</p>
+              <p className="dlg-text">{t('装备词条不受影响。')}</p>
             </>
           )}
-          confirmText="应用"
+          confirmText={t('应用')}
           onConfirm={() => commitSchemeApply(pendingApply.outcome)}
           onClose={() => setPendingApply(null)}
         />

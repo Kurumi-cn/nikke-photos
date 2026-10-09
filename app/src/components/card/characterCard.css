@@ -11,6 +11,14 @@
   font-display: block;
 }
 
+/* 繁体皮肤用的同一款游戏字体的 TC 子集（繁体模式下词条区换用它，简体用户观感不变） */
+@font-face {
+  font-family: 'NIKKE Text TC';
+  src: url('../../assets/fonts/NotoSansTC-Black-subset.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: block;
+}
+
 @font-face {
   font-family: 'NIKKE Digit';
   src: url('../../assets/fonts/Azonix_Regular.otf') format('opentype');
@@ -36,6 +44,11 @@
 
 .np-card.is-transparent {
   background: transparent;
+}
+
+/* 繁体模式：词条区改用 TC 字形的同款游戏字体（tokens.css 里 data-locale 由 i18n 写入） */
+:root[data-locale='zh-Hant'] .np-card {
+  --np-affix-cn-font: 'NIKKE Text TC', 'Microsoft JhengHei', 'Microsoft YaHei', system-ui, sans-serif;
 }
 
 .np-card-art,

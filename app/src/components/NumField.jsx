@@ -9,6 +9,7 @@
 // 输入框自己持有一份草稿文本，这样「清空重打」不会被 min 值堵住；
 // 外部 value 变化（切角色 / 恢复到示例数据）时重置草稿，但**聚焦中不重置**，免得打字被打断。
 import { useEffect, useRef, useState } from 'react'
+import { t } from '../lib/i18n.js'
 import { FIELD_RANGES, isEmptyValue, isInRange, rangeText } from '../lib/fieldRanges.js'
 
 export const toInput = (value) => (value === null || value === undefined ? '' : String(value))
@@ -48,11 +49,11 @@ export default function NumField({ label, value, onChange, rangeKey, hint, onVal
     }
     const next = parseNumber(raw)
     if (next === null) {
-      report('请输入数字')
+      report(t('请输入数字'))
       return
     }
     if (!Number.isInteger(next)) {
-      report('请输入整数')
+      report(t('请输入整数'))
       return
     }
     if (isInRange(rangeKey, next)) {
@@ -60,12 +61,12 @@ export default function NumField({ label, value, onChange, rangeKey, hint, onVal
       onChange(next)
       return
     }
-    report(`输入越界！范围 ${rangeText(rangeKey)}`)
+    report(t('输入越界！范围 {range}', { range: rangeText(rangeKey) }))
   }
 
   return (
     <label className="form-row">
-      <span className="form-label">{label}</span>
+      <span className="form-label">{t(label)}</span>
       <input
         className={message ? 'inp is-invalid' : 'inp'}
         type="number"
@@ -81,7 +82,7 @@ export default function NumField({ label, value, onChange, rangeKey, hint, onVal
       />
       {message
         ? <span className="form-error">{message}</span>
-        : (hint ? <span className="form-hint">{hint}</span> : null)}
+        : (hint ? <span className="form-hint">{t(hint)}</span> : null)}
     </label>
   )
 }

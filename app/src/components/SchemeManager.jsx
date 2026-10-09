@@ -8,6 +8,7 @@
 import { useEffect, useRef, useState } from 'react'
 import ConfirmDialog from './ConfirmDialog.jsx'
 import NumField from './NumField.jsx'
+import { t, tData } from '../lib/i18n.js'
 import '../styles/schemes.css'
 import { CUBES } from '../lib/cubes.js'
 import { getSchemes, saveSchemes } from '../lib/profileStore.js'
@@ -67,8 +68,8 @@ function SchemeEditor({ mode, initial, schemes, onClose, onSubmit }) {
 
   const trimmed = draft.name.trim()
   const nameError = !trimmed
-    ? '方案名不能为空'
-    : (isSchemeNameTaken(schemes, trimmed, draft.id) ? '方案名不允许重复' : '')
+    ? t('方案名不能为空')
+    : (isSchemeNameTaken(schemes, trimmed, draft.id) ? t('方案名不允许重复') : '')
   const canSave = !nameError && invalidKeys.size === 0
 
   const submit = () => {
@@ -101,22 +102,22 @@ function SchemeEditor({ mode, initial, schemes, onClose, onSubmit }) {
         if (event.target === event.currentTarget) onClose()
       }}
     >
-      <div className="dlg dlg-wide" role="dialog" aria-label={mode === 'create' ? '新建方案' : '编辑方案'}>
+      <div className="dlg dlg-wide" role="dialog" aria-label={mode === 'create' ? t('新建方案') : t('编辑方案')}>
         <div className="dlg-head">
-          <h2>{mode === 'create' ? '新建方案' : '编辑方案'}</h2>
-          <button type="button" className="dlg-x" onClick={onClose} aria-label="关闭">×</button>
+          <h2>{mode === 'create' ? t('新建方案') : t('编辑方案')}</h2>
+          <button type="button" className="dlg-x" onClick={onClose} aria-label={t('关闭')}>×</button>
         </div>
 
         <div className="dlg-body dlg-body-scroll">
           <div>
             <div className="dlg-row">
-              <span className="dlg-label">方案名</span>
+              <span className="dlg-label">{t('方案名')}</span>
               <input
                 ref={nameRef}
                 className={touched && nameError ? 'dlg-input is-invalid' : 'dlg-input'}
                 value={draft.name}
                 maxLength={SCHEME_NAME_MAX}
-                placeholder="例如：主号常用"
+                placeholder={t('例如：主号常用')}
                 onChange={(event) => {
                   setTouched(true)
                   setIn(['name'], event.target.value)
@@ -136,35 +137,35 @@ function SchemeEditor({ mode, initial, schemes, onClose, onSubmit }) {
               onChange={(event) => setIn(['forceReplace'], event.target.checked)}
             />
             <span>
-              <b>强制替换</b>
-              <small>应用方案时，覆盖已输入的内容；方案里留空的项一律不碰（不勾则只填空缺）</small>
+              <b>{t('强制替换')}</b>
+              <small>{t('应用方案时，覆盖已输入的内容；方案里留空的项一律不碰（不勾则只填空缺）')}</small>
             </span>
           </label>
 
           <div className="form-grid">
             <section className="form-block">
-              <h3>基础</h3>
+              <h3>{t('基础')}</h3>
               {renderRows(BASIC_ROWS)}
-              <p className="scheme-note">留空表示该方案不指定这一项</p>
+              <p className="scheme-note">{t('留空表示该方案不指定这一项')}</p>
             </section>
 
             <section className="form-block">
-              <h3>研究所与技能</h3>
+              <h3>{t('研究所与技能')}</h3>
               {renderRows(SKILL_ROWS)}
             </section>
 
             <section className="form-block">
-              <h3>魔方与收藏品</h3>
+              <h3>{t('魔方与收藏品')}</h3>
               <label className="form-row">
-                <span className="form-label">魔方</span>
+                <span className="form-label">{t('魔方')}</span>
                 <select
                   className="inp"
                   value={draft.cube?.resourceId ?? ''}
                   onChange={(event) => setIn(['cube', 'resourceId'], event.target.value === '' ? null : Number(event.target.value))}
                 >
-                  <option value="">不指定</option>
+                  <option value="">{t('不指定')}</option>
                   {CUBES.map((cube) => (
-                    <option key={cube.resourceId} value={cube.resourceId}>{cube.nameCn}</option>
+                    <option key={cube.resourceId} value={cube.resourceId}>{tData(cube.nameCn)}</option>
                   ))}
                 </select>
               </label>
@@ -177,15 +178,15 @@ function SchemeEditor({ mode, initial, schemes, onClose, onSubmit }) {
               />
 
               <label className="form-row">
-                <span className="form-label">收藏品</span>
+                <span className="form-label">{t('收藏品')}</span>
                 <select
                   className="inp"
                   value={draft.favoriteItem?.rarity ?? ''}
                   onChange={(event) => setIn(['favoriteItem', 'rarity'], event.target.value || null)}
                 >
-                  <option value="">不指定</option>
-                  <option value="R">R 收藏品</option>
-                  <option value="SR">SR 收藏品</option>
+                  <option value="">{t('不指定')}</option>
+                  <option value="R">{t('R 收藏品')}</option>
+                  <option value="SR">{t('SR 收藏品')}</option>
                 </select>
               </label>
               <NumField
@@ -197,26 +198,26 @@ function SchemeEditor({ mode, initial, schemes, onClose, onSubmit }) {
               />
 
               <label className="form-row">
-                <span className="form-label">珍藏品角色</span>
+                <span className="form-label">{t('珍藏品角色')}</span>
                 <select
                   className="inp"
                   value={ssrLevelToControl(draft.favoriteSsrLevel)}
                   onChange={(event) => setIn(['favoriteSsrLevel'], ssrLevelFromControl(event.target.value))}
                 >
                   {FAVORITE_SSR_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>{option.label}</option>
+                    <option key={option.value} value={option.value}>{t(option.label)}</option>
                   ))}
                 </select>
-                <span className="form-hint">只对珍藏品角色生效，其余角色按上面的收藏品设置</span>
+                <span className="form-hint">{t('只对珍藏品角色生效，其余角色按上面的收藏品设置')}</span>
               </label>
             </section>
           </div>
         </div>
 
         <div className="dlg-foot">
-          <button type="button" className="btn" onClick={onClose}>取消</button>
+          <button type="button" className="btn" onClick={onClose}>{t('取消')}</button>
           <button type="button" className="btn btn-primary" disabled={!canSave} onClick={submit}>
-            {mode === 'create' ? '创建' : '保存'}
+            {mode === 'create' ? t('创建') : t('保存')}
           </button>
         </div>
       </div>
@@ -254,15 +255,15 @@ export default function SchemeManager({ onApply }) {
   return (
     <div className="scheme-manager">
       <div className="scheme-toolbar">
-        <button type="button" className="btn btn-primary btn-sm" onClick={openCreate}>新建方案</button>
+        <button type="button" className="btn btn-primary btn-sm" onClick={openCreate}>{t('新建方案')}</button>
         <span className="spacer" />
-        <span className="archive-count">共 <strong>{schemes.length}</strong> 个方案</span>
+        <span className="archive-count">{t('共')} <strong>{schemes.length}</strong> {t('个方案')}</span>
       </div>
 
       {schemes.length === 0 ? (
         <div className="empty">
-          <div className="t">还没有方案</div>
-          <div>方案可以预先存好一组默认值，需要时一键应用到这个角色</div>
+          <div className="t">{t('还没有方案')}</div>
+          <div>{t('方案可以预先存好一组默认值，需要时一键应用到这个角色')}</div>
         </div>
       ) : (
         <div className="scheme-list">
@@ -273,9 +274,9 @@ export default function SchemeManager({ onApply }) {
                 <div className="scheme-main">
                   <div className="scheme-title">
                     <b>{scheme.name}</b>
-                    {scheme.forceReplace ? <span className="scheme-badge">强制替换</span> : null}
+                    {scheme.forceReplace ? <span className="scheme-badge">{t('强制替换')}</span> : null}
                   </div>
-                  <div className="scheme-meta">{summary || '未指定任何默认值'}</div>
+                  <div className="scheme-meta">{summary ? t(summary) : t('未指定任何默认值')}</div>
                 </div>
                 <div className="scheme-actions">
                   {onApply ? (
@@ -283,14 +284,14 @@ export default function SchemeManager({ onApply }) {
                       type="button"
                       className="btn btn-sm btn-primary"
                       disabled={!schemeHasAnyValue(scheme)}
-                      title={schemeHasAnyValue(scheme) ? '' : '该方案没有指定任何默认值'}
+                      title={schemeHasAnyValue(scheme) ? '' : t('该方案没有指定任何默认值')}
                       onClick={() => onApply(scheme)}
                     >
-                      应用至当前角色
+                      {t('应用至当前角色')}
                     </button>
                   ) : null}
-                  <button type="button" className="btn btn-sm" onClick={() => openEdit(scheme)}>编辑</button>
-                  <button type="button" className="btn btn-sm" onClick={() => setConfirmDelete(scheme)}>删除</button>
+                  <button type="button" className="btn btn-sm" onClick={() => openEdit(scheme)}>{t('编辑')}</button>
+                  <button type="button" className="btn btn-sm" onClick={() => setConfirmDelete(scheme)}>{t('删除')}</button>
                 </div>
               </div>
             )
@@ -312,7 +313,7 @@ export default function SchemeManager({ onApply }) {
       {confirmDelete ? (
         <ConfirmDialog
           title="删除方案"
-          message={<p className="dlg-text">确定删除方案「{confirmDelete.name}」？删除后无法恢复。</p>}
+          message={<p className="dlg-text">{t('确定删除方案「{name}」？删除后无法恢复。', { name: confirmDelete.name })}</p>}
           confirmText="删除"
           danger
           onConfirm={handleDelete}

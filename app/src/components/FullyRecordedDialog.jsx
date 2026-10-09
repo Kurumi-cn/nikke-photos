@@ -1,5 +1,6 @@
 import CharacterGrid from './CharacterGrid.jsx'
 import FilterBar from './FilterBar.jsx'
+import { t } from '../lib/i18n.js'
 
 /**
  * 角色一览弹窗：显示某个存档下「已完善」的角色。
@@ -30,10 +31,10 @@ export default function FullyRecordedDialog({
         if (event.target === event.currentTarget) onClose()
       }}
     >
-      <div className="dlg dlg-wide dlg-tall" role="dialog" aria-label={`${profileName} 角色一览`}>
+      <div className="dlg dlg-wide dlg-tall" role="dialog" aria-label={t('{name} 角色一览', { name: profileName })}>
         <div className="dlg-head">
-          <h2>「{profileName}」已完善角色（{characters.length}）</h2>
-          <button type="button" className="dlg-x" onClick={onClose} aria-label="关闭">×</button>
+          <h2>{t('「{name}」已完善角色（{count}）', { name: profileName, count: characters.length })}</h2>
+          <button type="button" className="dlg-x" onClick={onClose} aria-label={t('关闭')}>×</button>
         </div>
 
         <div className="fr-toolbar">
@@ -47,11 +48,11 @@ export default function FullyRecordedDialog({
             <input
               value={search}
               onChange={(event) => onSearchChange(event.target.value)}
-              placeholder="搜索：中文名 / 英文名 / 资源号 / 拼音首字母"
+              placeholder={t('搜索：中文名 / 英文名 / 资源号 / 拼音首字母')}
               spellCheck={false}
             />
             {search ? (
-              <button type="button" className="search-clear" onClick={() => onSearchChange('')} aria-label="清空搜索">×</button>
+              <button type="button" className="search-clear" onClick={() => onSearchChange('')} aria-label={t('清空搜索')}>×</button>
             ) : null}
           </label>
 
@@ -67,14 +68,14 @@ export default function FullyRecordedDialog({
           <span className="spacer" />
 
           {isCurrent ? (
-            <span className="fr-current">当前存档</span>
+            <span className="fr-current">{t('当前存档')}</span>
           ) : (
-            <button type="button" className="btn btn-sm" onClick={onSwitchToCurrent}>切换到当前档</button>
+            <button type="button" className="btn btn-sm" onClick={onSwitchToCurrent}>{t('切换到当前档')}</button>
           )}
         </div>
 
         {!isCurrent ? (
-          <p className="fr-readonly">该存档不是当前存档，角色一览仅供查看；点击「切换到当前档」后可进入角色详情。</p>
+          <p className="fr-readonly">{t('该存档不是当前存档，角色一览仅供查看；点击「切换到当前档」后可进入角色详情。')}</p>
         ) : null}
 
         <div className="fr-body" ref={gridRef} onScroll={onGridScroll}>
@@ -84,8 +85,8 @@ export default function FullyRecordedDialog({
             </div>
           ) : (
             <div className="empty">
-              <div className="t">没有匹配的角色</div>
-              <div>换个关键词，或调整筛选条件</div>
+              <div className="t">{t('没有匹配的角色')}</div>
+              <div>{t('换个关键词，或调整筛选条件')}</div>
             </div>
           )}
         </div>

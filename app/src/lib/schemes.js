@@ -16,6 +16,7 @@
 
 import { findCube } from './cubes.js'
 import { isEmptyValue, isOutOfSpec } from './fieldRanges.js'
+import { t, tData } from './i18n.js'
 
 /** 方案名长度上限（与存档名一致） */
 export const SCHEME_NAME_MAX = 30
@@ -179,15 +180,15 @@ export const mergeSchemes = (existing, incoming) => {
 // ---- 应用 ----
 
 const describeCube = (cube) => [
-  cube?.resourceId ? (findCube(cube.resourceId)?.nameCn || `魔方 ${cube.resourceId}`) : '',
-  isEmptyValue(cube?.level) ? '' : `${cube.level} 级`,
+  cube?.resourceId ? (tData(findCube(cube.resourceId)?.nameCn) || t('魔方 {id}', { id: cube.resourceId })) : '',
+  isEmptyValue(cube?.level) ? '' : t('{level} 级', { level: cube.level }),
 ].filter(Boolean).join(' · ')
 
 const describeFavorite = (favorite) => {
-  if (favorite?.rarity === 'SSR') return `SSR 珍藏品 · ${(Number(favorite.level) || 0) + 1}⭐`
+  if (favorite?.rarity === 'SSR') return t('SSR 珍藏品 · {stars}⭐', { stars: (Number(favorite.level) || 0) + 1 })
   return [
     favorite?.rarity || '',
-    isEmptyValue(favorite?.level) ? '' : `${favorite.level} 级`,
+    isEmptyValue(favorite?.level) ? '' : t('{level} 级', { level: favorite.level }),
   ].filter(Boolean).join(' · ')
 }
 
@@ -216,7 +217,7 @@ export const applyScheme = (record, scheme, { force, isFavoriteCharacter = false
   const put = (path, rangeKey, label, value) => {
     if (isEmptyValue(value)) return
     if (isOutOfSpec(rangeKey, value)) {
-      notes.push(`${label} 的方案值 ${value} 越界，已跳过`)
+      notes.push(t('{label} 的方案值 {value} 越界，已跳过', { label: t(label), value }))
       return
     }
     const current = getPath(next, path)
@@ -256,7 +257,7 @@ export const applyScheme = (record, scheme, { force, isFavoriteCharacter = false
     cubePatch.nameEn = cubeFound.nameEn
   }
   if (!isEmptyValue(cube.level)) cubePatch.level = cube.level
-  putGroup('cube', cubePatch, '魔方', describeCube)
+  putGroup('cube', cubePatch, t('魔方'), describeCube)
 
   // 收藏品：珍藏品角色 + 单选指定了星数 → 走 SSR 支（内部存 0-2，与表单一致）
   const ssrLevel = detail.favoriteSsrLevel
@@ -265,7 +266,7 @@ export const applyScheme = (record, scheme, { force, isFavoriteCharacter = false
     favoritePatch.rarity = 'SSR'
     favoritePatch.level = ssrLevel - 1
   } else {
-    if (!isFavoriteCharacter && ssrLevel !== null) notes.push('收藏品：该角色不是珍藏品角色，已忽略珍藏品设置')
+    if (!isFavoriteCharacter && ssrLevel !== null) notes.push(t('收藏品：该角色不是珍藏品角色，已忽略珍藏品设置'))
     if (detail.favoriteItem?.rarity) favoritePatch.rarity = detail.favoriteItem.rarity
     if (!isEmptyValue(detail.favoriteItem?.level)) favoritePatch.level = detail.favoriteItem.level
   }
@@ -294,17 +295,17 @@ export const schemeSummary = (scheme) => {
   for (const { path, label } of SCHEME_FIELD_ROWS) {
     const [group, key] = path
     const value = key === undefined ? detail[group] : detail[group]?.[key]
-    if (!isEmptyValue(value)) parts.push(`${label} ${value}`)
+    if (!isEmptyValue(value)) parts.push(`${t(label)} ${value}`)
   }
   const cube = describeCube(detail.cube)
-  if (cube) parts.push(`魔方 ${cube}`)
+  if (cube) parts.push(`${t('魔方')} ${cube}`)
   const favorite = describeFavorite(detail.favoriteItem)
-  if (favorite) parts.push(`收藏品 ${favorite}`)
-  if (detail.favoriteSsrLevel !== null) parts.push(`珍藏品角色 ${detail.favoriteSsrLevel}⭐`)
+  if (favorite) parts.push(`${t('收藏品')} ${favorite}`)
+  if (detail.favoriteSsrLevel !== null) parts.push(`${t('珍藏品角色')} ${detail.favoriteSsrLevel}⭐`)
   return parts.join(' · ')
 }
 
 /** 「应用」二次确认里用的字段变更描述：`突破（星）2 → 1` */
 export const changeText = ({ label, from, to }) => (
-  from === null || from === undefined ? `${label} → ${to}` : `${label} ${from} → ${to}`
+  from === null || from === undefined ? `${t(label)} → ${to}` : `${t(label)} ${from} → ${to}`
 )

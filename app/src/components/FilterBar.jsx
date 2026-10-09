@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { TAXONOMY, assetUrl } from '../lib/roster.js'
+import { t } from '../lib/i18n.js'
 
 const SWITCHES = [
   { key: 'cnPublished', label: '国服已实装' },
@@ -56,7 +57,7 @@ export default function FilterBar({
               aria-expanded={open}
               onClick={() => setOpenKey(open ? null : group.key)}
             >
-              {group.label}
+              {t(group.label)}
               {chosen.length > 0 && <span className="badge">{chosen.length}</span>}
               <span className="caret">▾</span>
             </button>
@@ -72,7 +73,7 @@ export default function FilterBar({
                       onClick={() => onToggleOption(group.key, option.value)}
                     >
                       <img src={assetUrl(option.icon)} alt="" />
-                      <span className="name">{option.label}</span>
+                      <span className="name">{t(option.label)}</span>
                       {active && <span className="check">✓</span>}
                     </button>
                   )
@@ -94,13 +95,13 @@ export default function FilterBar({
           onClick={() => onToggleSwitch(item.key)}
         >
           <span className="track" />
-          {item.label}
+          {t(item.label)}
         </button>
       ))}
 
       {activeCount > 0 && (
         <button type="button" className="link-btn" onClick={onClear}>
-          清空筛选 ({activeCount})
+          {t('清空筛选 ({count})', { count: activeCount })}
         </button>
       )}
     </div>

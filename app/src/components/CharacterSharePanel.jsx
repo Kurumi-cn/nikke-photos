@@ -5,7 +5,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import FilterBar from './FilterBar.jsx'
 import ShareCodeNotice from './ShareCodeNotice.jsx'
-import { CHARACTERS, applyFilters, assetUrl, countActiveFilters, findCharacter, iconFor } from '../lib/roster.js'
+import { t } from '../lib/i18n.js'
+import { CHARACTERS, applyFilters, assetUrl, countActiveFilters, displayName, findCharacter, iconFor } from '../lib/roster.js'
 import {
   fullyRecordedCodes,
   getCurrentProfile,
@@ -117,10 +118,10 @@ export default function CharacterSharePanel() {
       node.focus()
       node.select()
     }
-    flash('已选中，请按 Ctrl+C 复制')
+    flash(t('已选中，请按 Ctrl+C 复制'))
     try {
       const pending = navigator.clipboard?.writeText(code)
-      if (pending && typeof pending.then === 'function') pending.then(() => flash('已复制')).catch(() => {})
+      if (pending && typeof pending.then === 'function') pending.then(() => flash(t('已复制'))).catch(() => {})
     } catch {
       // 剪贴板不可用：保留「已选中」提示
     }
@@ -132,15 +133,15 @@ export default function CharacterSharePanel() {
   }
 
   return (
-    <section className="bs-section" aria-label="角色数据分享码">
+    <section className="bs-section" aria-label={t('角色数据分享码')}>
       <header className="bs-head">
         <div>
-          <h2>角色数据</h2>
+          <h2>{t('角色数据')}</h2>
           <div className="desc">
-            选已完善的角色生成分享码，在 QQ 里发 <code>/妮姬导入 &lt;分享码&gt;</code>
+            {t('选已完善的角色生成分享码，在 QQ 里发')} <code>/妮姬导入 &lt;{t('分享码')}&gt;</code>
           </div>
         </div>
-        <div className="count">已选 <strong>{picked.length}</strong> / {SHARE_MAX_COUNT}</div>
+        <div className="count">{t('已选')} <strong>{picked.length}</strong> / {SHARE_MAX_COUNT}</div>
       </header>
 
       <div className="toolbar">
@@ -154,11 +155,11 @@ export default function CharacterSharePanel() {
           <input
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="搜索：中文名 / 英文名 / 资源号 / 拼音首字母"
+            placeholder={t('搜索：中文名 / 英文名 / 资源号 / 拼音首字母')}
             spellCheck={false}
           />
           {search ? (
-            <button type="button" className="search-clear" onClick={() => setSearch('')} aria-label="清空搜索">×</button>
+            <button type="button" className="search-clear" onClick={() => setSearch('')} aria-label={t('清空搜索')}>×</button>
           ) : null}
         </label>
 
@@ -173,25 +174,25 @@ export default function CharacterSharePanel() {
 
         <span className="spacer" />
 
-        <span className="share-limit">单次最多 {SHARE_MAX_COUNT} 个{limitHit ? '（已达上限，先取消部分选择）' : ''}</span>
+        <span className="share-limit">{t('单次最多 {max} 个{extra}', { max: SHARE_MAX_COUNT, extra: limitHit ? t('（已达上限，先取消部分选择）') : '' })}</span>
         {picked.length > 0 ? (
-          <button type="button" className="btn btn-sm" onClick={() => setPicked([])}>清空选择</button>
+          <button type="button" className="btn btn-sm" onClick={() => setPicked([])}>{t('清空选择')}</button>
         ) : null}
       </div>
 
       <div className="share-fields">
         <div className="share-fields-head">
-          <span className="t">导出字段</span>
-          <span className="h">装备词条必选；勾得越少，码越短</span>
+          <span className="t">{t('导出字段')}</span>
+          <span className="h">{t('装备词条必选；勾得越少，码越短')}</span>
           <span className="spacer" />
-          <button type="button" className="link-btn" onClick={() => setNoticeOpen(true)}>默认值说明</button>
+          <button type="button" className="link-btn" onClick={() => setNoticeOpen(true)}>{t('默认值说明')}</button>
         </div>
         <div className="field-list">
           {SHARE_FIELDS.map((field) => (
             <label
               key={field.key}
               className={`field-item${field.locked ? ' is-locked' : ''}`}
-              title={field.locked ? '装备词条为必选项' : undefined}
+              title={field.locked ? t('装备词条为必选项') : undefined}
             >
               <input
                 type="checkbox"
@@ -199,7 +200,7 @@ export default function CharacterSharePanel() {
                 disabled={field.locked}
                 onChange={() => toggleField(field.key)}
               />
-              <span>{field.label}</span>
+              <span>{t(field.label)}</span>
             </label>
           ))}
         </div>
@@ -212,20 +213,20 @@ export default function CharacterSharePanel() {
           readOnly
           rows={3}
           value={code}
-          placeholder="先在上面选角色，码会实时出现在这里"
+          placeholder={t('先在上面选角色，码会实时出现在这里')}
           onFocus={(event) => event.target.select()}
         />
         <div className="share-meta">
           {codeError
-            ? <span className="dlg-error">{codeError}</span>
-            : <span>{picked.length} 个角色 · {code ? `${code.length} 字符` : '—'}</span>}
+            ? <span className="dlg-error">{t(codeError)}</span>
+            : <span>{t('{count} 个角色', { count: picked.length })} · {code ? t('{n} 字符', { n: code.length }) : '—'}</span>}
           <button
             type="button"
             className="btn btn-sm btn-primary"
             onClick={handleCopy}
             disabled={!code}
           >
-            {copyHint || '复制分享码'}
+            {copyHint || t('复制分享码')}
           </button>
         </div>
       </div>
@@ -245,31 +246,31 @@ export default function CharacterSharePanel() {
                   type="button"
                   className={`pick-tile${active ? ' is-picked' : ''}${blocked ? ' is-disabled' : ''}`}
                   onClick={() => togglePick(item)}
-                  title={character.nameCn}
+                  title={displayName(character)}
                 >
                   <span className="pick-thumb">
                     {character.avatar
                       ? <img src={assetUrl(character.avatar)} alt="" loading="lazy" decoding="async" />
-                      : <span className="ph">无头像</span>}
+                      : <span className="ph">{t('无头像')}</span>}
                     {elementIcon ? <img className="elem" src={assetUrl(elementIcon)} alt="" /> : null}
                     {burstIcon ? <img className="burst" src={assetUrl(burstIcon)} alt="" /> : null}
                     <span className="pick-check" aria-hidden="true">✓</span>
                   </span>
-                  <span className="pick-name">{character.nameCn}</span>
+                  <span className="pick-name">{displayName(character)}</span>
                 </button>
               )
             })}
           </div>
         ) : (
           <div className="empty">
-            <div className="t">没有匹配的角色</div>
-            <div>换个关键词，或调整筛选条件</div>
+            <div className="t">{t('没有匹配的角色')}</div>
+            <div>{t('换个关键词，或调整筛选条件')}</div>
           </div>
         )
       ) : (
         <div className="empty">
-          <div className="t">当前存档还没有已完善的角色</div>
-          <div>先在「数据录入」把角色的四件装备填完，这里就能生成分享码了</div>
+          <div className="t">{t('当前存档还没有已完善的角色')}</div>
+          <div>{t('先在「数据录入」把角色的四件装备填完，这里就能生成分享码了')}</div>
         </div>
       )}
 

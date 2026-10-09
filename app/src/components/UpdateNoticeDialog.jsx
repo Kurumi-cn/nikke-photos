@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { BASELINE_VERSION, CHANGELOG, CURRENT_VERSION, displayDate } from '../data/changelog.js'
 import { markVersionSeen, readSeenVersion } from '../lib/updateNotice.js'
+import { t } from '../lib/i18n.js'
 import '../styles/changelog.css'
 
 export default function UpdateNoticeDialog({ onClose }) {
@@ -31,10 +32,10 @@ export default function UpdateNoticeDialog({ onClose }) {
         if (event.target === event.currentTarget) close()
       }}
     >
-      <div className="dlg" role="dialog" aria-label="版本更新">
+      <div className="dlg" role="dialog" aria-label={t('版本更新')}>
         <div className="dlg-head">
-          <h2>版本更新</h2>
-          <button type="button" className="dlg-x" onClick={close} aria-label="关闭">×</button>
+          <h2>{t('版本更新')}</h2>
+          <button type="button" className="dlg-x" onClick={close} aria-label={t('关闭')}>×</button>
         </div>
 
         <div className="dlg-body">
@@ -52,12 +53,12 @@ export default function UpdateNoticeDialog({ onClose }) {
               checked={mute}
               onChange={(event) => setMute(event.target.checked)}
             />
-            <span>不再提醒（有新版本时仍会提示）</span>
+            <span>{t('不再提醒（有新版本时仍会提示）')}</span>
           </label>
         </div>
 
         <div className="dlg-foot">
-          <button type="button" className="btn btn-primary" onClick={close}>知道了</button>
+          <button type="button" className="btn btn-primary" onClick={close}>{t('知道了')}</button>
         </div>
       </div>
     </div>

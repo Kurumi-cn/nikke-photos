@@ -1,4 +1,6 @@
 import roster from '../data/roster.json' with { type: 'json' }
+import { toHantChars } from './hant.js'
+import { tData } from './i18n.js'
 
 export const CHARACTERS = roster.characters
 export const TAXONOMY = roster.taxonomy
@@ -21,23 +23,28 @@ for (const group of TAXONOMY.filters) {
   }
 }
 
-export const labelFor = (key, value) => labelIndex.get(`${key}:${value}`) || value || '—'
+export const labelFor = (key, value) => tData(labelIndex.get(`${key}:${value}`) || value || '—')
 
 /** 分类值 → 图标路径（无图标返回空串，调用方自行跳过） */
 export const iconFor = (key, value) => iconIndex.get(`${key}:${value}`) || ''
 
+/** 角色显示名：繁体模式下走字形映射（数据层名词，见 lib/hant.js） */
+export const displayName = (character) => tData(character?.nameCn ?? '')
+
 const norm = (value) => String(value ?? '').toLowerCase()
+/** 搜索归一：简繁字形先统一（两种写法都能命中），再转小写 */
+const searchKey = (value) => norm(toHantChars(value))
 
 export function matchesSearch(character, query) {
-  const q = norm(query).trim()
+  const q = searchKey(query).trim()
   if (!q) return true
   return (
-    norm(character.nameCn).includes(q)
-    || norm(character.nameEn).includes(q)
-    || norm(character.nameCode).includes(q)
-    || norm(character.resourceId).includes(q)
-    || norm(character.pinyin).includes(q)
-    || character.aliases.some((alias) => norm(alias).includes(q))
+    searchKey(character.nameCn).includes(q)
+    || searchKey(character.nameEn).includes(q)
+    || searchKey(character.nameCode).includes(q)
+    || searchKey(character.resourceId).includes(q)
+    || searchKey(character.pinyin).includes(q)
+    || character.aliases.some((alias) => searchKey(alias).includes(q))
   )
 }
 

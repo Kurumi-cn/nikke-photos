@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { CARD_HEIGHT, CARD_WIDTH } from '../lib/cardLayout.js'
+import { t } from '../lib/i18n.js'
 
 const ZOOMS = [
   { key: 'fit', label: '适应窗口' },
@@ -158,7 +159,7 @@ export default function CardPreviewDialog({ open, onClose, children, autoSize = 
         if (event.target === event.currentTarget) onClose()
       }}
     >
-      <div className="pv-box" role="dialog" aria-label="卡片放大预览">
+      <div className="pv-box" role="dialog" aria-label={t('卡片放大预览')}>
         <div className="pv-bar">
           <div className="zoom">
             {ZOOMS.map((item) => (
@@ -168,14 +169,14 @@ export default function CardPreviewDialog({ open, onClose, children, autoSize = 
                 className={zoom === item.key ? 'active' : ''}
                 onClick={() => pickZoom(item.key)}
               >
-                {item.label}
+                {t(item.label)}
               </button>
             ))}
           </div>
           <span className="pv-hint">
-            当前 {Math.round(scale * 100)}% · 滚轮缩放 · 拖动平移 · 双击复位
+            {t('当前 {percent}% · 滚轮缩放 · 拖动平移 · 双击复位', { percent: Math.round(scale * 100) })}
           </span>
-          <button type="button" className="dlg-x" onClick={onClose} aria-label="关闭">×</button>
+          <button type="button" className="dlg-x" onClick={onClose} aria-label={t('关闭')}>×</button>
         </div>
         <div
           className={canPan ? 'pv-stage pv-pan' : 'pv-stage'}

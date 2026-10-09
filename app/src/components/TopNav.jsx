@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { CURRENT_VERSION } from '../data/changelog.js'
+import { LOCALE_HANS, LOCALE_HANT, currentLocale, setLocale, t } from '../lib/i18n.js'
 import { getCurrentProfile, subscribeProfiles } from '../lib/profileStore.js'
 import { THEME_DARK, THEME_LIGHT, currentTheme, hasManualTheme, setTheme } from '../lib/theme.js'
 
@@ -30,6 +31,22 @@ function SunIcon() {
         stroke="currentColor"
         strokeWidth="1.4"
         strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+/** 地球 = 语言切换（与主题图标同规格） */
+function LangIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <circle cx="8" cy="8" r="6.2" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M1.8 8h12.4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <path
+        d="M8 1.8c1.8 1.9 2.7 4 2.7 6.2S9.8 12.3 8 14.2C6.2 12.3 5.3 10.2 5.3 8S6.2 3.7 8 1.8Z"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
       />
     </svg>
   )
@@ -93,6 +110,15 @@ export default function TopNav() {
     setThemeState(next)
   }
 
+  // 语言切换：整棵树的重渲染由 App 的订阅负责，这里只需要写状态（并立刻反映到按钮上）
+  const locale = currentLocale()
+  const [, refreshLocale] = useState(0)
+  const switchLocale = (next) => {
+    if (next === locale) return
+    setLocale(next)
+    refreshLocale((count) => count + 1)
+  }
+
   // Escape 关闭抽屉（与站内弹窗同一套习惯）
   useEffect(() => {
     if (!menuOpen) return undefined
@@ -108,7 +134,7 @@ export default function TopNav() {
   return (
     <header className="topbar">
       <div className="topbar-inner">
-        <button type="button" className="nav-burger" onClick={() => setMenuOpen(true)} aria-label="打开导航菜单">
+        <button type="button" className="nav-burger" onClick={() => setMenuOpen(true)} aria-label={t('打开导航菜单')}>
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
             <path d="M3 5h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             <path d="M3 9h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -123,22 +149,40 @@ export default function TopNav() {
         <nav className="tabs">
           {TABS.map((item) => (
             <NavLink key={item.to} to={item.to} className={({ isActive }) => (isActive ? 'tab active' : 'tab')}>
-              {item.label}
+              {t(item.label)}
             </NavLink>
           ))}
         </nav>
         <div className="topbar-right">
+          <div className="lang-toggle" role="group" aria-label={t('界面语言')}>
+            <button
+              type="button"
+              className={locale === LOCALE_HANS ? 'on' : ''}
+              aria-pressed={locale === LOCALE_HANS}
+              onClick={() => switchLocale(LOCALE_HANS)}
+            >
+              {t('简')}
+            </button>
+            <button
+              type="button"
+              className={locale === LOCALE_HANT ? 'on' : ''}
+              aria-pressed={locale === LOCALE_HANT}
+              onClick={() => switchLocale(LOCALE_HANT)}
+            >
+              {t('繁')}
+            </button>
+          </div>
           <button
             type="button"
             className="theme-toggle"
             onClick={toggleTheme}
-            aria-label={theme === THEME_DARK ? '切换到浅色外观' : '切换到深色外观'}
-            title={theme === THEME_DARK ? '切换到浅色外观' : '切换到深色外观'}
+            aria-label={theme === THEME_DARK ? t('切换到浅色外观') : t('切换到深色外观')}
+            title={theme === THEME_DARK ? t('切换到浅色外观') : t('切换到深色外观')}
           >
             {theme === THEME_DARK ? <SunIcon /> : <MoonIcon />}
           </button>
-          <Link className="current-profile" to="/profiles" title="切换 / 管理存档">
-            当前存档：<strong>{profile.name}</strong>
+          <Link className="current-profile" to="/profiles" title={t('切换 / 管理存档')}>
+            {t('当前存档：')}<strong>{profile.name}</strong>
           </Link>
           <span className="version">v{CURRENT_VERSION}</span>
         </div>
@@ -151,7 +195,7 @@ export default function TopNav() {
             if (event.target === event.currentTarget) closeMenu()
           }}
         >
-          <nav className="nav-drawer" aria-label="导航菜单">
+          <nav className="nav-drawer" aria-label={t('导航菜单')}>
             <div className="nav-drawer-head">
               <span className="dot" />
               NIKKE Photos
@@ -165,7 +209,7 @@ export default function TopNav() {
                   className={({ isActive }) => (isActive ? 'nav-drawer-tab active' : 'nav-drawer-tab')}
                   onClick={closeMenu}
                 >
-                  {item.label}
+                  {t(item.label)}
                 </NavLink>
               ))}
             </div>
@@ -173,10 +217,18 @@ export default function TopNav() {
             <div className="nav-drawer-foot">
               <button type="button" className="nav-drawer-theme" onClick={toggleTheme}>
                 {theme === THEME_DARK ? <SunIcon /> : <MoonIcon />}
-                <span>切换到{theme === THEME_DARK ? '浅色' : '深色'}外观</span>
+                <span>{theme === THEME_DARK ? t('切换到浅色外观') : t('切换到深色外观')}</span>
+              </button>
+              <button
+                type="button"
+                className="nav-drawer-theme"
+                onClick={() => switchLocale(locale === LOCALE_HANT ? LOCALE_HANS : LOCALE_HANT)}
+              >
+                <LangIcon />
+                <span>{locale === LOCALE_HANT ? t('切换到简体中文') : t('切换到繁体中文')}</span>
               </button>
               <Link className="nav-drawer-profile" to="/profiles" onClick={closeMenu}>
-                当前存档：<strong>{profile.name}</strong>
+                {t('当前存档：')}<strong>{profile.name}</strong>
               </Link>
               <span className="nav-drawer-version">v{CURRENT_VERSION}</span>
             </div>

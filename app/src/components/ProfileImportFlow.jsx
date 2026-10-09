@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import ImportDialog from './ImportDialog.jsx'
 import ProfileDialog from './ProfileDialog.jsx'
+import { t } from '../lib/i18n.js'
 import {
   getCurrentProfileId,
   importAsNewProfile,
@@ -28,17 +29,17 @@ export default function ProfileImportFlow({ parsed, onDone, onClose }) {
       // 导入文件里不含同步器等级时（如 Workshop 图鉴导入）保留目标存档的原值，不要把它清掉；
       // 档案 JSON / 账号数据都带同步器等级，走原样覆盖
       const payload = parsed.synchroLevel == null && target ? { ...parsed, synchroLevel: target.synchroLevel } : parsed
-      onDone(importIntoProfile(id, payload), `「${target?.name || '存档'}」`)
+      onDone(importIntoProfile(id, payload), t('「{name}」', { name: target?.name || t('存档') }))
     } catch (problem) {
-      setError(`导入失败：${problem?.message || problem}`)
+      setError(t('导入失败：{message}', { message: problem?.message || problem }))
     }
   }
 
   const create = (values) => {
     try {
-      onDone(importAsNewProfile(draft, values), `「${values.name}」`)
+      onDone(importAsNewProfile(draft, values), t('「{name}」', { name: values.name }))
     } catch (problem) {
-      setError(`导入失败：${problem?.message || problem}`)
+      setError(t('导入失败：{message}', { message: problem?.message || problem }))
     }
   }
 

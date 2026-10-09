@@ -19,6 +19,39 @@
           document.documentElement.setAttribute('data-theme', 'light')
         }
       })()
+      // 首屏前应用语言，避免繁体用户看到一瞬简体（key 与 src/lib/i18n.js 保持一致）
+      ;(function () {
+        function pickLang() {
+          var query = window.location.search || ''
+          var hash = window.location.hash || ''
+          var hashQuery = hash.indexOf('?') >= 0 ? hash.slice(hash.indexOf('?') + 1) : ''
+          var values = []
+          try { values.push(new URLSearchParams(query).get('lang')) } catch (error) { /* 忽略 */ }
+          try { values.push(new URLSearchParams(hashQuery).get('lang')) } catch (error) { /* 忽略 */ }
+          for (var i = 0; i < values.length; i += 1) {
+            var value = String(values[i] || '').toLowerCase()
+            if (value === 'zh-hant' || value === 'tw' || value === 'hant') return 'zh-Hant'
+            if (value === 'zh-hans' || value === 'cn' || value === 'hans') return 'zh-Hans'
+          }
+          var saved = localStorage.getItem('nikke-photos:locale')
+          if (saved === 'zh-Hant' || saved === 'zh-Hans') return saved
+          var langs = navigator.languages || [navigator.language]
+          for (var j = 0; j < langs.length; j += 1) {
+            var lang = String(langs[j] || '').toLowerCase()
+            if (lang === 'zh-tw' || lang === 'zh-hk' || lang === 'zh-mo' || lang === 'zh-hant') return 'zh-Hant'
+            if (lang.indexOf('zh') === 0) return 'zh-Hans'
+          }
+          return 'zh-Hans'
+        }
+        var locale
+        try {
+          locale = pickLang()
+        } catch (error) {
+          locale = 'zh-Hans'
+        }
+        document.documentElement.setAttribute('data-locale', locale)
+        document.documentElement.lang = locale === 'zh-Hant' ? 'zh-Hant' : 'zh-CN'
+      })()
     </script>
   </head>
   <body>

@@ -17,6 +17,7 @@ import {
   subscribeProfiles,
   updateProfile,
 } from '../lib/profileStore.js'
+import { t } from '../lib/i18n.js'
 
 const SORT_OPTIONS = [
   { key: 'updatedAt', label: '最近修改时间' },
@@ -175,7 +176,7 @@ export default function ProfilesPage() {
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = `nikke-photos-档案-${stamp()}.json`
+    link.download = `nikke-photos-${t('档案')}-${stamp()}.json`
     link.click()
     URL.revokeObjectURL(url)
   }
@@ -183,11 +184,11 @@ export default function ProfilesPage() {
   /** 档案类文件导入完成：列表刷新由 subscribeProfiles 负责，这里只给一条结果提示 */
   const finishProfileImport = (result, label) => {
     setProfileImport(null)
-    const schemeNote = result.schemes ? `，方案 ${result.schemes} 个` : ''
+    const schemeNote = result.schemes ? t('，方案 {count} 个', { count: result.schemes }) : ''
     const renameNote = result.schemeRenames?.length
-      ? `（方案重名已改为 ${result.schemeRenames.map((item) => `「${item.to}」`).join('、')}）`
+      ? t('（方案重名已改为 {names}）', { names: result.schemeRenames.map((item) => `「${item.to}」`).join('、') })
       : ''
-    setNotice(`已导入 ${result.imported} 个角色记录到${label}${result.unknown.length ? `（${result.unknown.length} 个键未识别）` : ''}${schemeNote}${renameNote}`)
+    setNotice(`${t('已导入 {count} 个角色记录到', { count: result.imported })}${label}${result.unknown.length ? t('（{count} 个键未识别）', { count: result.unknown.length }) : ''}${schemeNote}${renameNote}`)
   }
 
   const handleSubmit = (values) => {
@@ -213,27 +214,27 @@ export default function ProfilesPage() {
           <path d="M12.5 8h-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
           <path d="M7 4 3 8l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-        返回
+        {t('返回')}
       </button>
 
       <div className="page-head">
         <div>
-          <h1>存档管理</h1>
-          <div className="desc">每个存档独立保存角色数据；点击存档行即可切换为当前存档</div>
+          <h1>{t('存档管理')}</h1>
+          <div className="desc">{t('每个存档独立保存角色数据；点击存档行即可切换为当前存档')}</div>
         </div>
         <div className="head-actions">
-          <button type="button" className="btn" onClick={handleExportProfile}>导出当前档案数据</button>
-          <button type="button" className="btn" onClick={() => setAccountImport(true)}>导入账号/档案数据</button>
-          <button type="button" className="btn btn-primary" onClick={openCreate}>新建存档</button>
+          <button type="button" className="btn" onClick={handleExportProfile}>{t('导出当前档案数据')}</button>
+          <button type="button" className="btn" onClick={() => setAccountImport(true)}>{t('导入账号/档案数据')}</button>
+          <button type="button" className="btn btn-primary" onClick={openCreate}>{t('新建存档')}</button>
         </div>
       </div>
 
       <div className="toolbar">
         <label className="sort-field">
-          <span>排序</span>
+          <span>{t('排序')}</span>
           <select value={view.sortKey} onChange={(event) => patchView({ sortKey: event.target.value })}>
             {SORT_OPTIONS.map((option) => (
-              <option key={option.key} value={option.key}>{option.label}</option>
+              <option key={option.key} value={option.key}>{t(option.label)}</option>
             ))}
           </select>
         </label>
@@ -242,10 +243,10 @@ export default function ProfilesPage() {
           className="btn btn-sm"
           onClick={() => patchView({ sortDir: view.sortDir === 'asc' ? 'desc' : 'asc' })}
         >
-          {view.sortDir === 'asc' ? '升序 ↑' : '降序 ↓'}
+          {view.sortDir === 'asc' ? t('升序 ↑') : t('降序 ↓')}
         </button>
         <span className="spacer" />
-        <span className="archive-count">共 <strong>{profiles.length}</strong> 个存档</span>
+        <span className="archive-count">{t('共')} <strong>{profiles.length}</strong> {t('个存档')}</span>
       </div>
 
       <div className="profile-list">
@@ -263,12 +264,12 @@ export default function ProfilesPage() {
             <div className="profile-main">
               <div className="profile-title">
                 <b>{profile.name}</b>
-                {profile.isCurrent ? <span className="profile-badge">当前</span> : null}
+                {profile.isCurrent ? <span className="profile-badge">{t('当前')}</span> : null}
               </div>
               <div className="profile-meta">
-                <span>已完善：<strong>{profile.fully}</strong></span>
-                <span>同步器等级 {profile.synchroLevel}</span>
-                <span>最近修改 {formatTime(profile.updatedAt)}</span>
+                <span>{t('已完善：')}<strong>{profile.fully}</strong></span>
+                <span>{t('同步器等级 {level}', { level: profile.synchroLevel })}</span>
+                <span>{t('最近修改 {time}', { time: formatTime(profile.updatedAt) })}</span>
               </div>
             </div>
 
@@ -278,19 +279,19 @@ export default function ProfilesPage() {
                 className="btn btn-sm"
                 onClick={() => patchView({ openProfileId: profile.id, pageScroll: window.scrollY })}
               >
-                角色一览
+                {t('角色一览')}
               </button>
               <button type="button" className="btn btn-sm" onClick={() => setEditor({ mode: 'edit', profile })}>
-                详情
+                {t('详情')}
               </button>
               <button
                 type="button"
                 className="btn btn-sm"
                 disabled={profile.deletable === false}
-                title={profile.deletable === false ? '默认存档不可删除' : ''}
+                title={profile.deletable === false ? t('默认存档不可删除') : ''}
                 onClick={() => setConfirmDelete(profile)}
               >
-                删除
+                {t('删除')}
               </button>
             </div>
           </div>
@@ -318,7 +319,7 @@ export default function ProfilesPage() {
       {notice ? (
         <div className="drop-toast" role="status">
           <span>{notice}</span>
-          <button type="button" onClick={() => setNotice('')} aria-label="关闭">×</button>
+          <button type="button" onClick={() => setNotice('')} aria-label={t('关闭')}>×</button>
         </div>
       ) : null}
 
@@ -359,19 +360,19 @@ export default function ProfilesPage() {
             if (event.target === event.currentTarget) setConfirmDelete(null)
           }}
         >
-          <div className="dlg" role="dialog" aria-label="删除存档">
+          <div className="dlg" role="dialog" aria-label={t('删除存档')}>
             <div className="dlg-head">
-              <h2>删除存档</h2>
-              <button type="button" className="dlg-x" onClick={() => setConfirmDelete(null)} aria-label="关闭">×</button>
+              <h2>{t('删除存档')}</h2>
+              <button type="button" className="dlg-x" onClick={() => setConfirmDelete(null)} aria-label={t('关闭')}>×</button>
             </div>
             <div className="dlg-body">
               <p className="dlg-text">
-                确定删除存档「{confirmDelete.name}」？该存档已完善 {confirmDelete.fully} 个角色的数据会一并删除，且无法恢复。
+                {t('确定删除存档「{name}」？该存档已完善 {count} 个角色的数据会一并删除，且无法恢复。', { name: confirmDelete.name, count: confirmDelete.fully })}
               </p>
             </div>
             <div className="dlg-foot">
-              <button type="button" className="btn" onClick={() => setConfirmDelete(null)}>取消</button>
-              <button type="button" className="btn btn-danger" onClick={handleDelete}>删除</button>
+              <button type="button" className="btn" onClick={() => setConfirmDelete(null)}>{t('取消')}</button>
+              <button type="button" className="btn btn-danger" onClick={handleDelete}>{t('删除')}</button>
             </div>
           </div>
         </div>

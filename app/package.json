@@ -14,6 +14,8 @@
     "store:migrate-check": "node scripts/check-migrations.mjs",
     "account:check": "node scripts/check-account-import.mjs",
     "workshop:check": "node scripts/check-workshop-import.mjs",
+    "i18n:map": "node scripts/build-s2t-map.mjs",
+    "i18n:check": "node scripts/check-i18n.mjs",
     "share:check": "node scripts/check-share-code.mjs",
     "ocr:scan": "node scripts/ocr-scan.mjs",
     "ocr:extract": "node scripts/extract-glyph-templates.mjs",

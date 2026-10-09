@@ -18,6 +18,7 @@ import {
   versionOf,
 } from './profileMigrations.js'
 import { CHARACTERS } from './roster.js'
+import { t } from './i18n.js'
 import { mergeSchemes, normalizeSchemes } from './schemes.js'
 import { isFullyRecorded } from './statsModel.js'
 
@@ -217,7 +218,7 @@ function ensureIndex() {
   const stamp = now()
   const profile = {
     id: DEFAULT_PROFILE_ID,
-    name: DEFAULT_PROFILE_NAME,
+    name: t(DEFAULT_PROFILE_NAME),
     synchroLevel: DEFAULT_SYNCHRO_LEVEL,
     research: defaultResearch(),
     schemes: [],
@@ -247,24 +248,25 @@ export function getCurrentProfileId() {
   return ensureIndex().currentId
 }
 
-/** 自动编号：现存「存档N」的最大编号 + 1（不补空号） */
+/** 自动编号：现存「存档N」的最大编号 + 1（不补空号）；繁体环境下生成「存檔N」，编号两边都认 */
 export function nextProfileName() {
   let max = 0
   for (const item of ensureIndex().profiles) {
-    const matched = /^存档(\d+)$/.exec(String(item.name || ''))
+    const matched = /^存[档檔](\d+)$/.exec(String(item.name || ''))
     if (matched) max = Math.max(max, Number(matched[1]))
   }
-  return `存档${max + 1}`
+  return t('存档{n}', { n: max + 1 })
 }
 
-/** Workshop 图鉴导入的默认存档名：现存「workshop导入N」的最大编号 + 1（不补空号） */
+/** Workshop 图鉴导入的默认存档名：现存「workshop导入N」的最大编号 + 1（不补空号）；
+ *  繁体环境下生成「workshop匯入N」，两种写法都参与编号 */
 export function nextWorkshopProfileName() {
   let max = 0
   for (const item of ensureIndex().profiles) {
-    const matched = /^workshop导入(\d+)$/i.exec(String(item.name || '').trim())
+    const matched = /^workshop(?:导入|匯入)(\d+)$/i.exec(String(item.name || '').trim())
     if (matched) max = Math.max(max, Number(matched[1]))
   }
-  return `workshop导入${max + 1}`
+  return t('workshop导入{n}', { n: max + 1 })
 }
 
 /** 某存档下「已完善」角色（四件装备全录入）的 nameCode 列表 */
@@ -314,7 +316,7 @@ export function deleteProfile(id) {
   const index = ensureIndex()
   const target = index.profiles.find((item) => item.id === id)
   if (!target) return false
-  if (target.deletable === false) throw new Error('默认存档不可删除')
+  if (target.deletable === false) throw new Error(t('默认存档不可删除'))
   index.profiles = index.profiles.filter((item) => item.id !== id)
   if (index.currentId === id) index.currentId = index.profiles[0].id
   writeIndex(index)

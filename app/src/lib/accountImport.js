@@ -10,6 +10,7 @@
 import { AFFIX_TIER_VALUES, FUNCTION_LABELS } from '../data/affixTiers.js'
 import { findCubeByCubeId } from './cubes.js'
 import { FIELD_RANGES, isInRange } from './fieldRanges.js'
+import { t, tData } from './i18n.js'
 import { defaultResearch, NAME_MAX } from './profileStore.js'
 import { findCharacter } from './roster.js'
 
@@ -193,16 +194,20 @@ const buildNotices = (report, synchroLevel) => {
   const notices = []
   if (report.unmatched.length > 0) {
     const head = report.unmatched.slice(0, 5).join('、')
-    notices.push(`图鉴未收录，已跳过 ${report.unmatched.length} 个角色（${head}${report.unmatched.length > 5 ? ' 等' : ''}）`)
+    notices.push(t('图鉴未收录，已跳过 {count} 个角色（{head}{more}）', {
+      count: report.unmatched.length,
+      head,
+      more: report.unmatched.length > 5 ? t(' 等') : '',
+    }))
   }
-  if (report.unknownCube > 0) notices.push(`有 ${report.unknownCube} 个角色的魔方编号本工具不认识，该魔方已跳过`)
-  if (report.favoriteMismatch > 0) notices.push(`有 ${report.favoriteMismatch} 个角色账号里显示是 SSR 珍藏品，但本工具图鉴里不是珍藏品角色`)
-  if (report.positionConflicts > 0) notices.push(`同一位置出现多条词条，已取首条：${report.positionConflicts} 处`)
-  if (report.valueMismatch > 0) notices.push(`词条数值与游戏显示不一致（已按本工具档位表为准）：${report.valueMismatch} 处`)
-  if (report.synchroFallback) notices.push(`没有取到可用的同步器等级，已预填 ${synchroLevel}，请自行确认`)
-  if (report.nameTruncated) notices.push(`游戏昵称超过 ${NAME_MAX} 字，存档名已截断`)
+  if (report.unknownCube > 0) notices.push(t('有 {count} 个角色的魔方编号本工具不认识，该魔方已跳过', { count: report.unknownCube }))
+  if (report.favoriteMismatch > 0) notices.push(t('有 {count} 个角色账号里显示是 SSR 珍藏品，但本工具图鉴里不是珍藏品角色', { count: report.favoriteMismatch }))
+  if (report.positionConflicts > 0) notices.push(t('同一位置出现多条词条，已取首条：{count} 处', { count: report.positionConflicts }))
+  if (report.valueMismatch > 0) notices.push(t('词条数值与游戏显示不一致（已按本工具档位表为准）：{count} 处', { count: report.valueMismatch }))
+  if (report.synchroFallback) notices.push(t('没有取到可用的同步器等级，已预填 {level}，请自行确认', { level: synchroLevel }))
+  if (report.nameTruncated) notices.push(t('游戏昵称超过 {max} 字，存档名已截断', { max: NAME_MAX }))
   for (const [label, count] of Object.entries(report.fieldIssues)) {
-    notices.push(`${label}：${count} 处缺失或越界，已留空`)
+    notices.push(t('{label}：{count} 处缺失或越界，已留空', { label: tData(label), count }))
   }
   return notices
 }

@@ -7,6 +7,14 @@
   font-display: swap;
 }
 
+/* 繁体皮肤用的 TC 子集（繁体模式下表格文字换用它） */
+@font-face {
+  font-family: 'NIKKE Text TC';
+  src: url('../assets/fonts/NotoSansTC-Black-subset.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
 @font-face {
   font-family: 'NIKKE Digit';
   src: url('../assets/fonts/Azonix_Regular.otf') format('opentype');
@@ -49,6 +57,12 @@
   background: #fff;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
+  /* 表格文字字体：简体用 SC 子集，繁体模式换 TC 子集（见下方 data-locale 覆盖） */
+  --st-text-font: 'NIKKE Text', 'Microsoft YaHei', sans-serif;
+}
+
+:root[data-locale='zh-Hant'] .st-sheet {
+  --st-text-font: 'NIKKE Text TC', 'Microsoft JhengHei', 'Microsoft YaHei', sans-serif;
 }
 
 .st-table {
@@ -70,7 +84,7 @@
   font-size: 13px;
   font-weight: 600;
   text-align: center;
-  font-family: 'NIKKE Text', 'Microsoft YaHei', sans-serif;
+  font-family: var(--st-text-font);
 }
 
 /* 第一列（署名 + 角色名）：宽度按内容自适应——由角色名与署名里最长的那个决定，
@@ -87,7 +101,7 @@
   overflow-wrap: anywhere;
   /* 署名最多占原来那格的文字宽度（两行足够放下 20 字），超长折行后截断 */
   max-width: 144px;
-  font-family: 'NIKKE Text', 'Microsoft YaHei', sans-serif;
+  font-family: var(--st-text-font);
   font-weight: 900;
   font-size: 13px;
   line-height: 1.35;
@@ -108,7 +122,7 @@
 
 .st-name {
   text-align: center;
-  font-family: 'NIKKE Text', 'Microsoft YaHei', sans-serif;
+  font-family: var(--st-text-font);
   font-weight: 900;
   font-size: 13px;
   color: var(--text);

@@ -8,6 +8,7 @@
 //      不拦的话同一次投放会被处理两遍。
 import { useEffect, useRef, useState } from 'react'
 import { sniffImportFile } from '../lib/importSniff.js'
+import { t } from '../lib/i18n.js'
 import '../styles/importDrop.css'
 
 const carriesFiles = (event) => Array.from(event.dataTransfer?.types || []).includes('Files')
@@ -80,8 +81,8 @@ export default function ImportDropLayer({ onSniffed, onError }) {
   return (
     <div className="drop-layer">
       <div className="drop-layer-box">
-        <b>松手即导入</b>
-        <span>支持本工具导出的「档案」、油猴脚本导出的「账号数据」，以及 NIKKE Workshop 导出的图鉴 xlsx</span>
+        <b>{t('松手即导入')}</b>
+        <span>{t('支持本工具导出的「档案」、油猴脚本导出的「账号数据」，以及 NIKKE Workshop 导出的图鉴 xlsx')}</span>
       </div>
     </div>
   )

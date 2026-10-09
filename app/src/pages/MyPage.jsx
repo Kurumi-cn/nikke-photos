@@ -1,5 +1,6 @@
 // 更多：功能入口集合
 import { Link } from 'react-router-dom'
+import { t } from '../lib/i18n.js'
 
 const ENTRIES = [
   {
@@ -29,15 +30,15 @@ export default function MyPage() {
     <main className="page">
       <div className="page-head">
         <div>
-          <h1>更多</h1>
-          <div className="desc">常用功能入口</div>
+          <h1>{t('更多')}</h1>
+          <div className="desc">{t('常用功能入口')}</div>
         </div>
       </div>
       <div className="my-grid">
         {ENTRIES.map((entry) => (
           <Link key={entry.to} className="my-card" to={entry.to}>
-            <b>{entry.title}</b>
-            <span>{entry.desc}</span>
+            <b>{t(entry.title)}</b>
+            <span>{t(entry.desc)}</span>
           </Link>
         ))}
       </div>

@@ -5,6 +5,7 @@ import { AFFIX_TIER_VALUES, FUNCTION_LABELS, affixTierText } from '../data/affix
 import { recognizeEquipment } from '../lib/ocr/equipment/engine.js'
 import { runShadowComparison } from '../lib/ocr/equipment/shadow.js'
 import { captureScreenFrame, imageDataFromBlob, isScreenCaptureSupported, loadOcrAssets } from '../lib/ocr/assets.js'
+import { LOCALE_HANT, currentLocale, t, tData } from '../lib/i18n.js'
 import ConfirmDialog from './ConfirmDialog.jsx'
 
 const FUNCTION_OPTIONS = Object.entries(FUNCTION_LABELS)
@@ -98,9 +99,9 @@ function OcrRow({ row, onChange }) {
           if (event.target.value) jumpToTiers()
         }}
       >
-        <option value="">未获得效果</option>
+        <option value="">{t('未获得效果')}</option>
         {FUNCTION_OPTIONS.map(([code, label]) => (
-          <option key={code} value={code}>{label}</option>
+          <option key={code} value={code}>{tData(label)}</option>
         ))}
       </select>
       <select
@@ -110,16 +111,16 @@ function OcrRow({ row, onChange }) {
         disabled={!row.functionType}
         onChange={(event) => onChange({ level: event.target.value ? Number(event.target.value) : null })}
       >
-        <option value="">{row.functionType ? '请选择档位' : '—'}</option>
+        <option value="">{row.functionType ? t('请选择档位') : '—'}</option>
         {tiers
           ? tiers.map((_, index) => (
-            <option key={index} value={index + 1}>{`第 ${index + 1} 档 · ${affixTierText(row.functionType, index + 1)}`}</option>
+            <option key={index} value={index + 1}>{t('第 {tier} 档 · {text}', { tier: index + 1, text: affixTierText(row.functionType, index + 1) })}</option>
           ))
           : null}
       </select>
       <span className="ocr-flag-cell">
-        {row.snapped ? <span className="ocr-flag">已校正至档位</span> : null}
-        {row.needsConfirm ? <span className="ocr-flag ocr-flag-warn">需核对</span> : null}
+        {row.snapped ? <span className="ocr-flag">{t('已校正至档位')}</span> : null}
+        {row.needsConfirm ? <span className="ocr-flag ocr-flag-warn">{t('需核对')}</span> : null}
       </span>
     </div>
   )
@@ -165,25 +166,25 @@ export default function EquipmentOcrDialog({ open, slotLabel, onClose, onApply }
       // 引擎级失败必须与“识别不出来”分开表达（规格 §4.3）：三行都置 unknown 并带 OCR_ENGINE_ERROR
       if (result.engineError) {
         setPhase('idle')
-        setMessage(`识别引擎出错，本次结果不可用：${result.engineError.message}`)
+        setMessage(t('识别引擎出错，本次结果不可用：{message}', { message: result.engineError.message }))
         return
       }
       setWarnings((result.warnings || []).filter((code) => WARNING_LABELS[code]))
       if (result.panel === null) {
         setPhase('idle')
-        setMessage('未检测到装备面板，请重新截图，或裁剪出装备面板后粘贴')
+        setMessage(t('未检测到装备面板，请重新截图，或裁剪出装备面板后粘贴'))
         return
       }
       if (result.rows.every((row) => row.empty)) {
         setPhase('idle')
-        setMessage('未识别到改造装备词条，请确认截图为装备详情面板（含“改造装备效果”区域）')
+        setMessage(t('未识别到改造装备词条，请确认截图为装备详情面板（含“改造装备效果”区域）'))
         return
       }
       setRows(toEditableRows(result.rows))
       setPhase('done')
     } catch (error) {
       setPhase('idle')
-      setMessage(error?.message || '识别失败，请重试')
+      setMessage(error?.message || t('识别失败，请重试'))
     }
   }
 
@@ -194,7 +195,7 @@ export default function EquipmentOcrDialog({ open, slotLabel, onClose, onApply }
       await recognize(frame.imageData, { dataUrl: frame.dataUrl, meta: frame.meta })
     } catch (error) {
       if (error?.name === 'NotAllowedError' || error?.name === 'AbortError') return // 用户取消了共享选择
-      setMessage(error?.message || '抓屏失败，请重试')
+      setMessage(error?.message || t('抓屏失败，请重试'))
     }
   }
 
@@ -291,10 +292,10 @@ export default function EquipmentOcrDialog({ open, slotLabel, onClose, onApply }
         if (event.target === event.currentTarget) onClose()
       }}
     >
-      <div className="dlg dlg-wide" role="dialog" aria-label="识别装备词条">
+      <div className="dlg dlg-wide" role="dialog" aria-label={t('识别装备词条')}>
         <div className="dlg-head">
-          <h2>识别装备词条 · {slotLabel}</h2>
-          <button type="button" className="dlg-x" onClick={onClose} aria-label="关闭">×</button>
+          <h2>{t('识别装备词条 · {slot}', { slot: slotLabel })}</h2>
+          <button type="button" className="dlg-x" onClick={onClose} aria-label={t('关闭')}>×</button>
         </div>
 
         <div className="dlg-body">
@@ -312,13 +313,13 @@ export default function EquipmentOcrDialog({ open, slotLabel, onClose, onApply }
               if (file) recognize(file)
             }}
           >
-            <p className="ocr-drop-text">请将截图拖拽至此，或进行粘贴、选择本地文件</p>
+            <p className="ocr-drop-text">{t('请将截图拖拽至此，或进行粘贴、选择本地文件')}</p>
             <div className="ocr-drop-actions">
               {screenCaptureSupported ? (
-                <button type="button" className="btn btn-sm" onClick={capture} disabled={phase === 'busy'}>截图识别</button>
+                <button type="button" className="btn btn-sm" onClick={capture} disabled={phase === 'busy'}>{t('截图识别')}</button>
               ) : null}
               <button type="button" className="btn btn-sm" onClick={() => fileRef.current?.click()} disabled={phase === 'busy'}>
-                选择文件
+                {t('选择文件')}
               </button>
             </div>
           </div>
@@ -335,31 +336,34 @@ export default function EquipmentOcrDialog({ open, slotLabel, onClose, onApply }
           />
 
           {screenCaptureSupported ? (
-            <p className="ocr-hint">浏览器抓帧画面可能受到压缩影响；若识别结果与实际游戏多次出现不符的情况，建议改用系统截图（Win+Shift+S）或QQ等软件的截图后粘贴或拖入</p>
+            <p className="ocr-hint">{t('浏览器抓帧画面可能受到压缩影响；若识别结果与实际游戏多次出现不符的情况，建议改用系统截图（Win+Shift+S）或QQ等软件的截图后粘贴或拖入')}</p>
           ) : null}
-          <p className="ocr-hint">识别效果在 1920×1080 分辨率下最佳；截图请包含完整的装备面板（含 OVERLOAD 标识）</p>
+          <p className="ocr-hint">{t('识别效果在 1920×1080 分辨率下最佳；截图请包含完整的装备面板（含 OVERLOAD 标识）')}</p>
+          {currentLocale() === LOCALE_HANT ? (
+            <p className="ocr-hint">{t('识别用的字符模板取自简体客户端，繁中客户端的截图可能识别不准，建议改用手动填写')}</p>
+          ) : null}
 
           {captureInfo ? (
             <div className="ocr-capture">
-              <img className="ocr-capture-thumb" src={captureInfo.dataUrl} alt="本次识别图片预览" />
+              <img className="ocr-capture-thumb" src={captureInfo.dataUrl} alt={t('本次识别图片预览')} />
               <div className="ocr-capture-side">
-                <b>本次识别图片</b>
+                <b>{t('本次识别图片')}</b>
                 <span>
                   {captureInfo.meta
-                    ? `${captureInfo.meta.displaySurface}${SURFACE_LABELS[captureInfo.meta.displaySurface] ? `（${SURFACE_LABELS[captureInfo.meta.displaySurface]}）` : ''} · `
+                    ? `${captureInfo.meta.displaySurface}${SURFACE_LABELS[captureInfo.meta.displaySurface] ? `（${t(SURFACE_LABELS[captureInfo.meta.displaySurface])}）` : ''} · `
                     : ''}
                   {captureInfo.width}×{captureInfo.height}
                 </span>
-                <button type="button" className="btn btn-sm" onClick={downloadCapture}>下载图片</button>
+                <button type="button" className="btn btn-sm" onClick={downloadCapture}>{t('下载图片')}</button>
               </div>
             </div>
           ) : null}
 
-          {phase === 'busy' ? <p className="ocr-status">识别中…</p> : null}
+          {phase === 'busy' ? <p className="ocr-status">{t('识别中…')}</p> : null}
           {message ? <p className="dlg-error">{message}</p> : null}
           {warnings.length > 0 ? (
             <ul className="ocr-warn-list">
-              {warnings.map((code) => <li key={code}>{WARNING_LABELS[code]}</li>)}
+              {warnings.map((code) => <li key={code}>{t(WARNING_LABELS[code])}</li>)}
             </ul>
           ) : null}
 
@@ -368,14 +372,14 @@ export default function EquipmentOcrDialog({ open, slotLabel, onClose, onApply }
               {rows.map((row) => (
                 <OcrRow key={row.position} row={row} onChange={(patch) => updateRow(row.position, patch)} />
               ))}
-              <p className="ocr-note">请逐行核对后应用；“未获得效果”行将保持空白。</p>
+              <p className="ocr-note">{t('请逐行核对后应用；“未获得效果”行将保持空白。')}</p>
             </div>
           ) : null}
         </div>
 
         <div className="dlg-foot">
-          <button type="button" className="btn" onClick={onClose}>取消</button>
-          <button type="button" className="btn btn-primary" onClick={apply} disabled={phase !== 'done'}>应用</button>
+          <button type="button" className="btn" onClick={onClose}>{t('取消')}</button>
+          <button type="button" className="btn btn-primary" onClick={apply} disabled={phase !== 'done'}>{t('应用')}</button>
         </div>
       </div>
 

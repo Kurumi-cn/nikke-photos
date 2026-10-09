@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { t } from '../lib/i18n.js'
 
 /** 分享码弹窗：展示 NKP2 识别码 + 一键复制 + 字符数
  *
@@ -45,11 +46,11 @@ export default function ShareCodeDialog({
       node.focus()
       node.select()
     }
-    flash('已选中，请按 Ctrl+C 复制')
+    flash(t('已选中，请按 Ctrl+C 复制'))
     try {
       const pending = navigator.clipboard?.writeText(code)
       if (pending && typeof pending.then === 'function') {
-        pending.then(() => flash('已复制')).catch(() => {})
+        pending.then(() => flash(t('已复制'))).catch(() => {})
       }
     } catch {
       // 剪贴板不可用：保留「已选中」提示
@@ -63,38 +64,38 @@ export default function ShareCodeDialog({
         if (event.target === event.currentTarget) onClose()
       }}
     >
-      <div className="dlg dlg-wide" role="dialog" aria-label={title}>
+      <div className="dlg dlg-wide" role="dialog" aria-label={t(title)}>
         <div className="dlg-head">
-          <h2>{title}</h2>
-          <button type="button" className="dlg-x" onClick={onClose} aria-label="关闭">×</button>
+          <h2>{t(title)}</h2>
+          <button type="button" className="dlg-x" onClick={onClose} aria-label={t('关闭')}>×</button>
         </div>
 
         <div className="dlg-body">
-          <p className="share-sub">{hint}</p>
+          <p className="share-sub">{t(hint)}</p>
           {error ? <p className="dlg-error">{error}</p> : null}
           <textarea
             ref={codeRef}
             className="share-code"
             readOnly
             rows={6}
-            value={loading ? '生成中…' : code}
+            value={loading ? t('生成中…') : code}
             onFocus={(event) => event.target.select()}
           />
           <div className="share-meta">
-            <span>{count} {unit} · {code ? `${code.length} 字符` : '—'}</span>
+            <span>{count} {t(unit)} · {code ? t('{n} 字符', { n: code.length }) : '—'}</span>
             <button
               type="button"
               className="btn btn-sm btn-primary"
               onClick={handleCopy}
               disabled={loading || !code}
             >
-              {copyHint || '复制分享码'}
+              {copyHint || t('复制分享码')}
             </button>
           </div>
         </div>
 
         <div className="dlg-foot">
-          <button type="button" className="btn" onClick={onClose}>关闭</button>
+          <button type="button" className="btn" onClick={onClose}>{t('关闭')}</button>
         </div>
       </div>
     </div>

@@ -144,6 +144,40 @@ input {
   color: var(--text);
 }
 
+/* 语言切换（简 / 繁）：与主题按钮同规格的小分段控件 */
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.lang-toggle button {
+  min-width: 24px;
+  height: 22px;
+  padding: 0 6px;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  color: var(--text-3);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--dur), color var(--dur);
+}
+
+.lang-toggle button:hover {
+  color: var(--text);
+}
+
+.lang-toggle button.on {
+  background: var(--bg-2);
+  color: var(--text);
+}
+
 /* ---------- 页面骨架 ---------- */
 
 .page {

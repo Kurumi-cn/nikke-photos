@@ -6,10 +6,11 @@ import CardPreviewDialog from '../components/CardPreviewDialog.jsx'
 import ExportDialog from '../components/ExportDialog.jsx'
 import ShareCodeDialog from '../components/ShareCodeDialog.jsx'
 import { CARD_HEIGHT, CARD_WIDTH, DEFAULT_MODULES, MODULE_OPTIONS } from '../lib/cardLayout.js'
-import { assetUrl, findCharacter } from '../lib/roster.js'
+import { assetUrl, displayName, findCharacter } from '../lib/roster.js'
 import { getResearch, getSynchroLevel, loadRecord, saveRecord, subscribeProfiles } from '../lib/profileStore.js'
 import { encodeShareCode, loadShareFields } from '../lib/shareCode.js'
 import { getTestProfile } from '../data/testProfiles.js'
+import { t, tData } from '../lib/i18n.js'
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value))
 const pad = (value) => String(value).padStart(2, '0')
@@ -164,11 +165,11 @@ export default function CharacterPage() {
             <path d="M12.5 8h-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             <path d="M7 4 3 8l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          返回
+          {t('返回')}
         </button>
         <div className="empty">
-          <div className="t">未找到该角色</div>
-          <div>资源号 {code} 不在当前名单中</div>
+          <div className="t">{t('未找到该角色')}</div>
+          <div>{t('资源号 {code} 不在当前名单中', { code })}</div>
         </div>
       </main>
     )
@@ -215,7 +216,7 @@ export default function CharacterPage() {
   const buildFileName = () => {
     const now = new Date()
     const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}`
-    return `${sanitize(`NIKKE_${character.nameCn}_${artwork?.label || '默认'}_${stamp}`)}.png`
+    return `${sanitize(`NIKKE_${displayName(character)}_${tData(artwork?.label) || t('默认')}_${stamp}`)}.png`
   }
 
   const openExport = () => {
@@ -237,7 +238,7 @@ export default function CharacterPage() {
         backgroundColor: transparent ? undefined : '#f5f7f8',
         style: { transform: 'none', margin: '0' },
       })
-      if (!blob) throw new Error('导出失败：未生成图片数据')
+      if (!blob) throw new Error(t('导出失败：未生成图片数据'))
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
@@ -275,10 +276,10 @@ export default function CharacterPage() {
     }
   }
   const dataState = hasStored
-    ? (dirty ? '正在保存…' : `已保存到本机${savedAt ? ` · ${formatTime(savedAt)}` : ''}`)
+    ? (dirty ? t('正在保存…') : (savedAt ? `${t('已保存到本机')} · ${formatTime(savedAt)}` : t('已保存到本机')))
     : sample
-      ? `示例数据（${sample.label}）· 修改后自动保存到本机`
-      : '暂无录入数据'
+      ? t('示例数据（{label}）· 修改后自动保存到本机', { label: sample.label })
+      : t('暂无录入数据')
 
   return (
     <main className="page">
@@ -287,23 +288,23 @@ export default function CharacterPage() {
           <path d="M12.5 8h-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
           <path d="M7 4 3 8l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-        返回
+        {t('返回')}
       </button>
 
       <div className="page-head">
         <div className="char-head">
-          {character.avatar ? <img className="avatar" src={assetUrl(character.avatar)} alt={character.nameCn} /> : null}
+          {character.avatar ? <img className="avatar" src={assetUrl(character.avatar)} alt={displayName(character)} /> : null}
           <div>
-            <h1>{character.nameCn}</h1>
+            <h1>{displayName(character)}</h1>
             <div className="desc">
               {character.nameEn} · {character.nameCode} · {dataState}
             </div>
           </div>
         </div>
         <div className="head-actions">
-          <Link className="btn" to={`/data?code=${character.nameCode}`} state={{ from: 'character' }}>编辑该角色数据</Link>
-          <button type="button" className="btn" onClick={openShare} disabled={!hasRecord}>分享到 BOT</button>
-          <button type="button" className="btn btn-primary" onClick={openExport}>导出图片</button>
+          <Link className="btn" to={`/data?code=${character.nameCode}`} state={{ from: 'character' }}>{t('编辑该角色数据')}</Link>
+          <button type="button" className="btn" onClick={openShare} disabled={!hasRecord}>{t('分享到 BOT')}</button>
+          <button type="button" className="btn btn-primary" onClick={openExport}>{t('导出图片')}</button>
         </div>
       </div>
 
@@ -336,7 +337,7 @@ export default function CharacterPage() {
             </div>
           </div>
           <div className="stage-hint">
-            <span>在卡片上拖动可移动立绘 · 预览 {Math.round(cardScale * 100)}%</span>
+            <span>{t('在卡片上拖动可移动立绘 · 预览 {scale}%', { scale: Math.round(cardScale * 100) })}</span>
             <div className="hint-zoom">
               {[['auto', '自动'], [60, '60%'], [80, '80%'], [100, '100%']].map(([key, label]) => (
                 <button
@@ -344,9 +345,9 @@ export default function CharacterPage() {
                   type="button"
                   className={previewZoom === key ? 'active' : ''}
                   onClick={() => setPreviewZoom(key)}
-                  title={key === 'auto' ? '卡片高度与右侧配置栏对齐' : `固定 ${label} 显示`}
+                  title={key === 'auto' ? t('卡片高度与右侧配置栏对齐') : t('固定 {label} 显示', { label })}
                 >
-                  {label}
+                  {t(label)}
                 </button>
               ))}
             </div>
@@ -355,9 +356,9 @@ export default function CharacterPage() {
 
         <aside className="config">
           <section className="config-block">
-            <h2>立绘</h2>
+            <h2>{t('立绘')}</h2>
             <label className="field">
-              <span>版本（{artworks.length} 个）</span>
+              <span>{t('版本（{count} 个）', { count: artworks.length })}</span>
               <select
                 value={artwork?.id || ''}
                 onChange={(event) => {
@@ -366,12 +367,12 @@ export default function CharacterPage() {
                 }}
               >
                 {artworks.map((item) => (
-                  <option key={item.id} value={item.id}>{item.label}</option>
+                  <option key={item.id} value={item.id}>{tData(item.label)}</option>
                 ))}
               </select>
             </label>
             <label className="field">
-              <span>缩放 {transform.scale}%</span>
+              <span>{t('缩放 {value}%', { value: transform.scale })}</span>
               <input
                 type="range" min="70" max="300" value={transform.scale}
                 onChange={(event) => {
@@ -381,7 +382,7 @@ export default function CharacterPage() {
               />
             </label>
             <label className="field">
-              <span>水平位置 {Math.round(transform.offsetX)}</span>
+              <span>{t('水平位置 {value}', { value: Math.round(transform.offsetX) })}</span>
               <input
                 type="range" min="0" max="100" value={transform.offsetX}
                 onChange={(event) => {
@@ -391,7 +392,7 @@ export default function CharacterPage() {
               />
             </label>
             <label className="field">
-              <span>垂直位置 {Math.round(transform.offsetY)}</span>
+              <span>{t('垂直位置 {value}', { value: Math.round(transform.offsetY) })}</span>
               <input
                 type="range" min="-40" max="40" value={transform.offsetY}
                 onChange={(event) => {
@@ -400,11 +401,11 @@ export default function CharacterPage() {
                 }}
               />
             </label>
-            <button type="button" className="btn btn-sm" onClick={resetArtwork}>复位立绘</button>
+            <button type="button" className="btn btn-sm" onClick={resetArtwork}>{t('复位立绘')}</button>
           </section>
 
           <section className="config-block">
-            <h2>模块</h2>
+            <h2>{t('模块')}</h2>
             <div className="module-list">
               {MODULE_OPTIONS.map((option) => (
                 <button
@@ -415,16 +416,16 @@ export default function CharacterPage() {
                   onClick={() => toggleModule(option.key)}
                 >
                   <span className="track" />
-                  {option.label}
+                  {t(option.label)}
                 </button>
               ))}
             </div>
           </section>
 
           <section className="config-block">
-            <h2>布局</h2>
+            <h2>{t('布局')}</h2>
             <label className="field">
-              <span>装备与词条合计大小 {panelScale}%</span>
+              <span>{t('装备与词条合计大小 {value}%', { value: panelScale })}</span>
               <input
                 type="range" min="80" max="150" value={panelScale}
                 onChange={(event) => {
@@ -436,11 +437,11 @@ export default function CharacterPage() {
           </section>
 
           <section className="config-block">
-            <h2>导出</h2>
-            <p className="config-note">默认 3x（{CARD_WIDTH * 3} × {CARD_HEIGHT * 3} px）PNG；倍率、背景与署名在弹窗内设置。</p>
+            <h2>{t('导出')}</h2>
+            <p className="config-note">{t('默认 3x（{w} × {h} px）PNG；倍率、背景与署名在弹窗内设置。', { w: CARD_WIDTH * 3, h: CARD_HEIGHT * 3 })}</p>
             <div className="config-actions">
-              <button type="button" className="btn" onClick={() => setPreviewOpen(true)}>放大预览</button>
-              <button type="button" className="btn" onClick={openExport}>导出设置…</button>
+              <button type="button" className="btn" onClick={() => setPreviewOpen(true)}>{t('放大预览')}</button>
+              <button type="button" className="btn" onClick={openExport}>{t('导出设置…')}</button>
             </div>
           </section>
         </aside>
