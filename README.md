@@ -5,7 +5,9 @@
 妮姬（NIKKE）角色卡片生成与练度管理工具：纯前端网页应用（React 19 + Vite，无后端、无账号系统，数据只存在你的浏览器里）。
 
 **在线使用**：https://kurumi-cn.github.io/nikke-photos/#/
-
+## BOT插件
+- 已发布，地址：[https://github.com/Kurumi-cn/nikke-photos](https://github.com/Kurumi-cn/astrbot_plugin_nikke_roster)
+- 目前为测试版本，欢迎反馈！
 ## 功能一览
 
 - **角色列表**：搜索（中文名 / 英文名 / 资源号 / 拼音首字母）+ 分类筛选（企业 / 爆裂阶段 / 武器 / 稀有度 / 属性 / 职业）+ 国服图鉴 / 珍藏品 / 超标准开关
