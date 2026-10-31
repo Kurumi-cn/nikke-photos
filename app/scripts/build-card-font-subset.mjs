@@ -18,7 +18,7 @@ import path from 'node:path'
 const APP_DIR = path.resolve(import.meta.dirname, '..')
 const PROJECT_DIR = path.resolve(APP_DIR, '..')
 const FONT_DIR = 'D:\\NIKKE备用工作区0923_tools\\font_library\\fonts\\OTF'
-const PYTHON_TOOLS = path.join(PROJECT_DIR, '.tools', 'fonttools')
+const PYTHON_TOOLS = process.env.NIKKE_FONTTOOLS_DIR || path.join(PROJECT_DIR, '.tools', 'fonttools')
 
 const CJK = /[\u3000-\u303f\u4e00-\u9fff\uff00-\uffef\u2018\u2019\u201c\u201d\u2026\u2014\u00b7]/g
 const EXTS = new Set(['.js', '.jsx', '.css', '.json'])

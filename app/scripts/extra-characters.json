@@ -1,7 +1,7 @@
 {
   "_note": [
     "本仓库自带的「补充角色表」：Helper 上游角色表尚未收录、但官方目录已有的角色。",
-    "build-roster.mjs 会把它按 Helper 的同形状注入到主循环里，因此这三个角色走的是与上游角色完全相同的校验路径；",
+    "build-roster.mjs 会把它按 Helper 的同形状注入到主循环里，因此这些补充角色走的是与上游角色完全相同的校验路径；",
     "若将来 Helper 补齐了同一个 nameCode，这里会自动让位（见 build-roster.mjs 的去重逻辑），不会产生重复条目。",
     "",
     "字段来源（2026-10-03 核对）：",
@@ -11,9 +11,13 @@
     "    口径交叉验证：同一取法读 rid 400 得 Wind/SG、rid 401 得 Electronic/AR，与本项目已有角色「吉尔提」「森」逐项一致",
     "  · 立绘：Workshop character-artwork 的 c104 / c404 / c405.webp（已随 npm run assets:sync 同步进 public）",
     "  · 头像：nikke-db.github.io/images/sprite/si_c<rid>_00_s.png（Workshop 自己的头像 URL 也指向这个源）",
-    "  · 技能图标：Workshop 技能图标目录里只有 c104；c404 / c405 暂无（与国服独占两个角色一样留空，不影响卡片渲染）"
+    "  · 技能图标：Workshop 技能图标目录里只有 c104；c404 / c405 暂无（与国服独占两个角色一样留空，不影响卡片渲染）",
+    "2026-10-25：追加5184贝洛塔：南瓜女巫，resourceId=63。官方roledata/63-v2-{zh-tw,en}.json核实身份与分类；部队/变爆裂Step3差异、静态图片来源和授权边界详见scripts/character-sources/belorta-pumpkin-witch.json及工作日志。",
+    "南瓜女巫头像来自NIKKE DB固定树版本，立绘来自Enikk页面明确关联的静态webp（原文件662×941，未编辑）。不把第三方图像视为GPL/MIT授权素材；再分发许可待核实。",
+    "原版贝洛塔3007/c060保留；新变体无已核实国服/珍藏品/超标准标记；当前技能图标目录未含63，保持既有可选图标缺失路径，不套用原版技能图标。",
+    "2026-10-25：用户要求更换为其提供的贝洛塔：南瓜女巫 (1).png，原始2048×2048透明PNG原字节复制为c063.png；当前引用已切换，旧Enikk webp仅保留历史兼容，不作为默认立绘。"
   ],
-  "revision": "2026-10-03",
+  "revision": "2026-10-25",
   "characters": [
     {
       "nameCode": "5181",
@@ -21,7 +25,13 @@
       "nameCn": "德雷克：终极反派",
       "nameEn": "Drake: Great Villain",
       "avatar": "avatars/si_c104_00_s.png",
-      "artworks": [{ "id": "default", "label": "默认", "file": "c104.webp" }],
+      "artworks": [
+        {
+          "id": "default",
+          "label": "默认",
+          "file": "c104.webp"
+        }
+      ],
       "use_burst_skill": "Step3",
       "weapon_type": "SG",
       "original_rare": "SSR",
@@ -35,7 +45,13 @@
       "nameCn": "吉尔提：神力兔女郎",
       "nameEn": "Guilty: Mighty Bunny",
       "avatar": "avatars/si_c404_00_s.png",
-      "artworks": [{ "id": "default", "label": "默认", "file": "c404.webp" }],
+      "artworks": [
+        {
+          "id": "default",
+          "label": "默认",
+          "file": "c404.webp"
+        }
+      ],
       "use_burst_skill": "Step3",
       "weapon_type": "SR",
       "original_rare": "SSR",
@@ -49,13 +65,39 @@
       "nameCn": "森：疾速兔女郎",
       "nameEn": "Sin: Swift Bunny",
       "avatar": "avatars/si_c405_00_s.png",
-      "artworks": [{ "id": "default", "label": "默认", "file": "c405.webp" }],
+      "artworks": [
+        {
+          "id": "default",
+          "label": "默认",
+          "file": "c405.webp"
+        }
+      ],
       "use_burst_skill": "Step3",
       "weapon_type": "SR",
       "original_rare": "SSR",
       "element": "Water",
       "class": "Attacker",
       "corporation": "MISSILIS"
+    },
+    {
+      "nameCode": "5184",
+      "resourceId": "63",
+      "nameCn": "贝洛塔：南瓜女巫",
+      "nameEn": "Belorta: Pumpkin Witch",
+      "avatar": "avatars/si_c063_00_s.png",
+      "artworks": [
+        {
+          "id": "default",
+          "label": "默认",
+          "file": "c063.png"
+        }
+      ],
+      "use_burst_skill": "Step2",
+      "weapon_type": "RL",
+      "original_rare": "SSR",
+      "element": "Water",
+      "class": "Supporter",
+      "corporation": "TETRA"
     }
   ]
 }

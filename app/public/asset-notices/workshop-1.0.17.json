@@ -1,0 +1,619 @@
+{
+  "schemaVersion": 1,
+  "repository": "https://github.com/ChrisLu7899/NIKKE-Workshop",
+  "version": "1.0.17",
+  "commit": "0645b8d2867dd85330cc6d44b9078c74d557f221",
+  "verifiedOn": "2026-10-31",
+  "licenseNotice": "游戏图片、名称与商标属于相关权利人；Workshop代码GPL许可不自动覆盖素材，公开再分发许可未独立核实。",
+  "characters": [
+    {
+      "nameCode": "5185",
+      "resourceId": "19",
+      "nameCn": "玛丽安：女王",
+      "nameEn": "Marian: Queen",
+      "aliases": [
+        "瑪麗安：女王"
+      ],
+      "avatar": "ui-assets/nikke/character-avatars/c019.png",
+      "artworks": [
+        {
+          "id": "default",
+          "label": "默认",
+          "file": "c019.webp"
+        },
+        {
+          "id": "skin-1",
+          "label": "最后的爱恋",
+          "file": "c019_01.webp"
+        }
+      ],
+      "use_burst_skill": "Step3",
+      "weapon_type": "MG",
+      "original_rare": "SSR",
+      "element": "Fire",
+      "class": "Attacker",
+      "corporation": "PILGRIM",
+      "overSpec": true
+    },
+    {
+      "nameCode": "5186",
+      "resourceId": "472",
+      "nameCn": "红莲：弑神",
+      "nameEn": "Scarlet: Goddeath",
+      "aliases": [
+        "紅蓮：弒神"
+      ],
+      "avatar": "ui-assets/nikke/character-avatars/c472.png",
+      "artworks": [
+        {
+          "id": "default",
+          "label": "默认",
+          "file": "c472.webp"
+        }
+      ],
+      "use_burst_skill": "Step3",
+      "weapon_type": "AR",
+      "original_rare": "SSR",
+      "element": "Fire",
+      "class": "Attacker",
+      "corporation": "PILGRIM",
+      "overSpec": true
+    },
+    {
+      "nameCode": "5187",
+      "resourceId": "473",
+      "nameCn": "长发公主：圣域",
+      "nameEn": "Rapunzel: Sanctuary",
+      "aliases": [
+        "長髮公主：聖域"
+      ],
+      "avatar": "ui-assets/nikke/character-avatars/c473.png",
+      "artworks": [
+        {
+          "id": "default",
+          "label": "默认",
+          "file": "c473.webp"
+        }
+      ],
+      "use_burst_skill": "Step2",
+      "weapon_type": "RL",
+      "original_rare": "SSR",
+      "element": "Fire",
+      "class": "Supporter",
+      "corporation": "PILGRIM",
+      "overSpec": true
+    }
+  ],
+  "skins": [
+    {
+      "resourceId": "471",
+      "id": "skin-1",
+      "label": "垂泪之日",
+      "file": "c471_01.webp"
+    },
+    {
+      "resourceId": "18",
+      "id": "skin-1",
+      "label": "亲爱的公主",
+      "file": "c018_01.webp"
+    },
+    {
+      "resourceId": "223",
+      "id": "skin-2",
+      "label": "三毒",
+      "file": "c223_02.webp"
+    }
+  ],
+  "skillIcons": {
+    "19": {
+      "skill1": "generic/icn_skill_damage_01.png",
+      "skill2": "generic/icn_skill_coredamage_01.png",
+      "burst": "burst/c019.png"
+    },
+    "472": {
+      "skill1": "generic/icn_skill_statpenetration_01.png",
+      "skill2": "generic/icn_skill_statcritical_01.png",
+      "burst": "burst/c472.png"
+    },
+    "473": {
+      "skill1": "generic/icn_skill_heal_01.png",
+      "skill2": "generic/icn_skill_barrier_01.png",
+      "burst": "burst/c473.png"
+    }
+  },
+  "cube": {
+    "cubeId": 1000318,
+    "resourceId": 10015,
+    "nameCn": "遗迹外框魔方",
+    "nameEn": "Bezel Cube",
+    "icon": "ui-assets/nikke/cubes/ie_10015.png"
+  },
+  "officialData": [
+    {
+      "id": 19,
+      "locale": "zh-tw",
+      "url": "https://sg-tools-cdn.blablalink.com/kq-65/68e8d38db548ff0d7dd8e91391bae94f.json",
+      "sha256": "50be4aa8fcde5d04ca4711f7023f3816783482d174c4abf8163f6597309cd604"
+    },
+    {
+      "id": 19,
+      "locale": "en",
+      "url": "https://sg-tools-cdn.blablalink.com/lw-20/593470216e19c9096c76ef220eca7959.json",
+      "sha256": "524ed24a5b21ce5663b964760a3dbf8ebb8543e58d7f85f3f6709a043efa4f46"
+    },
+    {
+      "id": 472,
+      "locale": "zh-tw",
+      "url": "https://sg-tools-cdn.blablalink.com/at-85/0fb135ed32922e678977d84b7b702959.json",
+      "sha256": "41ae683f47e00f4fab1e1e412aa00122dea6b681278d9581082161c64c47b819"
+    },
+    {
+      "id": 472,
+      "locale": "en",
+      "url": "https://sg-tools-cdn.blablalink.com/vf-30/58bc3ce1526ab6d3ceee3c441b609ea4.json",
+      "sha256": "963fb16d1bc0a8129df5319d9684c9f582d673a7cd736f14ece0177d1f9d3d5e"
+    },
+    {
+      "id": 473,
+      "locale": "zh-tw",
+      "url": "https://sg-tools-cdn.blablalink.com/ru-32/29c792a16f91b401b5603d4aa574d1af.json",
+      "sha256": "4a63877330e2494ba364d22d99479d52c636966ecb5133d9581a27d2b0df8185"
+    },
+    {
+      "id": 473,
+      "locale": "en",
+      "url": "https://sg-tools-cdn.blablalink.com/wr-49/658bc1118b8e65455cc29244a643aeb4.json",
+      "sha256": "1e3bb97124ed248d5e3179c6593a78ad8eb7f6f30a36a4b667df8a509f2c1edc"
+    }
+  ],
+  "assets": [
+    {
+      "file": "public/ocr/cube-icons/bezel-cube.png",
+      "bytes": 45475,
+      "sha256": "5c8a87c25cea2e014464daec5c3c0a35d71548b2c1a95eaf6df64f0c036bdea1",
+      "gitBlobSha": "b90fd70467b69a4f0e181b411172faa2f044924a",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ocr/cube-icons/bezel-cube.png"
+    },
+    {
+      "file": "public/ui-assets/nikke/character-artwork/c018_01.webp",
+      "bytes": 204240,
+      "sha256": "84c060c18dbc26548581b8ac9d18db2ded8b41b9010d2733ff704914b433f37c",
+      "gitBlobSha": "9612da515eac90e2a5c861bbb36457a691fb9a79",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/character-artwork/c018_01.webp"
+    },
+    {
+      "file": "public/ui-assets/nikke/character-artwork/c019.webp",
+      "bytes": 515842,
+      "sha256": "d867704758cab80b328ba4c2172363c7a9c3f63278443acdf0944b70275698a7",
+      "gitBlobSha": "b9a60bee5ddeac70583bde69e7a059cb14bc52ca",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/character-artwork/c019.webp"
+    },
+    {
+      "file": "public/ui-assets/nikke/character-artwork/c019_01.webp",
+      "bytes": 370446,
+      "sha256": "54f2d36918e66f419e02f797921b368a7d8d6c11416345361f4e2b0d537f226d",
+      "gitBlobSha": "65f323c135753ed02289746c20e02e1136e50a10",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/character-artwork/c019_01.webp"
+    },
+    {
+      "file": "public/ui-assets/nikke/character-artwork/c223_02.webp",
+      "bytes": 326132,
+      "sha256": "cc084bd6bb1cd1f678b17e8edc8d98df31262015b82433a1abde5a0f153e8a63",
+      "gitBlobSha": "a9eed8286227e0f421404e983b8df514ca3aa6b5",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/character-artwork/c223_02.webp"
+    },
+    {
+      "file": "public/ui-assets/nikke/character-artwork/c471_01.webp",
+      "bytes": 522934,
+      "sha256": "03dd13b5c587e2dd7eaa0c6663a3edf5a9ad32b1c4fca6699546e99241d5160f",
+      "gitBlobSha": "397f4029c76a7064ccad9c14e0b63aab9f510b88",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/character-artwork/c471_01.webp"
+    },
+    {
+      "file": "public/ui-assets/nikke/character-artwork/c472.webp",
+      "bytes": 404804,
+      "sha256": "899719ab6918957067d0ce3e53579b8a27da29abc00997157b98559c0c23def2",
+      "gitBlobSha": "22fb836f1e85ff3b78fe7a1049e30853c778ede2",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/character-artwork/c472.webp"
+    },
+    {
+      "file": "public/ui-assets/nikke/character-artwork/c473.webp",
+      "bytes": 429748,
+      "sha256": "802dd71adda30e72b7e5e6c205ac5482ac3bf57592b64b7993349cb013c15b11",
+      "gitBlobSha": "75ec02062d3d4e4f20b73389d661967309c2ced8",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/character-artwork/c473.webp"
+    },
+    {
+      "file": "public/ui-assets/nikke/character-avatars/c019.png",
+      "bytes": 246472,
+      "sha256": "88fc47d6a15df08fca42f85f14cb609e4ee25d15101fd74af090bda706a403cc",
+      "gitBlobSha": "067d19cd010c20ad75770a4c375182b8a99c49b0",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/character-avatars/c019.png"
+    },
+    {
+      "file": "public/ui-assets/nikke/character-avatars/c472.png",
+      "bytes": 266926,
+      "sha256": "30450a2326d0019a350fb9c85199796fe2ded3efba53a97eefaf1fb2fea9dde4",
+      "gitBlobSha": "039ca8529bed6f38d72e86d1e6e684f65ffd5667",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/character-avatars/c472.png"
+    },
+    {
+      "file": "public/ui-assets/nikke/character-avatars/c473.png",
+      "bytes": 260127,
+      "sha256": "183b2fef5cf1ca5d0f0c8f023718b35ec98b855af47acea4c758dbe38960353e",
+      "gitBlobSha": "68149415dff667d42869437843038bc89f493e50",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/character-avatars/c473.png"
+    },
+    {
+      "file": "public/ui-assets/nikke/cubes/ie_10015.png",
+      "bytes": 45475,
+      "sha256": "5c8a87c25cea2e014464daec5c3c0a35d71548b2c1a95eaf6df64f0c036bdea1",
+      "gitBlobSha": "b90fd70467b69a4f0e181b411172faa2f044924a",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/cubes/ie_10015.png"
+    },
+    {
+      "file": "public/ui-assets/nikke/skill-icons/burst/c019.png",
+      "bytes": 5793,
+      "sha256": "e7a78d799129cb359c9d7fd529e0ca0cf802c1e347b527b49963371aa1c46c61",
+      "gitBlobSha": "3c02b2860f16af10b25936edb7d41f920ff9968e",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/skill-icons/burst/c019.png"
+    },
+    {
+      "file": "public/ui-assets/nikke/skill-icons/burst/c472.png",
+      "bytes": 4854,
+      "sha256": "64348eb5ded647a5c01947e50a63d251ee772eae3a9d5829b7767ab295b02c14",
+      "gitBlobSha": "bfaf03df5c0937c0cd99b79496d6a744664fb256",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/skill-icons/burst/c472.png"
+    },
+    {
+      "file": "public/ui-assets/nikke/skill-icons/burst/c473.png",
+      "bytes": 4500,
+      "sha256": "4c111c2f3a3d148bf93f0910285e3bf8b62b6e27904b17b2d016722a05e2ad44",
+      "gitBlobSha": "e9f5d6a19ea1468806037964231d4f89609357c9",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/skill-icons/burst/c473.png"
+    },
+    {
+      "file": "public/ui-assets/nikke/skill-icons/generic/icn_skill_barrier_01.png",
+      "bytes": 3855,
+      "sha256": "9961591db16617910328f3dbe01f16f2ae9e43d73b1721c0091bb38c06747dfa",
+      "gitBlobSha": "c0e3ddaf0a866d6bb660a4819e723ec57ce3265e",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/skill-icons/generic/icn_skill_barrier_01.png"
+    },
+    {
+      "file": "public/ui-assets/nikke/skill-icons/generic/icn_skill_coredamage_01.png",
+      "bytes": 4070,
+      "sha256": "4d42c315fe2c1e3b1d5d16f6bb09f381ca708115718ad5f0daae24ab29c2ed81",
+      "gitBlobSha": "76891d6e23b743e8c605face5ea0026076069693",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/skill-icons/generic/icn_skill_coredamage_01.png"
+    },
+    {
+      "file": "public/ui-assets/nikke/skill-icons/generic/icn_skill_damage_01.png",
+      "bytes": 4568,
+      "sha256": "b1c9e22aad2fc7fcb20d83401ef6ac5fb9860fcb776dce9b0542394ed32a9f2f",
+      "gitBlobSha": "1b8ff84e91f758600625ae57e26ba2f8e0fcb4b7",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/skill-icons/generic/icn_skill_damage_01.png"
+    },
+    {
+      "file": "public/ui-assets/nikke/skill-icons/generic/icn_skill_heal_01.png",
+      "bytes": 2239,
+      "sha256": "9387a3fcaa3d487e08b0a799175e14298c10c75ac0e744daa8dfcc16dace4f19",
+      "gitBlobSha": "3c05342ed71ce1d06d22f263299a2fd2d001b515",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/skill-icons/generic/icn_skill_heal_01.png"
+    },
+    {
+      "file": "public/ui-assets/nikke/skill-icons/generic/icn_skill_statcritical_01.png",
+      "bytes": 4350,
+      "sha256": "facd2b302974ae0a3d73317a41047dbc5e67f53a9bda5e80b1832781082366d9",
+      "gitBlobSha": "7378d8fe2e046aeacdc0df200250137e2ee23d4b",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/skill-icons/generic/icn_skill_statcritical_01.png"
+    },
+    {
+      "file": "public/ui-assets/nikke/skill-icons/generic/icn_skill_statpenetration_01.png",
+      "bytes": 2141,
+      "sha256": "bb0a4c2983b3b9ed9ac954d66bed745a3b6cf903d55ef178a76a2ff3e0758a06",
+      "gitBlobSha": "f1b38a4f851378a7f8787151285f90fc536b29d2",
+      "url": "https://raw.githubusercontent.com/ChrisLu7899/NIKKE-Workshop/0645b8d2867dd85330cc6d44b9078c74d557f221/public/ui-assets/nikke/skill-icons/generic/icn_skill_statpenetration_01.png"
+    }
+  ],
+  "artworkSources": {
+    "c018_01": {
+      "type": "static-art",
+      "resourceNumber": "018",
+      "sourceAssetId": "c018_01",
+      "source": "static_art/c018_01/c018_01.png",
+      "manifest": "static_art/c018_01/manifest.json",
+      "bundleHash": "21596777864ac097d4b478af3522b2ef",
+      "sourceSha256": "06e4d484461bd65f363694e025fa6d69f535d8139718a64d6492136bb2736f8a",
+      "outputSha256": "84c060c18dbc26548581b8ac9d18db2ded8b41b9010d2733ff704914b433f37c",
+      "outputSize": 204240,
+      "width": 1600,
+      "height": 1600,
+      "recipe": "square-transparent-v1:webp-q90-alpha100-effort5",
+      "visualCheck": "passed"
+    },
+    "c019": {
+      "type": "static-art",
+      "resourceNumber": "019",
+      "sourceAssetId": "c019_00",
+      "source": "static_art/c019_00/c019_00.png",
+      "manifest": "static_art/c019_00/manifest.json",
+      "bundleHash": "c48b4bde3319c3aa3b13b3a2e7ec1bf1",
+      "sourceSha256": "259f0d2fdc035e52dc755872109bb4fedb44ea3648a8a28bfa0875453b7380cc",
+      "outputSha256": "d867704758cab80b328ba4c2172363c7a9c3f63278443acdf0944b70275698a7",
+      "outputSize": 515842,
+      "width": 1600,
+      "height": 1600,
+      "recipe": "square-transparent-v1:webp-q90-alpha100-effort5",
+      "visualCheck": "passed"
+    },
+    "c019_01": {
+      "type": "static-art",
+      "resourceNumber": "019",
+      "sourceAssetId": "c019_01",
+      "source": "static_art/c019_01/c019_01.png",
+      "manifest": "static_art/c019_01/manifest.json",
+      "bundleHash": "5dd02eb4c128b6d51b1b4d4e20b2d995",
+      "sourceSha256": "a74e6822a45b21f2d34f5a15794509060ad06ae8801173accd7cf4b61448cbcd",
+      "outputSha256": "54f2d36918e66f419e02f797921b368a7d8d6c11416345361f4e2b0d537f226d",
+      "outputSize": 370446,
+      "width": 1600,
+      "height": 1600,
+      "recipe": "square-transparent-v1:webp-q90-alpha100-effort5",
+      "visualCheck": "passed"
+    },
+    "c223_02": {
+      "type": "static-art",
+      "resourceNumber": "223",
+      "sourceAssetId": "c223_02",
+      "source": "static_art/c223_02/c223_02.png",
+      "manifest": "static_art/c223_02/manifest.json",
+      "bundleHash": "e912b20c793755f512b8bac1531e7b42",
+      "sourceSha256": "c49e1b8aa9537a1cd3d6e786e9a8f8f4bcdac6c3dc00e8437ca6bdf8aaef4b7b",
+      "outputSha256": "cc084bd6bb1cd1f678b17e8edc8d98df31262015b82433a1abde5a0f153e8a63",
+      "outputSize": 326132,
+      "width": 1600,
+      "height": 1600,
+      "recipe": "square-transparent-v1:webp-q90-alpha100-effort5",
+      "visualCheck": "passed"
+    },
+    "c471_01": {
+      "type": "static-art",
+      "resourceNumber": "471",
+      "sourceAssetId": "c471_01",
+      "source": "static_art/c471_01/c471_01.png",
+      "manifest": "static_art/c471_01/manifest.json",
+      "bundleHash": "12176949b5cdcdd16b09b6ab8ec3110d",
+      "sourceSha256": "9976dc0942a1fd788c395355ffcd3a4322cfeba05ffdbea3dd421126b773390d",
+      "outputSha256": "03dd13b5c587e2dd7eaa0c6663a3edf5a9ad32b1c4fca6699546e99241d5160f",
+      "outputSize": 522934,
+      "width": 1600,
+      "height": 1600,
+      "recipe": "square-transparent-v1:webp-q90-alpha100-effort5",
+      "visualCheck": "passed"
+    },
+    "c472": {
+      "type": "static-art",
+      "resourceNumber": "472",
+      "sourceAssetId": "c472_00",
+      "source": "static_art/c472_00/c472_00.png",
+      "manifest": "static_art/c472_00/manifest.json",
+      "bundleHash": "db4e93d496467bfcfcb79378c8ae0867",
+      "sourceSha256": "19a863b0bb90c7d292b040a69c2215110abc8273fc2cb08a6c0ae7e725cd51fa",
+      "outputSha256": "899719ab6918957067d0ce3e53579b8a27da29abc00997157b98559c0c23def2",
+      "outputSize": 404804,
+      "width": 1600,
+      "height": 1600,
+      "recipe": "square-transparent-v1:webp-q90-alpha100-effort5",
+      "visualCheck": "passed"
+    },
+    "c473": {
+      "type": "static-art",
+      "resourceNumber": "473",
+      "sourceAssetId": "c473_00",
+      "source": "static_art/c473_00/c473_00.png",
+      "manifest": "static_art/c473_00/manifest.json",
+      "bundleHash": "ff359cfa7c286eeca56e2b9507d1a988",
+      "sourceSha256": "9b38282fc3e67427438ff21702a5febcd8fa1e2bc375622fb10c91ac2afdf68f",
+      "outputSha256": "802dd71adda30e72b7e5e6c205ac5482ac3bf57592b64b7993349cb013c15b11",
+      "outputSize": 429748,
+      "width": 1600,
+      "height": 1600,
+      "recipe": "square-transparent-v1:webp-q90-alpha100-effort5",
+      "visualCheck": "passed"
+    }
+  },
+  "avatarSources": {
+    "c019": {
+      "schemaVersion": 1,
+      "assetId": "c019",
+      "resourceKey": "icons-char-mi(hd)_assets_mi_c019_00_s_e4a28598bcbbefe6388340d0ff8d443b.bundle",
+      "bundleHash": "e4a28598bcbbefe6388340d0ff8d443b",
+      "bundleSha256": "06c71595a614981a4a1013cfc92464f07bc48e81461b1a4bf58f89fb71346971",
+      "spriteName": "mi_c019_00_s",
+      "cab": "CAB-266bdf611d60ed4becbdbdc6b30f0569",
+      "pathId": "2803507655563059188",
+      "size": [
+        256,
+        512
+      ],
+      "pngSha256": "88fc47d6a15df08fca42f85f14cb609e4ee25d15101fd74af090bda706a403cc",
+      "recipe": "UnityPy Sprite.image; original pixels, size and alpha; no crop, resize or repaint",
+      "reviewStatus": "passed",
+      "reviewedAt": "2026-10-29",
+      "visualReview": {
+        "sha256": "88fc47d6a15df08fca42f85f14cb609e4ee25d15101fd74af090bda706a403cc",
+        "reviewer": "Codex visual QA",
+        "checks": {
+          "identity": true,
+          "face": true,
+          "originalFraming": true,
+          "alpha": true
+        },
+        "note": "实际逐图查看当前原生portrait Sprite；与当前角色表及已验收默认standing身份一致，保留原生边界与alpha。"
+      },
+      "source": "character_avatars/c019/c019.png"
+    },
+    "c472": {
+      "schemaVersion": 1,
+      "assetId": "c472",
+      "resourceKey": "icons-char-mi(hd)_assets_mi_c472_00_s_9a4508d154748e5e9e9bd857e599e555.bundle",
+      "bundleHash": "9a4508d154748e5e9e9bd857e599e555",
+      "bundleSha256": "3ad50733980c6ff4b736d79ac17002a28ef6b0e24aa06eb64ad91c822452adaf",
+      "spriteName": "mi_c472_00_s",
+      "cab": "CAB-0922a67d1908da91ea004be947579973",
+      "pathId": "538670475926595241",
+      "size": [
+        256,
+        512
+      ],
+      "pngSha256": "30450a2326d0019a350fb9c85199796fe2ded3efba53a97eefaf1fb2fea9dde4",
+      "recipe": "UnityPy Sprite.image; original pixels, size and alpha; no crop, resize or repaint",
+      "reviewStatus": "passed",
+      "reviewedAt": "2026-10-29",
+      "visualReview": {
+        "sha256": "30450a2326d0019a350fb9c85199796fe2ded3efba53a97eefaf1fb2fea9dde4",
+        "reviewer": "Codex visual QA",
+        "checks": {
+          "identity": true,
+          "face": true,
+          "originalFraming": true,
+          "alpha": true
+        },
+        "note": "实际逐图查看当前原生portrait Sprite；与当前角色表及已验收默认standing身份一致，保留原生边界与alpha。"
+      },
+      "source": "character_avatars/c472/c472.png"
+    },
+    "c473": {
+      "schemaVersion": 1,
+      "assetId": "c473",
+      "resourceKey": "icons-char-mi(hd)_assets_mi_c473_00_s_35a47661709cc21315cbe2c2357a493a.bundle",
+      "bundleHash": "35a47661709cc21315cbe2c2357a493a",
+      "bundleSha256": "f7853b33a93c867e8e135650fd8b3bad33799a98562c3116fd7d1c4afb8dce91",
+      "spriteName": "mi_c473_00_s",
+      "cab": "CAB-a20011f696d1f9e20043ad3cefe77f32",
+      "pathId": "5443699498944920144",
+      "size": [
+        256,
+        512
+      ],
+      "pngSha256": "183b2fef5cf1ca5d0f0c8f023718b35ec98b855af47acea4c758dbe38960353e",
+      "recipe": "UnityPy Sprite.image; original pixels, size and alpha; no crop, resize or repaint",
+      "reviewStatus": "passed",
+      "reviewedAt": "2026-10-29",
+      "visualReview": {
+        "sha256": "183b2fef5cf1ca5d0f0c8f023718b35ec98b855af47acea4c758dbe38960353e",
+        "reviewer": "Codex visual QA",
+        "checks": {
+          "identity": true,
+          "face": true,
+          "originalFraming": true,
+          "alpha": true
+        },
+        "note": "实际逐图查看当前原生portrait Sprite；与当前角色表及已验收默认standing身份一致，保留原生边界与alpha。"
+      },
+      "source": "character_avatars/c473/c473.png"
+    }
+  },
+  "objectSources": [
+    {
+      "file": "cubes/ie_10015.png",
+      "sprite_name": "ie_10015",
+      "source_png_sha256": "5c8a87c25cea2e014464daec5c3c0a35d71548b2c1a95eaf6df64f0c036bdea1",
+      "output_png_sha256": "5c8a87c25cea2e014464daec5c3c0a35d71548b2c1a95eaf6df64f0c036bdea1",
+      "size": [
+        190,
+        210
+      ]
+    },
+    {
+      "file": "skill-icons/generic/icn_skill_statcritical_01.png",
+      "sprite_name": "icn_skill_statcritical_01",
+      "source_png_sha256": "facd2b302974ae0a3d73317a41047dbc5e67f53a9bda5e80b1832781082366d9",
+      "output_png_sha256": "facd2b302974ae0a3d73317a41047dbc5e67f53a9bda5e80b1832781082366d9",
+      "size": [
+        104,
+        94
+      ]
+    },
+    {
+      "file": "skill-icons/generic/icn_skill_damage_01.png",
+      "sprite_name": "icn_skill_damage_01",
+      "source_png_sha256": "b1c9e22aad2fc7fcb20d83401ef6ac5fb9860fcb776dce9b0542394ed32a9f2f",
+      "output_png_sha256": "b1c9e22aad2fc7fcb20d83401ef6ac5fb9860fcb776dce9b0542394ed32a9f2f",
+      "size": [
+        97,
+        98
+      ]
+    },
+    {
+      "file": "skill-icons/generic/icn_skill_coredamage_01.png",
+      "sprite_name": "icn_skill_coredamage_01",
+      "source_png_sha256": "4d42c315fe2c1e3b1d5d16f6bb09f381ca708115718ad5f0daae24ab29c2ed81",
+      "output_png_sha256": "4d42c315fe2c1e3b1d5d16f6bb09f381ca708115718ad5f0daae24ab29c2ed81",
+      "size": [
+        104,
+        104
+      ]
+    },
+    {
+      "file": "skill-icons/burst/c019.png",
+      "sprite_name": "icn_skill_c019_ult",
+      "source_png_sha256": "e7a78d799129cb359c9d7fd529e0ca0cf802c1e347b527b49963371aa1c46c61",
+      "output_png_sha256": "e7a78d799129cb359c9d7fd529e0ca0cf802c1e347b527b49963371aa1c46c61",
+      "size": [
+        98,
+        86
+      ]
+    },
+    {
+      "file": "skill-icons/generic/icn_skill_heal_01.png",
+      "sprite_name": "icn_skill_heal_01",
+      "source_png_sha256": "9387a3fcaa3d487e08b0a799175e14298c10c75ac0e744daa8dfcc16dace4f19",
+      "output_png_sha256": "9387a3fcaa3d487e08b0a799175e14298c10c75ac0e744daa8dfcc16dace4f19",
+      "size": [
+        95,
+        91
+      ]
+    },
+    {
+      "file": "skill-icons/generic/icn_skill_barrier_01.png",
+      "sprite_name": "icn_skill_barrier_01",
+      "source_png_sha256": "9961591db16617910328f3dbe01f16f2ae9e43d73b1721c0091bb38c06747dfa",
+      "output_png_sha256": "9961591db16617910328f3dbe01f16f2ae9e43d73b1721c0091bb38c06747dfa",
+      "size": [
+        89,
+        101
+      ]
+    },
+    {
+      "file": "skill-icons/generic/icn_skill_statpenetration_01.png",
+      "sprite_name": "icn_skill_statpenetration_01",
+      "source_png_sha256": "bb0a4c2983b3b9ed9ac954d66bed745a3b6cf903d55ef178a76a2ff3e0758a06",
+      "output_png_sha256": "bb0a4c2983b3b9ed9ac954d66bed745a3b6cf903d55ef178a76a2ff3e0758a06",
+      "size": [
+        100,
+        101
+      ]
+    },
+    {
+      "file": "skill-icons/burst/c472.png",
+      "sprite_name": "icn_skill_c472_ult",
+      "source_png_sha256": "64348eb5ded647a5c01947e50a63d251ee772eae3a9d5829b7767ab295b02c14",
+      "output_png_sha256": "64348eb5ded647a5c01947e50a63d251ee772eae3a9d5829b7767ab295b02c14",
+      "size": [
+        104,
+        89
+      ]
+    },
+    {
+      "file": "skill-icons/burst/c473.png",
+      "sprite_name": "icn_skill_c473_ult",
+      "source_png_sha256": "4c111c2f3a3d148bf93f0910285e3bf8b62b6e27904b17b2d016722a05e2ad44",
+      "output_png_sha256": "4c111c2f3a3d148bf93f0910285e3bf8b62b6e27904b17b2d016722a05e2ad44",
+      "size": [
+        100,
+        104
+      ]
+    }
+  ]
+}

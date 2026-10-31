@@ -31,10 +31,17 @@ const entries = [...text.matchAll(entryPattern)].map((match) => ({
   nameEn: match[4],
   icon: `${UI_ROOT}/cubes/ie_${match[2]}.png`,
 }))
+// Keep the checked-in increment even when regenerating from the older local catalog.
+const supplement = JSON.parse(await readFile(path.join(APP_DIR, 'scripts/character-sources/workshop-1.0.17.json'), 'utf8')).cube
+const existing = entries.find(item => item.cubeId === supplement.cubeId || item.resourceId === supplement.resourceId)
+if (existing && (existing.cubeId !== supplement.cubeId || existing.resourceId !== supplement.resourceId || existing.nameCn !== supplement.nameCn)) {
+  throw new Error('补充魔方与上游目录映射冲突')
+}
+if (!existing) entries.push(supplement)
 
 const errors = []
 const warnings = []
-if (entries.length !== 17) errors.push(`魔方条目数异常：${entries.length}（预期 17）`)
+if (entries.length !== 18) errors.push(`魔方条目数异常：${entries.length}（预期 18）`)
 for (const entry of entries) {
   if (!(await exists(path.join(PUBLIC_DIR, entry.icon)))) {
     warnings.push(`魔方图标缺失：${entry.icon}（${entry.nameCn}，执行 npm run assets:sync 同步）`)

@@ -1,0 +1,135 @@
+{
+  "character": {
+    "nameCode": "5184",
+    "resourceId": "63",
+    "nameCn": "贝洛塔：南瓜女巫",
+    "nameEn": "Belorta: Pumpkin Witch",
+    "avatar": "avatars/si_c063_00_s.png",
+    "artworks": [
+      {
+        "id": "default",
+        "label": "默认",
+        "file": "c063.png"
+      }
+    ],
+    "use_burst_skill": "Step2",
+    "weapon_type": "RL",
+    "original_rare": "SSR",
+    "element": "Water",
+    "class": "Supporter",
+    "corporation": "TETRA"
+  },
+  "verifiedOn": "2026-10-25",
+  "scope": "Desktop project only; original Web project read-only",
+  "identity": {
+    "nameCode": "5184",
+    "resourceId": "63",
+    "characterRowId": 306301,
+    "baseVariant": {
+      "nameCode": "3007",
+      "resourceId": "60",
+      "rarity": "SR"
+    }
+  },
+  "officialData": {
+    "localeURLs": {
+      "zh-tw": "https://sg-tools-cdn.blablalink.com/we-66/d5876eb0e9b9c5798b42a81f6abe6d20.json",
+      "en": "https://sg-tools-cdn.blablalink.com/ig-26/f032e7c701fdcf6c5ae18940850764d4.json",
+      "zh-cn": "https://sg-tools-cdn.blablalink.com/wd-52/616316bb407fcd081ff09a9dd1e6e68f.json"
+    },
+    "availableLocales": [
+      "zh-tw",
+      "en"
+    ],
+    "unavailable": "zh-cn and zero-padded roledata/063 paths return404",
+    "snapshotSha256": {
+      "zh-tw": "2783d950897751054a414ef67cd643140a88b73a733474ac8739959bae1cff53",
+      "en": "4d1fecf533b684ae019332de043bec968f562484aa2656e4f238cd205fcfeba7"
+    },
+    "squad": {
+      "key": "LittleCannon",
+      "id": 33,
+      "nameHant": "小加農炮部隊",
+      "nameEnglish": "The Carronades",
+      "usedByRuntime": false
+    },
+    "burst": {
+      "use_burst_skill": "Step2",
+      "change_burst_step": "Step3",
+      "decision": "Use use_burst_skill, consistent with existing filters; do not misclassify by change_burst_step"
+    }
+  },
+  "references": {
+    "enikk": "https://enikk.app/characters/belorta-pumpkin-witch",
+    "nikkeGG": "https://nikke.gg/characters/belorta-pumpkin-witch/",
+    "officialPublisherNotice": "https://prtimes.jp/main/html/rd/p/000000141.000145037.html",
+    "nikkeDB": "https://github.com/Nikke-db/Nikke-db.github.io",
+    "nikkeDBFinding": "Tree includes c063 sprite and three Live2D models. Characters.json does not yet contain the new variant; ID comes from official roledata, not inference from filenames.",
+    "nikkeDBTree": "65d1c9517608cbfa1a4e62971f0afe5ca99cbee2",
+    "hashNote": "Pinned raw files use the verified immutable tree SHA. Separate commit metadata was not fetched; do not label this tree SHA as a commit."
+  },
+  "localSearch": {
+    "readOnly": [
+      "E:/博哥/NIKKE Photos/app",
+      "E:/博哥/nikke_web/idcode_data.js",
+      "E:/桌面/NIKKE Helper",
+      "E:/NIKKE helper",
+      "E:/博哥/NIKKE WORKSHOP 1.0.14",
+      "E:/博哥/NIKKE-Workshop",
+      "E:/博哥/NIKKE-Workshop-source"
+    ],
+    "finding": "Existing roster204 and idcode index have original Belorta only; no c063 static artwork/avatar found in checked libraries. Existing extracted-source manifests point to unavailable NIKKE_files/output rather than embedding a usable c063 file."
+  },
+  "resources": [
+    {
+      "file": "public/avatars/si_c063_00_s.png",
+      "url": "https://raw.githubusercontent.com/Nikke-db/Nikke-db.github.io/65d1c9517608cbfa1a4e62971f0afe5ca99cbee2/images/sprite/si_c063_00_s.png",
+      "sha256": "4a14b4db6d37513c95c6fa1b29bdd9f741487700e48601640c5390d95081b8e9",
+      "bytes": 35732,
+      "width": 128,
+      "height": 128,
+      "purpose": "selector/avatar",
+      "modified": false
+    },
+    {
+      "file": "public/ui-assets/nikke/character-artwork/c063.png",
+      "source": "User supplied local attachment",
+      "sourceFileName": "贝洛塔：南瓜女巫 (1).png",
+      "sourceLocalPath": "E:/Edge Download/贝洛塔：南瓜女巫 (1).png",
+      "sha256": "108f44e64741ea2bd501a39e4365e2c8691a6d2c51c883cb7cfc95e0b3d6d479",
+      "bytes": 1908220,
+      "width": 2048,
+      "height": 2048,
+      "alpha": true,
+      "purpose": "card/static portrait",
+      "modified": false,
+      "authorization": "User requested local use; original source and public redistribution permission remain unverified"
+    }
+  ],
+  "rights": {
+    "owners": "Game artwork rights remain with SHIFT UP / PROXIMA BETA and relevant rights holders",
+    "status": "Redistribution permission unverified; local integration does not establish a public distribution license",
+    "notices": "NIKKE DB repository API reports no license; hosting does not grant an independent artwork license. Enikk availability likewise does not grant redistribution permission. No EXE or public distribution performed."
+  },
+  "limitations": [
+    "Skill icons optional and absent for63; existing card model omits unavailable icon rows",
+    "No verified CN-release update; existing CN roster snapshot is preserved",
+    "No changes to role stores, share code versions or import/export schemas",
+    "No Live2D/atlas/skel/event downloads",
+    "Current portrait is the user-supplied2048x2048 PNG; no cropping, recompression or background edits"
+  ],
+  "supersededResources": [
+    {
+      "file": "public/ui-assets/nikke/character-artwork/c063.webp",
+      "url": "https://enikk.app/thumbs/v/75a1fda50e50fe5d/c063_00.webp",
+      "linkedFrom": "https://enikk.app/characters/belorta-pumpkin-witch",
+      "sha256": "98091f89b6a685d396f0c46a373a31b40282a92fd17c787a6bda6814158f467d",
+      "bytes": 103110,
+      "width": 662,
+      "height": 941,
+      "purpose": "card/static portrait",
+      "modified": "Filename only; bytes unchanged",
+      "status": "Replaced at explicit user request; retained only as legacy unused asset"
+    }
+  ]
+}

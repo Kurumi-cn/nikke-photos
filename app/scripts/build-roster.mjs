@@ -29,6 +29,7 @@ const REPORT_PATH = path.join(SCRIPT_DIR, 'roster-report.json')
 // 本仓库自带的补充角色表：Helper 上游还没收录、但官方目录已有的角色。
 // 上游只读，补录在这里做（原因与字段来源见该文件内的 _note）
 const EXTRA_CHARACTERS_PATH = path.join(SCRIPT_DIR, 'extra-characters.json')
+const NAME_OVERRIDES = JSON.parse(await readFile(path.join(SCRIPT_DIR,'roster-name-overrides.json'),'utf8'))
 
 const CHECK_ONLY = process.argv.includes('--check')
 
@@ -124,7 +125,7 @@ const pinyinInitials = (text) =>
     .toLowerCase()
     .replace(/[^a-z0-9]/g, '')
 
-const [assetsFile, directoryFile, cnFile, tagsFile, workshopObjects, skillIconCatalog, extraFile] = await Promise.all([
+const [assetsFile, directoryFile, cnFile, tagsFile, workshopObjects, skillIconCatalog, extraFile, workshopUpdate] = await Promise.all([
   readJson('character-assets.json'),
   readJson('nikke-directory.json'),
   readJson('cn-roster.json'),
@@ -132,11 +133,13 @@ const [assetsFile, directoryFile, cnFile, tagsFile, workshopObjects, skillIconCa
   readJsonPath(WORKSHOP_OBJECTS_PATH),
   readJsonPath(WORKSHOP_SKILL_CATALOG),
   readJsonPath(EXTRA_CHARACTERS_PATH),
+  readJsonPath(path.join(SCRIPT_DIR, 'character-sources/workshop-1.0.17.json')),
 ])
 
 /** 技能图标：按资源号取 skill1/skill2/burst 三个文件名，转成 public 相对路径 */
 const buildSkillIcons = (resourceId) => {
-  const entry = skillIconCatalog[String(resourceId ?? '').trim()]
+  const key = String(resourceId ?? '').trim()
+  const entry = workshopUpdate.skillIcons[key] || skillIconCatalog[key]
   if (!entry) return null
   const toPath = (file) => (file ? `${UI_ROOT}/skill-icons/${file}` : null)
   return { skill1: toPath(entry.skill1), skill2: toPath(entry.skill2), burst: toPath(entry.burst) }
@@ -148,7 +151,7 @@ const warnings = []
 // ---- 补充角色：按 Helper 的同形状注入，让下面那段唯一的主循环无需改动 ----
 // 去重按 nameCode：上游哪天补齐了同一个角色，这里会自动让位，不会出现重复条目
 const upstreamCodes = new Set(assetsFile.characters.map((item) => String(item.name_code)))
-const extras = (Array.isArray(extraFile.characters) ? extraFile.characters : []).filter((item) => {
+const extras = [...(Array.isArray(extraFile.characters) ? extraFile.characters : []), ...workshopUpdate.characters].filter((item) => {
   const code = String(item.nameCode)
   if (!code || !item.nameCn) {
     errors.push(`补充角色缺少 nameCode 或 nameCn：${JSON.stringify(item)}`)
@@ -170,6 +173,8 @@ const toAssetShape = (item) => ({
   avatar: item.avatar,
   artworks: Array.isArray(item.artworks) ? item.artworks : [],
   china_exclusive: false,
+  extra_aliases: item.aliases || [],
+  over_spec: Boolean(item.overSpec),
 })
 
 // 六个分类字段 → nikke-directory.json 的形状
@@ -231,12 +236,16 @@ for (const asset of allAssets) {
   }
 
   const baseName = asset.name_cn || ''
-  const displayName = cnFile.displayNames?.[code] || baseName
+  const displayName = NAME_OVERRIDES[code]?.nameCn || cnFile.displayNames?.[code] || baseName
   const aliasSet = new Set()
+  for (const alias of asset.extra_aliases || []) if (alias !== displayName) aliasSet.add(alias)
   if (baseName && baseName !== displayName) aliasSet.add(baseName)
+  for(const alias of NAME_OVERRIDES[code]?.aliases||[])if(alias!==displayName)aliasSet.add(alias)
+  if(cnFile.displayNames?.[code]&&cnFile.displayNames[code]!==displayName)aliasSet.add(cnFile.displayNames[code])
 
   const initials = new Set([pinyinInitials(displayName)])
   if (baseName && baseName !== displayName) initials.add(pinyinInitials(baseName))
+  for(const alias of aliasSet)initials.add(pinyinInitials(alias))
 
   // 珍藏品全集按资源号匹配（Workshop 的 favorites key 形如 c030）
   const favoriteKey = favoriteKeyByResourceId.get(
@@ -253,8 +262,17 @@ for (const asset of allAssets) {
     const alt = `${code}.webp`
     return (await exists(path.join(ARTWORK_DIR, alt))) ? alt : raw
   }
+  const mergedArtworks = [...(asset.artworks || [])]
+  for (const skin of workshopUpdate.skins.filter(item => item.resourceId === String(asset.resource_id))) {
+    const current = mergedArtworks.find(item => item.id === skin.id)
+    if (current) {
+      if (current.file !== skin.file || current.label !== skin.label) errors.push(`补充皮肤与既有皮肤冲突：${code}/${skin.id}`)
+    } else {
+      mergedArtworks.push({ id: skin.id, label: skin.label, file: skin.file })
+    }
+  }
   const artworks = []
-  for (const artwork of asset.artworks || []) {
+  for (const artwork of mergedArtworks) {
     artworks.push({
       id: artwork.id,
       label: artwork.label,
@@ -289,7 +307,7 @@ for (const asset of allAssets) {
         background: `${UI_ROOT}/character-artwork/favorite_${favoriteKey}.webp`,
       }
       : null,
-    overSpec: overSpecSet.has(code),
+    overSpec: overSpecSet.has(code) || Boolean(asset.over_spec),
   }
 
   // 必要字段校验
@@ -410,6 +428,7 @@ if (!CHECK_ONLY) {
       tags: 'NIKKE Helper tags.json',
       favoriteItemPool: 'NIKKE Workshop characterObjectAssets.json（favorites）',
       extraCharacters: 'scripts/extra-characters.json（本仓库补充，上游未收录的官方角色）',
+      workshopUpdate: 'scripts/character-sources/workshop-1.0.17.json（三角色、四皮肤、技能和来源）',
       sourceDir: SOURCE_DIR,
       workshopObjectsPath: WORKSHOP_OBJECTS_PATH,
       sourceGeneratedAt: assetsFile.generatedAt || null,

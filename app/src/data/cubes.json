@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-09-30T16:13:40.832Z",
+  "generatedAt": "2026-10-31T11:00:07.595Z",
   "source": "NIKKE Workshop cubeIconCatalog.js",
-  "count": 17,
+  "count": 18,
   "cubes": [
     {
       "cubeId": 1000301,
@@ -121,6 +121,13 @@
       "nameCn": "遗迹分裂魔方",
       "nameEn": "Diffusion Cube",
       "icon": "ui-assets/nikke/cubes/ie_10013.png"
+    },
+    {
+      "cubeId": 1000318,
+      "resourceId": 10015,
+      "nameCn": "遗迹外框魔方",
+      "nameEn": "Bezel Cube",
+      "icon": "ui-assets/nikke/cubes/ie_10015.png"
     }
   ]
 }

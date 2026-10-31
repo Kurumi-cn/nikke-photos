@@ -1,6 +1,6 @@
 {
-  "revision": "2026-10-03",
-  "generatedAt": "2026-10-03T09:25:01.610Z",
+  "revision": "2026-10-31",
+  "generatedAt": "2026-10-31T11:00:06.823Z",
   "sources": {
     "roster": "NIKKE Helper character-assets.json",
     "directory": "NIKKE Helper nikke-directory.json",
@@ -8,18 +8,19 @@
     "tags": "NIKKE Helper tags.json",
     "favoriteItemPool": "NIKKE Workshop characterObjectAssets.json（favorites）",
     "extraCharacters": "scripts/extra-characters.json（本仓库补充，上游未收录的官方角色）",
+    "workshopUpdate": "scripts/character-sources/workshop-1.0.17.json（三角色、四皮肤、技能和来源）",
     "sourceDir": "E:/桌面/NIKKE Helper/NIKKE Helper v1.0/src/renderer/src/data",
     "workshopObjectsPath": "E:/博哥/NIKKE WORKSHOP 1.0.14/NIKKE-Workshop-1.0.14/src/data/characterObjectAssets.json",
     "sourceGeneratedAt": "2026-09-01"
   },
   "counts": {
-    "characters": 204,
+    "characters": 208,
     "cnAvailable": 143,
     "collectible": 21,
     "collectibleCn": 12,
-    "overSpec": 4,
+    "overSpec": 7,
     "chinaExclusive": 2,
-    "artworks": 382
+    "artworks": 390
   },
   "taxonomy": {
     "filters": [
@@ -1568,10 +1569,13 @@
     {
       "nameCode": "5158",
       "resourceId": "74",
-      "nameCn": "索林：霜雪车票",
+      "nameCn": "索林：霜之旅票",
       "nameEn": "Soline: Frost Ticket",
-      "aliases": [],
-      "pinyin": "slsxcp",
+      "aliases": [
+        "索林：霜雪车票",
+        "索林：霜雪旅票"
+      ],
+      "pinyin": "slszlp slsxcp slsxlp",
       "avatar": "avatars/si_c074_00_s.png",
       "artworks": [
         {
@@ -3034,6 +3038,11 @@
           "id": "default",
           "label": "默认",
           "file": "c018.webp"
+        },
+        {
+          "id": "skin-1",
+          "label": "亲爱的公主",
+          "file": "c018_01.webp"
         }
       ],
       "skillIcons": {
@@ -5767,6 +5776,11 @@
           "id": "skin-1",
           "label": "无为",
           "file": "c223_01.webp"
+        },
+        {
+          "id": "skin-2",
+          "label": "三毒",
+          "file": "c223_02.webp"
         }
       ],
       "skillIcons": {
@@ -5871,6 +5885,11 @@
           "id": "default",
           "label": "默认",
           "file": "c471.webp"
+        },
+        {
+          "id": "skin-1",
+          "label": "垂泪之日",
+          "file": "c471_01.webp"
         }
       ],
       "skillIcons": {
@@ -7883,6 +7902,145 @@
       "collectibleCn": false,
       "favoriteItem": null,
       "overSpec": false
+    },
+    {
+      "nameCode": "5184",
+      "resourceId": "63",
+      "nameCn": "贝洛塔：南瓜女巫",
+      "nameEn": "Belorta: Pumpkin Witch",
+      "aliases": [],
+      "pinyin": "bltngnw",
+      "avatar": "avatars/si_c063_00_s.png",
+      "artworks": [
+        {
+          "id": "default",
+          "label": "默认",
+          "file": "c063.png"
+        }
+      ],
+      "skillIcons": null,
+      "class": "Supporter",
+      "element": "Water",
+      "use_burst_skill": "Step2",
+      "corporation": "TETRA",
+      "weapon_type": "RL",
+      "original_rare": "SSR",
+      "chinaExclusive": false,
+      "cnAvailable": false,
+      "collectible": false,
+      "collectibleCn": false,
+      "favoriteItem": null,
+      "overSpec": false
+    },
+    {
+      "nameCode": "5185",
+      "resourceId": "19",
+      "nameCn": "玛丽安：女王",
+      "nameEn": "Marian: Queen",
+      "aliases": [
+        "瑪麗安：女王"
+      ],
+      "pinyin": "mlanw",
+      "avatar": "ui-assets/nikke/character-avatars/c019.png",
+      "artworks": [
+        {
+          "id": "default",
+          "label": "默认",
+          "file": "c019.webp"
+        },
+        {
+          "id": "skin-1",
+          "label": "最后的爱恋",
+          "file": "c019_01.webp"
+        }
+      ],
+      "skillIcons": {
+        "skill1": "ui-assets/nikke/skill-icons/generic/icn_skill_damage_01.png",
+        "skill2": "ui-assets/nikke/skill-icons/generic/icn_skill_coredamage_01.png",
+        "burst": "ui-assets/nikke/skill-icons/burst/c019.png"
+      },
+      "class": "Attacker",
+      "element": "Fire",
+      "use_burst_skill": "Step3",
+      "corporation": "PILGRIM",
+      "weapon_type": "MG",
+      "original_rare": "SSR",
+      "chinaExclusive": false,
+      "cnAvailable": false,
+      "collectible": false,
+      "collectibleCn": false,
+      "favoriteItem": null,
+      "overSpec": true
+    },
+    {
+      "nameCode": "5186",
+      "resourceId": "472",
+      "nameCn": "红莲：弑神",
+      "nameEn": "Scarlet: Goddeath",
+      "aliases": [
+        "紅蓮：弒神"
+      ],
+      "pinyin": "hlss",
+      "avatar": "ui-assets/nikke/character-avatars/c472.png",
+      "artworks": [
+        {
+          "id": "default",
+          "label": "默认",
+          "file": "c472.webp"
+        }
+      ],
+      "skillIcons": {
+        "skill1": "ui-assets/nikke/skill-icons/generic/icn_skill_statpenetration_01.png",
+        "skill2": "ui-assets/nikke/skill-icons/generic/icn_skill_statcritical_01.png",
+        "burst": "ui-assets/nikke/skill-icons/burst/c472.png"
+      },
+      "class": "Attacker",
+      "element": "Fire",
+      "use_burst_skill": "Step3",
+      "corporation": "PILGRIM",
+      "weapon_type": "AR",
+      "original_rare": "SSR",
+      "chinaExclusive": false,
+      "cnAvailable": false,
+      "collectible": false,
+      "collectibleCn": false,
+      "favoriteItem": null,
+      "overSpec": true
+    },
+    {
+      "nameCode": "5187",
+      "resourceId": "473",
+      "nameCn": "长发公主：圣域",
+      "nameEn": "Rapunzel: Sanctuary",
+      "aliases": [
+        "長髮公主：聖域"
+      ],
+      "pinyin": "cfgzsy",
+      "avatar": "ui-assets/nikke/character-avatars/c473.png",
+      "artworks": [
+        {
+          "id": "default",
+          "label": "默认",
+          "file": "c473.webp"
+        }
+      ],
+      "skillIcons": {
+        "skill1": "ui-assets/nikke/skill-icons/generic/icn_skill_heal_01.png",
+        "skill2": "ui-assets/nikke/skill-icons/generic/icn_skill_barrier_01.png",
+        "burst": "ui-assets/nikke/skill-icons/burst/c473.png"
+      },
+      "class": "Supporter",
+      "element": "Fire",
+      "use_burst_skill": "Step2",
+      "corporation": "PILGRIM",
+      "weapon_type": "RL",
+      "original_rare": "SSR",
+      "chinaExclusive": false,
+      "cnAvailable": false,
+      "collectible": false,
+      "collectibleCn": false,
+      "favoriteItem": null,
+      "overSpec": true
     }
   ]
 }

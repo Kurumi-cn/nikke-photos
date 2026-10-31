@@ -17,7 +17,7 @@
 // 跨语言对上才说明网页端导出的码 BOT 真能读。
 import { readFileSync, writeFileSync } from 'node:fs'
 import {
-  SHARE_MAX_COUNT, TABLE_MAX_COUNT, SHARE_VERSION,
+  SHARE_MAX_COUNT, TABLE_MAX_COUNT, SHARE_VERSION, CUBE_IDS,
   encodeShareCode, encodeTableShareCode, decodeShareCode,
 } from '../src/lib/shareCode.js'
 
@@ -102,6 +102,17 @@ for (const char of characters) {
   })
 }
 if (!failed) console.log(`  全部 ${characters.length} 个角色可编码并还原`)
+
+// Frozen cube indices must survive both level boundaries, including append-only additions.
+for (const resourceId of CUBE_IDS) for (const level of [1, 15]) {
+  roundTrip(`魔方 ${resourceId} 等级 ${level}`, {
+    characters: [{ nameCode: '5185', record: { ...equipRecord, cube: { resourceId, level } } }],
+    fields: ['equip', 'cube'], synchroLevel: 200,
+  }, { check: decoded => {
+    const cube = decoded.characters['5185'].cube
+    return cube?.resourceId === resourceId && cube?.level === level ? [] : ['魔方编号或等级发生偏移']
+  } })
+}
 
 /** 取出 decoded.characters 里某个角色的字段，按 [路径, 期望值] 逐条核对 */
 function expectIn(nameCode, pairs) {
