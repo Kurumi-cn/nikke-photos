@@ -17,7 +17,14 @@
     "原版贝洛塔3007/c060保留；新变体无已核实国服/珍藏品/超标准标记；当前技能图标目录未含63，保持既有可选图标缺失路径，不套用原版技能图标。",
     "2026-10-25：用户要求更换为其提供的贝洛塔：南瓜女巫 (1).png，原始2048×2048透明PNG原字节复制为c063.png；当前引用已切换，旧Enikk webp仅保留历史兼容，不作为默认立绘。"
   ],
-  "revision": "2026-10-25",
+  "revision": "2026-11-23",
+  "skillIcons": {
+    "530": {
+      "skill1": "generic/icn_skill_debuffimmune_01.png",
+      "skill2": "generic/icn_skill_atkup_01.png",
+      "burst": "burst/c530.webp"
+    }
+  },
   "characters": [
     {
       "nameCode": "5181",
@@ -98,6 +105,27 @@
       "element": "Water",
       "class": "Supporter",
       "corporation": "TETRA"
+    },
+    {
+      "nameCode": "5188",
+      "resourceId": "530",
+      "nameCn": "思凯",
+      "nameEn": "Sky",
+      "aliases": ["思凱"],
+      "avatar": "avatars/si_c530_00_s.webp",
+      "artworks": [
+        {
+          "id": "default",
+          "label": "默认",
+          "file": "c530.webp"
+        }
+      ],
+      "use_burst_skill": "Step1",
+      "weapon_type": "SR",
+      "original_rare": "SSR",
+      "element": "Iron",
+      "class": "Supporter",
+      "corporation": "ELYSION"
     }
   ]
 }

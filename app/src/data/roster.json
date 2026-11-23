@@ -1,6 +1,6 @@
 {
-  "revision": "2026-10-31",
-  "generatedAt": "2026-10-31T11:00:06.823Z",
+  "revision": "2026-11-23",
+  "generatedAt": "2026-11-23T01:12:56.122Z",
   "sources": {
     "roster": "NIKKE Helper character-assets.json",
     "directory": "NIKKE Helper nikke-directory.json",
@@ -14,13 +14,13 @@
     "sourceGeneratedAt": "2026-09-01"
   },
   "counts": {
-    "characters": 208,
+    "characters": 209,
     "cnAvailable": 143,
     "collectible": 21,
     "collectibleCn": 12,
     "overSpec": 7,
     "chinaExclusive": 2,
-    "artworks": 390
+    "artworks": 391
   },
   "taxonomy": {
     "filters": [
@@ -6794,12 +6794,12 @@
         {
           "id": "skin-2",
           "label": "白色诺言",
-          "file": "c010_02.webp"
+          "file": "c010_01.webp"
         },
         {
           "id": "skin-3",
           "label": "经典假期",
-          "file": "c010_03.webp"
+          "file": "c010_02.webp"
         }
       ],
       "skillIcons": {
@@ -8041,6 +8041,41 @@
       "collectibleCn": false,
       "favoriteItem": null,
       "overSpec": true
+    },
+    {
+      "nameCode": "5188",
+      "resourceId": "530",
+      "nameCn": "思凯",
+      "nameEn": "Sky",
+      "aliases": [
+        "思凱"
+      ],
+      "pinyin": "sk",
+      "avatar": "avatars/si_c530_00_s.webp",
+      "artworks": [
+        {
+          "id": "default",
+          "label": "默认",
+          "file": "c530.webp"
+        }
+      ],
+      "skillIcons": {
+        "skill1": "ui-assets/nikke/skill-icons/generic/icn_skill_debuffimmune_01.png",
+        "skill2": "ui-assets/nikke/skill-icons/generic/icn_skill_atkup_01.png",
+        "burst": "ui-assets/nikke/skill-icons/burst/c530.webp"
+      },
+      "class": "Supporter",
+      "element": "Iron",
+      "use_burst_skill": "Step1",
+      "corporation": "ELYSION",
+      "weapon_type": "SR",
+      "original_rare": "SSR",
+      "chinaExclusive": false,
+      "cnAvailable": false,
+      "collectible": false,
+      "collectibleCn": false,
+      "favoriteItem": null,
+      "overSpec": false
     }
   ]
 }

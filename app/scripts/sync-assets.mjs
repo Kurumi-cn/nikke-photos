@@ -18,9 +18,8 @@ const SRC_WORKSHOP = process.env.NIKKE_WORKSHOP_ASSETS
 const ICON_GROUPS = ['企业', '爆裂阶段', '武器', '稀有度', '属性', '职业']
 const EQUIPMENT_ICON_GROUP = '装备'
 const WORKSHOP_DIRS = ['character-card', 'cubes', 'equipment', 'metadata', 'objects', 'skill-icons', 'stats']
-// 201 = Helper 本地素材库的头像数；+3 = scripts/extra-characters.json 里补录的三个官方角色
-// （那三张头像来自 nikke-db.github.io，源目录里没有，所以 cp 不会覆盖也不会删掉它们）
-const EXPECTED_AVATARS = 204
+// Helper 的 201 张头像加上本仓库补录的 5 张；Workshop 头像位于独立目录。
+const EXPECTED_AVATARS = 206
 const EXPECTED_ICONS = 26
 
 const DEST_AVATARS = path.join(APP_DIR, 'public', 'avatars')

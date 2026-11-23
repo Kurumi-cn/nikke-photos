@@ -1,0 +1,29 @@
+{
+  "name": "思凯 / Sky",
+  "verifiedOn": "2026-11-23",
+  "nameCode": "5188",
+  "resourceId": "530",
+  "notice": "https://nikke.hotcool.tw/News_detail-246",
+  "roleData": {
+    "zh-tw": "https://sg-tools-cdn.blablalink.com/to-86/0c1d9129faefa2d0053dcbbf974b28ca.json",
+    "en": "https://sg-tools-cdn.blablalink.com/ry-55/d03edda80fe591f0c0c289c47b9b5285.json"
+  },
+  "images": [
+    {
+      "file": "avatars/si_c530_00_s.webp",
+      "url": "https://sg-tools-cdn.blablalink.com/tv-03/in-96/cadc79068ffdd9f362e6c8d100130c18.webp",
+      "sha256": "a736f0d56496494c4e38ab357cb4d263999083d89cd67803d74744cddaca1ad1"
+    },
+    {
+      "file": "ui-assets/nikke/character-artwork/c530.webp",
+      "url": "https://sg-tools-cdn.blablalink.com/sp-72/yl-51/cc77c06d5ca35168728a9b56f75f01fa.webp",
+      "sha256": "36a969471548653ac6de0f44f5822187b2e8d2f9bdbf76f6ef11f30b14769676"
+    },
+    {
+      "file": "ui-assets/nikke/skill-icons/burst/c530.webp",
+      "url": "https://sg-tools-cdn.blablalink.com/fx-21/tx-25/hh-46/8415881a9843c297e73bc9a164403a23.webp",
+      "sha256": "a4e8007f61c656be5c1eea9d856d2a4014f2f78b734a4fb1086228661447e35f"
+    }
+  ],
+  "rights": "游戏素材权利归 SHIFT UP、PROXIMA BETA 及相关权利人。公开再分发许可待核实。"
+}

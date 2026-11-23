@@ -23,6 +23,11 @@ const SCRIPT_DIR = import.meta.dirname
 const APP_DIR = path.resolve(SCRIPT_DIR, '..')
 const PUBLIC_DIR = path.join(APP_DIR, 'public')
 const ARTWORK_DIR = path.join(PUBLIC_DIR, UI_ROOT, 'character-artwork')
+// 拉毗的存档皮肤 ID 沿用 Helper 编号，官方图鉴的 costume_index 分别为 1、2。
+const ARTWORK_FILE_OVERRIDES = {
+  '3001/skin-2': 'c010_01.webp',
+  '3001/skin-3': 'c010_02.webp',
+}
 const ROSTER_PATH = path.join(APP_DIR, 'src', 'data', 'roster.json')
 const REPORT_PATH = path.join(SCRIPT_DIR, 'roster-report.json')
 
@@ -139,7 +144,7 @@ const [assetsFile, directoryFile, cnFile, tagsFile, workshopObjects, skillIconCa
 /** 技能图标：按资源号取 skill1/skill2/burst 三个文件名，转成 public 相对路径 */
 const buildSkillIcons = (resourceId) => {
   const key = String(resourceId ?? '').trim()
-  const entry = workshopUpdate.skillIcons[key] || skillIconCatalog[key]
+  const entry = extraFile.skillIcons[key] || workshopUpdate.skillIcons[key] || skillIconCatalog[key]
   if (!entry) return null
   const toPath = (file) => (file ? `${UI_ROOT}/skill-icons/${file}` : null)
   return { skill1: toPath(entry.skill1), skill2: toPath(entry.skill2), burst: toPath(entry.burst) }
@@ -162,7 +167,7 @@ const extras = [...(Array.isArray(extraFile.characters) ? extraFile.characters :
     return false
   }
   return true
-})
+}).sort((a, b) => Number(a.nameCode) - Number(b.nameCode))
 
 // 立绘 / 头像 / 国服独占标记 → character-assets.json 的形状
 const toAssetShape = (item) => ({
@@ -276,7 +281,7 @@ for (const asset of allAssets) {
     artworks.push({
       id: artwork.id,
       label: artwork.label,
-      file: await resolveArtworkFile(artwork.file),
+      file: await resolveArtworkFile(ARTWORK_FILE_OVERRIDES[`${code}/${artwork.id}`] ?? artwork.file),
     })
   }
 
